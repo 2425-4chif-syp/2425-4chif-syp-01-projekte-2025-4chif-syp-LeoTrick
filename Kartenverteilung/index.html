@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bridge Kartenverteilung</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --border-color: #ddd;
+            --background-color: #ecf0f1;
+            --card-background: #fff;
+            --text-color: #2c3e50;
+            --red-suit-color: #e74c3c;
+            --black-suit-color: #2c3e50;
+            --highlight-color: #f1c40f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 2rem;
+        }
+
+        .sidebar {
+            flex: 0 0 400px;
+            background: var(--card-background);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+        }
+
+        .main-content {
+            flex: 1;
+            background: var(--card-background);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .constraints-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+
+        .constraints-table th,
+        .constraints-table td {
+            padding: 0.5rem;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .constraints-table th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .constraints-table input[type="number"] {
+            width: 60px;
+            padding: 0.25rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            text-align: center;
+            background-color: var(--highlight-color);
+        }
+
+        .constraints-table .label-cell {
+            text-align: left;
+            font-weight: bold;
+            padding-left: 1rem;
+        }
+
+        .control-group {
+            margin-bottom: 2rem;
+        }
+
+        .control-group h2 {
+            font-size: 1.1rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+        }
+
+        #generateBtn {
+            background-color: var(--success-color);
+        }
+
+        #generateBtn:hover {
+            background-color: #219a52;
+        }
+
+        #copyBtn, #downloadBtn {
+            background-color: var(--accent-color);
+        }
+
+        #copyBtn:hover, #downloadBtn:hover {
+            background-color: #2980b9;
+        }
+
+        .deals-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .deal-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+        }
+
+        .deal-title {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .bridge-table {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: auto auto auto;
+            gap: 1rem;
+            margin: 0 auto;
+            max-width: 400px;
+        }
+
+        .player-hand {
+            padding: 1rem;
+            background: var(--background-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .north {
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        .south {
+            grid-column: 2;
+            grid-row: 3;
+        }
+
+        .west {
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        .east {
+            grid-column: 3;
+            grid-row: 2;
+        }
+
+        .hand-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .suit-line {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .suit-symbol {
+            font-size: 1.2rem;
+            min-width: 1.5rem;
+        }
+
+        .cards {
+            font-family: monospace;
+            font-size: 1.1rem;
+            letter-spacing: 0.2em;
+        }
+
+        .red {
+            color: #e74c3c;
+        }
+
+        .black {
+            color: #2c3e50;
+        }
+
+        .center-cell {
+            width: 50px;
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                flex: none;
+                width: 100%;
+            }
+
+            .deals-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="control-group">
+                <h2>Verteilungsbedingungen</h2>
+                <div class="input-group">
+                    <label for="player">Spieler auswählen:</label>
+                    <select id="player">
+                        <option value="all">Alle Spieler</option>
+                        <option value="0">Nord</option>
+                        <option value="1">West</option>
+                        <option value="2">Ost</option>
+                        <option value="3">Süd</option>
+                    </select>
+                </div>
+
+                <!-- Einzelne Spieler-Bedingungen -->
+                <div id="single-player-constraints" style="display: none;">
+                    <table class="constraints-table">
+                        <thead>
+                            <tr>
+                                <th>Bedingung</th>
+                                <th>Min</th>
+                                <th>Max</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="label-cell">HCP:</td>
+                                <td><input type="number" id="minHcp" value="0" min="0" max="40"></td>
+                                <td><input type="number" id="maxHcp" value="40" min="0" max="40"></td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">TP:</td>
+                                <td><input type="number" id="minTp" value="7" min="0" max="50"></td>
+                                <td><input type="number" id="maxTp" value="50" min="0" max="50"></td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">♠:</td>
+                                <td><input type="number" id="minSpades" value="0" min="0" max="13"></td>
+                                <td><input type="number" id="maxSpades" value="13" min="0" max="13"></td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">♥:</td>
+                                <td><input type="number" id="minHearts" value="0" min="0" max="13"></td>
+                                <td><input type="number" id="maxHearts" value="13" min="0" max="13"></td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">♦:</td>
+                                <td><input type="number" id="minDiamonds" value="0" min="0" max="13"></td>
+                                <td><input type="number" id="maxDiamonds" value="13" min="0" max="13"></td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">♣:</td>
+                                <td><input type="number" id="minClubs" value="0" min="0" max="13"></td>
+                                <td><input type="number" id="maxClubs" value="13" min="0" max="13"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Alle Spieler-Bedingungen -->
+                <div id="all-players-constraints">
+                    <table class="constraints-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>N</th>
+                                <th>W</th>
+                                <th>O</th>
+                                <th>S</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="label-cell">HCP min:</td>
+                                <td><input type="number" id="hcp_min_N" value="0" min="0" max="40"></td>
+                                <td><input type="number" id="hcp_min_W" value="0" min="0" max="40"></td>
+                                <td><input type="number" id="hcp_min_O" value="0" min="0" max="40"></td>
+                                <td><input type="number" id="hcp_min_S" value="0" min="0" max="40"></td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">HCP max:</td>
+                                <td><input type="number" id="hcp_max_N" value="40" min="0" max="40"></td>
+                                <td><input type="number" id="hcp_max_W" value="40" min="0" max="40"></td>
+                                <td><input type="number" id="hcp_max_O" value="40" min="0" max="40"></td>
+                                <td><input type="number" id="hcp_max_S" value="40" min="0" max="40"></td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">TP min:</td>
+                                <td><input type="number" id="tp_min_N" value="7" min="0" max="50"></td>
+                                <td><input type="number" id="tp_min_W" value="7" min="0" max="50"></td>
+                                <td><input type="number" id="tp_min_O" value="7" min="0" max="50"></td>
+                                <td><input type="number" id="tp_min_S" value="7" min="0" max="50"></td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">TP max:</td>
+                                <td><input type="number" id="tp_max_N" value="50" min="0" max="50"></td>
+                                <td><input type="number" id="tp_max_W" value="50" min="0" max="50"></td>
+                                <td><input type="number" id="tp_max_O" value="50" min="0" max="50"></td>
+                                <td><input type="number" id="tp_max_S" value="50" min="0" max="50"></td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">♠ min:</td>
+                                <td><input type="number" id="spades_min_N" value="0" min="0" max="13"></td>
+                                <td><input type="number" id="spades_min_W" value="0" min="0" max="13"></td>
+                                <td><input type="number" id="spades_min_O" value="0" min="0" max="13"></td>
+                                <td><input type="number" id="spades_min_S" value="0" min="0" max="13"></td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">♠ max:</td>
+                                <td><input type="number" id="spades_max_N" value="13" min="0" max="13"></td>
+                                <td><input type="number" id="spades_max_W" value="13" min="0" max="13"></td>
+                                <td><input type="number" id="spades_max_O" value="13" min="0" max="13"></td>
+                                <td><input type="number" id="spades_max_S" value="13" min="0" max="13"></td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">♥ min:</td>
+                                <td><input type="number" id="hearts_min_N" value="0" min="0" max="13"></td>
+                                <td><input type="number" id="hearts_min_W" value="0" min="0" max="13"></td>
+                                <td><input type="number" id="hearts_min_O" value="0" min="0" max="13"></td>
+                                <td><input type="number" id="hearts_min_S" value="0" min="0" max="13"></td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">♥ max:</td>
+                                <td><input type="number" id="hearts_max_N" value="13" min="0" max="13"></td>
+                                <td><input type="number" id="hearts_max_W" value="13" min="0" max="13"></td>
+                                <td><input type="number" id="hearts_max_O" value="13" min="0" max="13"></td>
+                                <td><input type="number" id="hearts_max_S" value="13" min="0" max="13"></td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">♦ min:</td>
+                                <td><input type="number" id="diamonds_min_N" value="0" min="0" max="13"></td>
+                                <td><input type="number" id="diamonds_min_W" value="0" min="0" max="13"></td>
+                                <td><input type="number" id="diamonds_min_O" value="0" min="0" max="13"></td>
+                                <td><input type="number" id="diamonds_min_S" value="0" min="0" max="13"></td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">♦ max:</td>
+                                <td><input type="number" id="diamonds_max_N" value="13" min="0" max="13"></td>
+                                <td><input type="number" id="diamonds_max_W" value="13" min="0" max="13"></td>
+                                <td><input type="number" id="diamonds_max_O" value="13" min="0" max="13"></td>
+                                <td><input type="number" id="diamonds_max_S" value="13" min="0" max="13"></td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">♣ min:</td>
+                                <td><input type="number" id="clubs_min_N" value="0" min="0" max="13"></td>
+                                <td><input type="number" id="clubs_min_W" value="0" min="0" max="13"></td>
+                                <td><input type="number" id="clubs_min_O" value="0" min="0" max="13"></td>
+                                <td><input type="number" id="clubs_min_S" value="0" min="0" max="13"></td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">♣ max:</td>
+                                <td><input type="number" id="clubs_max_N" value="13" min="0" max="13"></td>
+                                <td><input type="number" id="clubs_max_W" value="13" min="0" max="13"></td>
+                                <td><input type="number" id="clubs_max_O" value="13" min="0" max="13"></td>
+                                <td><input type="number" id="clubs_max_S" value="13" min="0" max="13"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h2>Generierung</h2>
+                <div class="input-group">
+                    <label for="noDeals">Anzahl der Verteilungen:</label>
+                    <input type="number" id="noDeals" min="1" max="100" value="12">
+                </div>
+                <div class="input-group">
+                    <label for="cardCount">Anzahl der Karten:</label>
+                    <select id="cardCount">
+                        <option value="5" selected>5 Karten</option>
+                        <option value="6">6 Karten</option>
+                    </select>
+                </div>
+                <div class="button-group">
+                    <button id="generateBtn">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Generieren
+                    </button>
+                    <button id="copyBtn">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13 5H7C5.89543 5 5 5.89543 5 7V13C5 14.1046 5.89543 15 7 15H13C14.1046 15 15 14.1046 15 13V7C15 5.89543 14.1046 5 13 5Z" stroke="currentColor" stroke-width="2"/>
+                            <path d="M3 11H2C0.895431 11 0 10.1046 0 9V2C0 0.895431 0.895431 0 2 0H9C10.1046 0 11 0.895431 11 2V3" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        Kopieren
+                    </button>
+                    <button id="downloadBtn">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M14 10V12C14 13.1046 13.1046 14 12 14H4C2.89543 14 2 13.1046 2 12V10M8 2V11M8 11L5 8M8 11L11 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Herunterladen
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <h2>Generierte Verteilungen</h2>
+            <div id="deals-container" class="deals-grid">
+                <!-- Verteilungen werden hier eingefügt -->
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

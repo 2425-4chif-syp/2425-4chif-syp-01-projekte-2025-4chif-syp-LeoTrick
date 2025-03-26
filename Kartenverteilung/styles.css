@@ -1,0 +1,157 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.input-section {
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="number"] {
+    width: 100px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+button {
+    padding: 10px 20px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+#generateBtn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#generateBtn:hover {
+    background-color: #45a049;
+}
+
+#copyBtn, #downloadBtn {
+    background-color: #008CBA;
+    color: white;
+}
+
+#copyBtn:hover, #downloadBtn:hover {
+    background-color: #007399;
+}
+
+#deals-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.deal {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.deal-title {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-size: 1.2em;
+    color: #333;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, auto);
+    gap: 10px;
+    margin: 0 auto;
+    max-width: 600px;
+}
+
+.grid-cell {
+    padding: 10px;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.suit-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 2px 0;
+    font-size: 1.1em;
+}
+
+.suit-symbol {
+    font-size: 1.2em;
+    width: 20px;
+    text-align: center;
+}
+
+.heart, .diamond {
+    color: red;
+}
+
+.spade, .club {
+    color: black;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    .grid-container {
+        gap: 5px;
+    }
+
+    .grid-cell {
+        padding: 5px;
+        min-height: 60px;
+    }
+
+    .suit-line {
+        font-size: 0.9em;
+    }
+
+    button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+} 
