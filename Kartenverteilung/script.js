@@ -36,12 +36,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Hinzufügen eines Dropdown-Menüs für die Kartenauswahl
     cardCountSelect.addEventListener('change', () => {
         const selectedCount = parseInt(cardCountSelect.value);
-        if (selectedCount === 5) {
-            values.length = 0;
-            values.push('A', 'K', 'Q', 'J', 'T');
-        } else if (selectedCount === 6) {
-            values.length = 0;
-            values.push('A', 'K', 'Q', 'J', 'T', '9');
+        values.length = 0; // Leere das Array
+
+        // Füge die entsprechenden Kartenwerte hinzu
+        const allValues = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'];
+        for (let i = 0; i < selectedCount; i++) {
+            values.push(allValues[i]);
         }
     });
 
@@ -100,11 +100,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function checkConstraints(hand, playerIndex) {
         const selectedPlayer = playerSelect.value;
-        
+
         if (selectedPlayer === 'all') {
             // Bestehende Logik für alle Spieler
             const position = positions[playerIndex];
-            
+
             const hcp = calculateHCP(hand);
             const minHcp = parseInt(document.getElementById(`hcp_min_${position}`).value) || 0;
             const maxHcp = parseInt(document.getElementById(`hcp_max_${position}`).value) || 40;
@@ -198,13 +198,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Leere Zelle oben links
         bridgeTable.appendChild(document.createElement('div'));
-        
+
         // Nord
         const northHand = document.createElement('div');
         northHand.className = 'player-hand north';
         displayHand(hands[0], northHand);
         bridgeTable.appendChild(northHand);
-        
+
         // Leere Zelle oben rechts
         bridgeTable.appendChild(document.createElement('div'));
 
@@ -247,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
         suits.forEach(suit => {
             const suitLine = document.createElement('div');
             suitLine.className = `suit-line ${suit === 'H' || suit === 'D' ? 'red' : 'black'}`;
-            
+
             const symbol = document.createElement('span');
             symbol.className = 'suit-symbol';
             symbol.textContent = suitSymbols[suit];
@@ -294,7 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const formattedHand = formatHandForDisplay(hand);
                     const hcp = calculateHCP(hand);
                     const tp = calculateTP(hand);
-                    
+
                     return {
                         player: playerNames[playerIndex],
                         position: positions[playerIndex],
@@ -352,16 +352,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const noDeals = parseInt(document.getElementById('noDeals').value) || 1;
         const allDeals = [];
         let dealsGenerated = 0;
-        
+
         dealsContainer.innerHTML = '';
-        
+
         for (let i = 0; i < noDeals; i++) {
             const hands = generateDeal();
-            
+
             if (hands) {
                 dealsGenerated++;
                 allDeals.push(hands);
-                
+
                 const dealCard = createDealCard(hands, dealsGenerated);
                 dealsContainer.appendChild(dealCard);
             }
@@ -396,11 +396,11 @@ document.addEventListener('DOMContentLoaded', () => {
     downloadBtn.addEventListener('click', () => {
         const allDeals = JSON.parse(dealsContainer.dataset.deals || '[]');
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        
+
         const jsonContent = formatDealsForJSON(allDeals);
         const jsonBlob = new Blob([JSON.stringify(jsonContent, null, 2)], { type: 'application/json' });
         const jsonUrl = window.URL.createObjectURL(jsonBlob);
-        
+
         const jsonLink = document.createElement('a');
         jsonLink.href = jsonUrl;
         jsonLink.download = `kartenverteilung_${timestamp}.json`;
@@ -412,7 +412,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const textContent = formatDealsForSimpleText(allDeals);
         const textBlob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
         const textUrl = window.URL.createObjectURL(textBlob);
-        
+
         const textLink = document.createElement('a');
         textLink.href = textUrl;
         textLink.download = `kartenverteilung_${timestamp}.txt`;
