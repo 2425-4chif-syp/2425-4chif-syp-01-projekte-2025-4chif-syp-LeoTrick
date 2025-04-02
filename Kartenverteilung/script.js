@@ -236,6 +236,10 @@ document.addEventListener('DOMContentLoaded', () => {
         bridgeTable.appendChild(document.createElement('div'));
 
         dealCard.appendChild(bridgeTable);
+        
+        // Add trick analysis to the deal card
+        displayTrickAnalysis(dealCard, hands);
+        
         return dealCard;
     }
 
@@ -281,6 +285,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     .join('-');
             });
             output += handStrings.join(';');
+            
+            // Add analysis results if available
+            if (deals.analysisResults && deals.analysisResults[gameIndex]) {
+                output += '\n# Stichanalyse\n';
+                const analysis = deals.analysisResults[gameIndex];
+                for (const [trumpName, result] of Object.entries(analysis)) {
+                    output += `${trumpName}: NS=${result.nsStiche} OW=${result.owStiche} Gewinner=${result.winner}\n`;
+                }
+            }
+            
             output += '\n====================';
             return output;
         }).join('\n\n');
@@ -288,7 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function formatDealsForJSON(deals) {
         return deals.map((hands, gameIndex) => {
-            return {
+            const dealData = {
                 gameNumber: gameIndex + 1,
                 hands: hands.map((hand, playerIndex) => {
                     const formattedHand = formatHandForDisplay(hand);
@@ -322,6 +336,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     };
                 })
             };
+            
+            // Add analysis results if available
+            if (deals.analysisResults && deals.analysisResults[gameIndex]) {
+                dealData.analysis = deals.analysisResults[gameIndex];
+            }
+            
+            return dealData;
         });
     }
 
