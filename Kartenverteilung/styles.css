@@ -12,146 +12,99 @@ body {
 }
 
 .container {
-    max-width: 1200px;
+    display: grid;
+    grid-template-columns: 1fr 4fr; /* Sidebar takes 1/5th, main content takes 4/5th */
+    gap: 0.5rem;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 20px;
-    font-family: Arial, sans-serif;
+    padding: 0.5rem;
 }
 
-.input-section {
-    margin-bottom: 30px;
-    padding: 20px;
-    background-color: #f5f5f5;
-    border-radius: 8px;
+.sidebar {
+    background: var(--card-background);
+    border-radius: 6px;
+    padding: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    height: fit-content;
+    overflow-y: auto;
+    max-height: 85vh; /* Ensure the sidebar is scrollable if content overflows */
+    font-size: 0.85rem; /* Smaller font for compactness */
 }
 
-.input-group {
-    margin-bottom: 15px;
+.main-content {
+    background: var(--card-background);
+    border-radius: 6px;
+    padding: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    max-height: 85vh; /* Ensure the main content is scrollable if content overflows */
 }
 
-label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+.deals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* More compact grid for deals */
+    gap: 0.5rem;
 }
 
-input[type="number"] {
-    width: 100px;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-button {
-    padding: 10px 20px;
-    margin-right: 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s;
-}
-
-#generateBtn {
-    background-color: #4CAF50;
-    color: white;
-}
-
-#generateBtn:hover {
-    background-color: #45a049;
-}
-
-#copyBtn, #downloadBtn {
-    background-color: #008CBA;
-    color: white;
-}
-
-#copyBtn:hover, #downloadBtn:hover {
-    background-color: #007399;
-}
-
-#deals-container {
+.deal-card {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    gap: 30px;
-}
-
-.deal {
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    justify-content: space-between;
 }
 
 .deal-title {
-    text-align: center;
+    font-size: 0.9rem;
     font-weight: bold;
-    margin-bottom: 20px;
-    font-size: 1.2em;
-    color: #333;
+    text-align: center;
+    margin-bottom: 0.3rem;
 }
 
-.grid-container {
+.bridge-table {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(4, auto);
-    gap: 10px;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, auto);
+    gap: 0.3rem;
     margin: 0 auto;
-    max-width: 600px;
+    max-width: 250px;
 }
 
-.grid-cell {
-    padding: 10px;
-    min-height: 80px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.suit-line {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin: 2px 0;
-    font-size: 1.1em;
-}
-
-.suit-symbol {
-    font-size: 1.2em;
-    width: 20px;
+.player-hand {
+    padding: 0.3rem;
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 0.8rem;
     text-align: center;
 }
 
-.heart, .diamond {
-    color: red;
+button {
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
-.spade, .club {
-    color: black;
+button:hover {
+    background-color: var(--highlight-color);
 }
 
-/* Responsive design */
 @media (max-width: 768px) {
     .container {
-        padding: 10px;
+        grid-template-columns: 1fr; /* Stack sidebar and main content on smaller screens */
     }
 
-    .grid-container {
-        gap: 5px;
+    .sidebar {
+        max-height: none;
     }
 
-    .grid-cell {
-        padding: 5px;
-        min-height: 60px;
+    .main-content {
+        max-height: none;
     }
-
-    .suit-line {
-        font-size: 0.9em;
-    }
-
-    button {
-        width: 100%;
-        margin-bottom: 10px;
-    }
-} 
+}

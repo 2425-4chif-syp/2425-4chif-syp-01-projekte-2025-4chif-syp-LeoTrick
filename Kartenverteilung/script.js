@@ -297,13 +297,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const handStrings = clockwiseHands.map(hand => {
                 const formattedHand = formatHandForDisplay(hand);
-                return Object.values(formattedHand)
+                let result = Object.values(formattedHand)
                     .map(suitCards => suitCards || '-') // Ensure empty suits are represented by a single dash
-                    .join('-') // Add a single dash for separation
-                    .replace(/--+/g, '--'); // Ensure no more than two dashes in a row
+                    .join('-'); // Add a single dash for separation
+
+                // Replace sequences of more than two dashes with exactly two
+                result = result.replace(/-{3,}/g, '--');
+
+                // Remove extra dashes at the start and end
+                result = result.replace(/^-+/, '-').replace(/-+$/, '-');
+
+                return result;
             });
 
-            return handStrings.join(';');
+            // Ensure no trailing semicolon for empty hands
+            return handStrings.join(';').replace(/;$/, '');
         }).join('\n'); // Zeilenumbruch nach jedem Spiel
     }
 
@@ -353,6 +361,55 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    let fixedHands = [];
+
+    function setFixedHands(fixedHandsInput) {
+        // Parse the fixed hands input in the specified format
+        fixedHands = fixedHandsInput.split(';').map(hand => {
+            const suits = hand.split('-');
+            return {
+                'S': suits[0] === '-' ? [] : suits[0].split(''),
+                'H': suits[1] === '-' ? [] : suits[1].split(''),
+                'D': suits[2] === '-' ? [] : suits[2].split(''),
+                'C': suits[3] === '-' ? [] : suits[3].split('')
+            };
+        });
+    }
+
+    document.getElementById('setFixedHandBtn').addEventListener('click', () => {
+        const fixedHandInput = document.getElementById('fixedHandInput').value;
+        const fixedHandPlayer = parseInt(document.getElementById('fixedHandPlayer').value);
+
+        if (!fixedHandInput) {
+            alert('Bitte geben Sie eine gültige Fixhand ein.');
+            return;
+        }
+
+        // Parse the fixed hand for the selected player
+        const suits = fixedHandInput.split('-');
+        if (suits.length !== 4) {
+            alert('Die Fixhand muss genau vier Suits enthalten, getrennt durch Bindestriche.');
+            return;
+        }
+
+        const fixedHand = {
+            'S': suits[0] === '-' ? [] : suits[0].split(''),
+            'H': suits[1] === '-' ? [] : suits[1].split(''),
+            'D': suits[2] === '-' ? [] : suits[2].split(''),
+            'C': suits[3] === '-' ? [] : suits[3].split('')
+        };
+
+        // Ensure the fixedHands array has the correct length
+        while (fixedHands.length < 4) {
+            fixedHands.push({ 'S': [], 'H': [], 'D': [], 'C': [] });
+        }
+
+        // Assign the fixed hand to the selected player
+        fixedHands[fixedHandPlayer] = fixedHand;
+
+        alert(`Fixhand für Spieler ${['Nord', 'Ost', 'Süd', 'West'][fixedHandPlayer]} gesetzt.`);
+    });
+
     function generateDeal() {
         const maxAttempts = 1000;
         let attempts = 0;
@@ -360,12 +417,48 @@ document.addEventListener('DOMContentLoaded', () => {
         while (attempts < maxAttempts) {
             attempts++;
             const deck = createDeck();
+
+            console.log('Initial deck:', deck);
+            console.log('Fixed hands:', fixedHands);
+
+            // Remove cards from the deck that are part of fixed hands
+            fixedHands.forEach(fixedHand => {
+                Object.entries(fixedHand).forEach(([suit, cards]) => {
+                    cards.forEach(card => {
+                        const fullCard = card + suit;
+                        const index = deck.indexOf(fullCard);
+                        if (index !== -1) {
+                            deck.splice(index, 1);
+                        }
+                    });
+                });
+            });
+
+            console.log('Deck after removing fixed hands:', deck);
+
             shuffle(deck);
 
             const hands = [[], [], [], []];
-            for (let i = 0; i < deck.length; i++) {
-                hands[i % 4].push(deck[i]);
+
+            // Assign fixed hands first
+            fixedHands.forEach((fixedHand, index) => {
+                Object.entries(fixedHand).forEach(([suit, cards]) => {
+                    hands[index].push(...cards.map(card => card + suit));
+                });
+            });
+
+            console.log('Hands after assigning fixed hands:', hands);
+
+            // Distribute remaining cards
+            let deckIndex = 0;
+            for (let i = 0; i < hands.length; i++) {
+                while (hands[i].length < values.length) {
+                    hands[i].push(deck[deckIndex]);
+                    deckIndex++;
+                }
             }
+
+            console.log('Final hands after distribution:', hands);
 
             if (hands.every((hand, index) => checkConstraints(hand, index))) {
                 return hands;
