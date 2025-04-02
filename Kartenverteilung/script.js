@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
             suitCards.sort((a, b) => values.indexOf(a) - values.indexOf(b));
         });
 
-        // Format suits to ensure no more than one dash for empty suits
+        // Format suits to ensure correct dash handling for empty suits and separation
         const formattedSuits = {
             'S': suits['S'].join('') || '-',
             'H': suits['H'].join('') || '-',
@@ -298,9 +298,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const handStrings = clockwiseHands.map(hand => {
                 const formattedHand = formatHandForDisplay(hand);
                 return Object.values(formattedHand)
-                    .map(suitCards => suitCards) // Ensure suits are joined correctly
-                    .join('-')
-                    .replace(/-{2,}/g, '-'); // Replace multiple dashes with a single dash
+                    .map(suitCards => suitCards || '-') // Ensure empty suits are represented by a single dash
+                    .join('-') // Add a single dash for separation
+                    .replace(/--+/g, '--'); // Ensure no more than two dashes in a row
             });
 
             return handStrings.join(';');
