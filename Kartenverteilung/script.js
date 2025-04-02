@@ -181,7 +181,20 @@ document.addEventListener('DOMContentLoaded', () => {
             suitCards.sort((a, b) => values.indexOf(a) - values.indexOf(b));
         });
 
-        return suits;
+        // Format suits to ensure no more than one dash for empty suits
+        const formattedSuits = {
+            'S': suits['S'].join('') || '-',
+            'H': suits['H'].join('') || '-',
+            'D': suits['D'].join('') || '-',
+            'C': suits['C'].join('') || '-'
+        };
+
+        return {
+            'S': formattedSuits['S'],
+            'H': formattedSuits['H'],
+            'D': formattedSuits['D'],
+            'C': formattedSuits['C']
+        };
     }
 
     function createDealCard(hands, dealNumber) {
@@ -259,7 +272,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const cards = document.createElement('span');
             cards.className = 'cards';
-            cards.textContent = formattedHand[suit].join('') || '-';
+            const suitCards = Array.isArray(formattedHand[suit]) ? formattedHand[suit] : [formattedHand[suit]]; // Sicherstellen, dass es ein Array ist
+            cards.textContent = suitCards.join('') || '-';
             suitLine.appendChild(cards);
 
             handDiv.appendChild(suitLine);
@@ -267,6 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         container.appendChild(handDiv);
     }
+    
 
     function formatHandForText(hand) {
         const formattedHand = formatHandForDisplay(hand);
@@ -276,28 +291,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function formatDealsForSimpleText(deals) {
-        return deals.map((hands, gameIndex) => {
-            let output = `# Spiel ${gameIndex + 1}\n`;
-            const handStrings = hands.map(hand => {
+        return deals.map((hands) => {
+            // Rearrange hands to follow clockwise order: North, East, South, West
+            const clockwiseHands = [hands[0], hands[2], hands[3], hands[1]];
+
+            const handStrings = clockwiseHands.map(hand => {
                 const formattedHand = formatHandForDisplay(hand);
                 return Object.values(formattedHand)
-                    .map(suitCards => suitCards.join('') || '-')
-                    .join('-');
+                    .map(suitCards => suitCards) // Ensure suits are joined correctly
+                    .join('-')
+                    .replace(/-{2,}/g, '-'); // Replace multiple dashes with a single dash
             });
-            output += handStrings.join(';');
-            
-            // Add analysis results if available
-            if (deals.analysisResults && deals.analysisResults[gameIndex]) {
-                output += '\n# Stichanalyse\n';
-                const analysis = deals.analysisResults[gameIndex];
-                for (const [trumpName, result] of Object.entries(analysis)) {
-                    output += `${trumpName}: NS=${result.nsStiche} OW=${result.owStiche} Gewinner=${result.winner}\n`;
-                }
-            }
-            
-            output += '\n====================';
-            return output;
-        }).join('\n\n');
+
+            return handStrings.join(';');
+        }).join('\n'); // Zeilenumbruch nach jedem Spiel
     }
 
     function formatDealsForJSON(deals) {
