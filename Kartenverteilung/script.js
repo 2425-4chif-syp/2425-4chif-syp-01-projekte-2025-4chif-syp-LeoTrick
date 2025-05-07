@@ -469,11 +469,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Event Listeners
-    generateBtn.addEventListener('click', () => {
+    document.getElementById('generateBtn').addEventListener('click', () => {
         const noDeals = parseInt(document.getElementById('noDeals').value) || 1;
         const allDeals = [];
         let dealsGenerated = 0;
 
+        // Hide the sidebar completely when generating deals
+        const sidebar = document.querySelector('.sidebar');
+        sidebar.style.display = 'none';
+
+        // Clear the deals container
+        const dealsContainer = document.getElementById('deals-container');
         dealsContainer.innerHTML = '';
 
         for (let i = 0; i < noDeals; i++) {
@@ -493,7 +499,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         dealsContainer.dataset.deals = JSON.stringify(allDeals);
+
+        // Add a button to bring back the sidebar
+        const toggleSidebarBtn = document.getElementById('toggleSidebar');
+        toggleSidebarBtn.style.display = 'block';
     });
+
+    // Add logic to toggle the sidebar back
+    const toggleSidebarBtn = document.getElementById('toggleSidebar');
+    toggleSidebarBtn.addEventListener('click', () => {
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebar.style.display === 'none') {
+            sidebar.style.display = 'block';
+        } else {
+            sidebar.style.display = 'none';
+        }
+    });
+
+    // Ensure the toggle button is hidden initially
+    toggleSidebarBtn.style.display = 'none';
 
     copyBtn.addEventListener('click', () => {
         const allDeals = JSON.parse(dealsContainer.dataset.deals || '[]');

@@ -486,6 +486,14 @@
     </main>
 </div>
 
+<button class="toggle-sidebar-btn" id="toggleSidebar">Einstellungen</button>
+<script>
+    document.getElementById('toggleSidebar').addEventListener('click', () => {
+        const sidebar = document.querySelector('.sidebar');
+        sidebar.classList.toggle('open');
+    });
+</script>
+
 <script src="trick-analyzer.js"></script>
 <script src="script.js"></script>
 </body>

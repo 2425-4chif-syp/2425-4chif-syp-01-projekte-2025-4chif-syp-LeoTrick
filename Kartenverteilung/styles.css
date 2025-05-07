@@ -13,11 +13,12 @@ body {
 
 .container {
     display: grid;
-    grid-template-columns: 1fr 4fr; /* Sidebar takes 1/5th, main content takes 4/5th */
+    grid-template-columns: 1fr; /* Initially only show the main content */
     gap: 0.5rem;
     max-width: 1400px;
     margin: 0 auto;
     padding: 0.5rem;
+    position: relative;
 }
 
 .sidebar {
@@ -25,10 +26,22 @@ body {
     border-radius: 6px;
     padding: 0.5rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    height: fit-content;
+    height: 100%;
     overflow-y: auto;
-    max-height: 85vh; /* Ensure the sidebar is scrollable if content overflows */
-    font-size: 0.85rem; /* Smaller font for compactness */
+    max-height: 100vh;
+    font-size: 0.85rem;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 300px;
+    transform: translateX(-100%); /* Initially hidden */
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000;
+}
+
+.sidebar.open {
+    transform: translateX(0); /* Slide in when open */
 }
 
 .main-content {
@@ -37,12 +50,12 @@ body {
     padding: 0.5rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     overflow-y: auto;
-    max-height: 85vh; /* Ensure the main content is scrollable if content overflows */
+    max-height: 100vh;
 }
 
 .deals-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* More compact grid for deals */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Compact grid for deals */
     gap: 0.5rem;
 }
 
@@ -95,16 +108,26 @@ button:hover {
     background-color: var(--highlight-color);
 }
 
+.toggle-sidebar-btn {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1100;
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
 @media (max-width: 768px) {
-    .container {
-        grid-template-columns: 1fr; /* Stack sidebar and main content on smaller screens */
+    .deals-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjust for smaller screens */
     }
 
     .sidebar {
-        max-height: none;
-    }
-
-    .main-content {
-        max-height: none;
+        width: 250px; /* Smaller sidebar for mobile */
     }
 }
