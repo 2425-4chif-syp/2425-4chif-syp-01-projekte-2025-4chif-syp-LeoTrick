@@ -90,6 +90,12 @@ class BridgeGameAnalyzer {
                 }
             }
         }
+        
+        // Get the currently selected card count if available
+        if (typeof window !== 'undefined' && window.values && Array.isArray(window.values)) {
+            return window.values.length; // Use the global card count setting
+        }
+        
         return Math.floor(totalCards / 4); // Total cards divided by number of suits
     }
     
@@ -119,8 +125,8 @@ class BridgeGameAnalyzer {
         let trumpSuits = ["0", "1", "2", "3", "5"]; // Spades, Hearts, Diamonds, Clubs, No Trump
         let trumpNames = ["♠ Pik", "♥ Herz", "♦ Karo", "♣ Kreuz", "NT"];
         
-        // For more than 5 cards, only calculate NT
-        if (this.CARDS_PER_COLOR > 5) {
+        // For more than 8 cards, only calculate NT to save computation time
+        if (this.CARDS_PER_COLOR > 8) {
             trumpSuits = ["5"]; // Only No Trump
             trumpNames = ["NT"];
         }

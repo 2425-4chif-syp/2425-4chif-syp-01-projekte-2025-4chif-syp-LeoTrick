@@ -83,6 +83,55 @@
             text-align: center;
             background-color: var(--highlight-color);
         }
+        
+        .input-group small {
+            display: block;
+            color: #666;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .fixed-hand-container {
+            margin: 10px 0;
+        }
+        
+        .fixed-hand-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .suit-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .suit-symbol {
+            font-size: 1.5rem;
+            width: 30px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .suit-symbol.red {
+            color: #e74c3c;
+        }
+        
+        .suit-symbol.black {
+            color: #2c3e50;
+        }
+        
+        .suit-group input[type="text"] {
+            flex: 1;
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            text-transform: uppercase;
+        }
 
         .constraints-table .label-cell {
             text-align: left;
@@ -136,6 +185,15 @@
 
         #copyBtn:hover, #downloadBtn:hover {
             background-color: #2980b9;
+        }
+        
+        #analyzeBtn {
+            background-color: var(--highlight-color);
+            color: var(--secondary-color);
+        }
+
+        #analyzeBtn:hover {
+            background-color: #e67e22;
         }
 
         .deals-grid {
@@ -439,6 +497,25 @@
                     <option value="13">13 Karten</option>
                 </select>
             </div>
+            <div class="input-group">
+                <label for="fixedHand">Fixierte Karten:</label>
+                <div class="fixed-hand-container">
+                    <div class="fixed-hand-inputs">
+                        <div class="format-group">
+                            <input type="text" id="fixedHandFormat" placeholder="Format: J-QJ-K-J;" class="format-input">
+                            <button id="exampleBtn" class="example-btn" type="button" title="Beispiel einfügen">?</button>
+                        </div>
+                        <div class="format-info">
+                            <small>Eingabeformat: ♠-♥-♦-♣; (Pik-Herz-Karo-Kreuz)</small>
+                            <small>Beispiel: AK-QJ--; (Pik: A,K; Herz: Q,J; Karo: -; Kreuz: -)</small>
+                        </div>
+                        <div class="format-example">
+                            <small>Beispiel: AK-QJ-T9-87 bedeutet: Pik AK, Herz QJ, Karo T9, Kreuz 87</small>
+                        </div>
+                    </div>
+                </div>
+                <small>Geben Sie fixierte Karten im Format ein und wählen Sie den Spieler oben aus.</small>
+            </div>
             <div class="button-group">
                 <button id="generateBtn">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -459,124 +536,31 @@
                     </svg>
                     Herunterladen
                 </button>
+                <button id="analyzeBtn" title="Stichanalyse durchführen">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 12L8 2L14 12M4.5 8.5L8 3.5L11.5 8.5M5.5 10.5H10.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Stichanalyse
+                </button>
             </div>
         </div>
-
-        <div class="form-group">
-            <label for="fixedHandInput">Fixhand eingeben:</label>
-            <input type="text" id="fixedHandInput" placeholder="z.B. KJ--J-QJ">
-        </div>
-        <div class="form-group">
-            <label for="fixedHandPlayer">Spieler für Fixhand:</label>
-            <select id="fixedHandPlayer">
-                <option value="0">Nord</option>
-                <option value="1">Ost</option>
-                <option value="2">Süd</option>
-                <option value="3">West</option>
-            </select>
-        </div>
-        <button id="setFixedHandBtn">Fixhand setzen</button>
     </aside>
 
     <main class="main-content">
-        <h2>Kartenverteilungen</h2>
-        <div id="importContainer" class="import-section">
-            <!-- File import controls will be added here -->
-        </div>
-        <div class="example-section" style="margin: 20px 0;">
-            <button id="runExampleBtn" style="padding: 8px 16px; background-color: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">
-                Beispiel ausführen
-            </button>
-            <span id="exampleDistribution" style="font-family: monospace; background-color: #f8f9fa; padding: 5px 10px; border-radius: 4px;">
-                T-QT-K-T;AQ--A-AJ;K-KJ-Q-K;J-A-JT-Q
-            </span>
-        </div>
-        <div class="format-examples" style="margin: 20px 0; background-color: #f8f9fa; padding: 15px; border-radius: 4px; border: 1px solid #e9ecef;">
-            <h4>Unterstützte Formate:</h4>
-            <div style="margin-top: 10px;">
-                <strong>String Format:</strong>
-                <code style="display: block; margin: 5px 0; padding: 8px; background-color: #fff; border: 1px solid #ddd; border-radius: 4px;">T-QT-K-T;AQ--A-AJ;K-KJ-Q-K;J-A-JT-Q</code>
-                <small style="display: block; margin-top: 5px; color: #666;">Jede Hand ist durch Semikolon getrennt und enthält vier Suits mit Bindestrichen zwischen ihnen (Pik-Herz-Karo-Treff)</small>
-            </div>
-            <div style="margin-top: 15px;">
-                <strong>JSON Format:</strong>
-                <code style="display: block; margin: 5px 0; padding: 8px; background-color: #fff; border: 1px solid #ddd; border-radius: 4px;">{"N":{"S":"AKJ","H":"QT9","D":"K7","C":"AQJ2"},"E":{"S":"Q82","H":"A65","D":"AQT5","C":"T53"},"S":{"S":"T93","H":"J87","D":"J932","C":"K87"},"W":{"S":"7654","H":"K432","D":"864","C":"96"}}</code>
-                <small style="display: block; margin-top: 5px; color: #666;">JSON-Format mit Händen N, E, S, W und Suits S, H, D, C</small>
-            </div>
-        </div>
-        <h3>Generierte Verteilungen</h3>
+        <h2>Generierte Verteilungen</h2>
         <div id="deals-container" class="deals-grid">
             <!-- Verteilungen werden hier eingefügt -->
         </div>
     </main>
 </div>
 
-<button class="toggle-sidebar-btn" id="toggleSidebar">Einstellungen</button>
-<script>
-    document.getElementById('toggleSidebar').addEventListener('click', () => {
-        const sidebar = document.querySelector('.sidebar');
-        sidebar.classList.toggle('open');
-    });
-</script>
-
-<!-- Load scripts -->
+<!-- Load scripts in dependency order -->
 <script src="fallback.js"></script>
-<script src="card-importer.js"></script>
-<script src="bridge-trick-calculator.js"></script>
-<script src="trick-analyzer.js"></script>
 <script src="example-distributions.js"></script>
+<script src="card-importer.js"></script>
+<script src="trick-analyzer.js"></script>
 <script src="distribution-analyzer.js"></script>
+<script src="bridge-trick-calculator.js"></script>
 <script src="script.js"></script>
-
-<script>
-    // Direkten Aufruf für das Beispiel implementieren
-    document.getElementById('runExampleBtn').addEventListener('click', function() {
-        const exampleDistribution = document.getElementById('exampleDistribution').innerText.trim();
-        if (exampleDistribution) {
-            // Hole eine Referenz auf die analyzeCustomDistribution-Funktion
-            if (typeof analyzeCustomDistribution === 'function') {
-                console.log("Rufe analyzeCustomDistribution auf:", exampleDistribution);
-                analyzeCustomDistribution(exampleDistribution);
-            } else {
-                // Fallback: Direkter Aufruf des Trick-Analyzers
-                console.log("analyzeCustomDistribution nicht gefunden, direkter Aufruf");
-                const dealCard = document.createElement('div');
-                dealCard.className = 'deal-card';
-                dealCard.style.border = '1px solid #ddd';
-                dealCard.style.padding = '15px';
-                dealCard.style.marginBottom = '20px';
-                
-                const title = document.createElement('h2');
-                title.textContent = 'Beispielverteilung';
-                dealCard.appendChild(title);
-                
-                const dealsContainer = document.getElementById('deals-container');
-                dealsContainer.prepend(dealCard);
-                
-                try {
-                    // Versuche das Beispiel mit processCardDistribution zu verarbeiten
-                    if (typeof processCardDistribution === 'function') {
-                        const hands = processCardDistribution(exampleDistribution);
-                        displayHandVisualization(dealCard, hands);
-                        displayTrickAnalysisWithCalculator(dealCard, hands);
-                    } else if (exampleDistribution.includes(';') && exampleDistribution.includes('-')) {
-                        // Falls processCardDistribution nicht verfügbar ist, versuche parseStringDistribution
-                        const hands = parseStringDistribution(exampleDistribution);
-                        displayHandVisualization(dealCard, hands);
-                        displayTrickAnalysisWithCalculator(dealCard, hands);
-                    } else {
-                        throw new Error("Distribution konnte nicht verarbeitet werden");
-                    }
-                } catch (error) {
-                    const errorMsg = document.createElement('p');
-                    errorMsg.textContent = 'Fehler bei der Analyse: ' + error.message;
-                    errorMsg.style.color = 'red';
-                    dealCard.appendChild(errorMsg);
-                    console.error("Fehler bei der Verarbeitung:", error);
-                }
-            }
-        }
-    });
-</script>
 </body>
 </html>

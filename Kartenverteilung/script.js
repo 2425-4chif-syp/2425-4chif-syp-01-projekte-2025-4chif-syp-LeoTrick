@@ -1,120 +1,74 @@
-// Example of how to use the distribution analyzer
-// This shows how to analyze a distribution string programmatically
-function exampleDistributionAnalysis() {
-    console.log("Distribution analysis example:");
-    
-    // Example of a distribution string
-    const exampleDistribution = "T-QT-K-T;AQ--A-AJ;K-KJ-Q-K;J-A-JT-Q";
-    
-    try {
-        // Use the static method for simple analysis
-        const results = BridgeTrickCalculator.analyzeDistribution(exampleDistribution);
-        console.log("Analysis results:", results);
-        
-        // Example of JSON format
-        const jsonDistribution = {
-            "North": {
-                "S": "T",
-                "H": "QT",
-                "D": "K",
-                "C": "T"
-            },
-            "East": {
-                "S": "AQ",
-                "H": "",
-                "D": "A",
-                "C": "AJ"
-            },
-            "South": {
-                "S": "K",
-                "H": "KJ",
-                "D": "Q",
-                "C": "K"
-            },
-            "West": {
-                "S": "J",
-                "H": "A",
-                "D": "JT",
-                "C": "Q"
-            }
-        };
-        
-        const jsonResults = analyzeCardDistribution(jsonDistribution);
-        console.log("JSON analysis results:", jsonResults);
-    } catch (error) {
-        console.error("Analysis failed:", error);
-    }
-}
-
 document.addEventListener('DOMContentLoaded', () => {
+    // Add CSS for improved toast notification
+    const style = document.createElement('style');
+    style.textContent = `
+        .fixed-cards-toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            max-width: 90%;
+        }
+        
+        .toast-icon {
+            font-size: 1.2rem;
+        }
+        
+        .toast-close {
+            margin-left: 12px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            opacity: 0.8;
+        }
+        
+        .toast-close:hover {
+            opacity: 1;
+        }
+        
+        .fixed-cards-toast.fade-out {
+            opacity: 0;
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Add style for the analysis-info
+    const analysisInfoStyle = document.createElement('style');
+    analysisInfoStyle.textContent = `
+        .analysis-info {
+            background-color: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--accent-color);
+        }
+    `;
+    document.head.appendChild(analysisInfoStyle);
     // DOM-Elemente
     const generateBtn = document.getElementById('generateBtn');
     const copyBtn = document.getElementById('copyBtn');
     const downloadBtn = document.getElementById('downloadBtn');
+    const analyzeBtn = document.getElementById('analyzeBtn');
     const dealsContainer = document.getElementById('deals-container');
     const playerSelect = document.getElementById('player');
     const singlePlayerConstraints = document.getElementById('single-player-constraints');
     const allPlayersConstraints = document.getElementById('all-players-constraints');
     const cardCountSelect = document.getElementById('cardCount');
-    
-    // Create global reference to dealsContainer for file importer
-    window.dealsContainer = dealsContainer;
-    
-    // Create UI elements for direct distribution input
-    if (!customInputBtn) {
-        const customInputBtn = document.createElement('button');
-        customInputBtn.id = 'customInputBtn';
-        customInputBtn.className = 'btn btn-primary mb-3';
-        customInputBtn.textContent = 'Eigene Kartenverteilung analysieren';
-        
-        const customInputContainer = document.createElement('div');
-        customInputContainer.id = 'customInputContainer';
-        customInputContainer.className = 'mb-3';
-        customInputContainer.style.display = 'none';
-        
-        const inputLabel = document.createElement('label');
-        inputLabel.htmlFor = 'distributionInput';
-        inputLabel.className = 'form-label';
-        inputLabel.textContent = 'Kartenverteilung eingeben (JSON oder Format: T-QT-K-T;AQ--A-AJ;K-KJ-Q-K;J-A-JT-Q)';
-        
-        const distributionInput = document.createElement('textarea');
-        distributionInput.id = 'distributionInput';
-        distributionInput.className = 'form-control';
-        distributionInput.rows = 4;
-        
-        const analyzeBtn = document.createElement('button');
-        analyzeBtn.id = 'analyzeBtn';
-        analyzeBtn.className = 'btn btn-success mt-2';
-        analyzeBtn.textContent = 'Analysieren';
-        
-        customInputContainer.appendChild(inputLabel);
-        customInputContainer.appendChild(distributionInput);
-        customInputContainer.appendChild(analyzeBtn);
-        
-        // Insert elements into the page
-        const controlsContainer = document.querySelector('.container');
-        if (controlsContainer) {
-            controlsContainer.appendChild(customInputBtn);
-            controlsContainer.appendChild(customInputContainer);
-        }
-        
-        // Add event listeners
-        customInputBtn.addEventListener('click', () => {
-            customInputContainer.style.display = customInputContainer.style.display === 'none' ? 'block' : 'none';
-        });
-        
-        analyzeBtn.addEventListener('click', () => {
-            const input = distributionInput.value.trim();
-            if (input) {
-                analyzeCustomDistribution(input);
-            } else {
-                alert('Bitte eine Kartenverteilung eingeben.');
-            }
-        });
-    }
 
     // Kartenwerte und Farben
-    const values = ['A', 'K', 'Q', 'J', 'T'];
+    window.values = ['A', 'K', 'Q', 'J', 'T']; // Default: 5 Karten (wird durch cardCountSelect aktualisiert)
+    const values = window.values; // Local reference for easier access
     const suits = ['S', 'H', 'D', 'C'];
     const suitSymbols = {
         'S': '♠',
@@ -137,17 +91,54 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Hinzufügen eines Dropdown-Menüs für die Kartenauswahl
-    cardCountSelect.addEventListener('change', () => {
+    // Funktion zum Aktualisieren der Kartenwerte basierend auf der ausgewählten Anzahl
+    function updateCardValues() {
         const selectedCount = parseInt(cardCountSelect.value);
-        values.length = 0; // Leere das Array
-
-        // Füge die entsprechenden Kartenwerte hinzu
-        const allValues = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'];
-        for (let i = 0; i < selectedCount; i++) {
-            values.push(allValues[i]);
+        
+        // Reset both arrays completely
+        values.length = 0;
+        window.values = []; // Create a new array instead of modifying the existing one
+        
+        // Make values reference the global array to ensure they're always in sync
+        window.values = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'].slice(0, selectedCount);
+        // Point the local reference to the same array
+        Object.assign(values, window.values);
+        
+        // Update solver array and trick analyzer when changing card count
+        if (window.BridgeDoubleDummySolver && window.bridgeSolver) {
+            window.bridgeSolver.RANKS = [...window.values];
         }
-    });
+        
+        // Reset any fixed hands when card count changes
+        document.getElementById('fixedHandFormat').value = '';
+        
+        // Update trick analysis UI elements if they exist
+        const analysisInfoElements = document.querySelectorAll('.analysis-info');
+        analysisInfoElements.forEach(el => {
+            el.textContent = `Bei ${selectedCount} Karten pro Spieler sind maximal ${selectedCount} Stiche möglich.`;
+        });
+        
+        // Wenn ein Solver vorhanden ist, aktualisiere seine Arrays
+        if (window.BridgeDoubleDummySolver && window.bridgeSolver instanceof window.BridgeDoubleDummySolver) {
+            // Update RANKS - create a new array to avoid reference issues
+            const allRanks = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'];
+            window.bridgeSolver.RANKS = allRanks.slice(0, selectedCount);
+            
+            // Update CARD_VALUES based on rank position
+            window.bridgeSolver.CARD_VALUES = {};
+            for (let i = 0; i < allRanks.length; i++) {
+                window.bridgeSolver.CARD_VALUES[allRanks[i]] = 14 - i; // A=14, K=13, etc.
+            }
+        }
+        
+        console.log(`Card values updated to: ${window.values.join(', ')}`);
+    }
+    
+    // Initialisiere Kartenwerte bei Seitenladung
+    updateCardValues();
+    
+    // Eventlistener für Kartenzahlauswahl
+    cardCountSelect.addEventListener('change', updateCardValues);
 
     // Hilfsfunktionen
     function createDeck() {
@@ -285,20 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
             suitCards.sort((a, b) => values.indexOf(a) - values.indexOf(b));
         });
 
-        // Format suits to ensure correct dash handling for empty suits and separation
-        const formattedSuits = {
-            'S': suits['S'].join('') || '-',
-            'H': suits['H'].join('') || '-',
-            'D': suits['D'].join('') || '-',
-            'C': suits['C'].join('') || '-'
-        };
-
-        return {
-            'S': formattedSuits['S'],
-            'H': formattedSuits['H'],
-            'D': formattedSuits['D'],
-            'C': formattedSuits['C']
-        };
+        return suits;
     }
 
     function createDealCard(hands, dealNumber) {
@@ -354,10 +332,76 @@ document.addEventListener('DOMContentLoaded', () => {
 
         dealCard.appendChild(bridgeTable);
         
-        // Add trick analysis to the deal card using the new calculator
-        displayTrickAnalysisWithCalculator(dealCard, hands);
+        // Add trick analysis to the deal card
+        displayTrickAnalysis(dealCard, hands);
         
         return dealCard;
+    }
+    
+    /**
+     * Display the trick analysis for a given deal
+     * @param {HTMLElement} container - The element to append the analysis to
+     * @param {Array} hands - The hands for North, West, East, South
+     */
+    function displayTrickAnalysis(container, hands) {
+        try {
+            // First create a distribution object in the format our analyzer expects
+            const distribution = {
+                "N": [],
+                "E": [],
+                "S": [],
+                "W": []
+            };
+            
+            // Map the positions from our order (N, W, E, S) to expected order (N, E, S, W)
+            const positionMap = {
+                0: "N", // North stays North
+                1: "W", // West stays West
+                2: "E", // East stays East 
+                3: "S"  // South stays South
+            };
+            
+            // For each hand, convert cards to the format expected by the analyzer
+            hands.forEach((hand, index) => {
+                const position = positionMap[index];
+                hand.forEach(card => {
+                    distribution[position].push(card);
+                });
+            });
+            
+            // Initialize the Bridge Trick Calculator
+            // Make sure BridgeTrickCalculator is defined in the global scope
+            if (typeof window.BridgeTrickCalculator === 'undefined') {
+                throw new Error('BridgeTrickCalculator is not defined. Make sure it is loaded before script.js');
+            }
+            
+            const calculator = new window.BridgeTrickCalculator();
+            
+            // Calculate the maximum tricks
+            const results = calculator.calculateMaxTricks(distribution);
+            
+            // Generate HTML representation
+            const analysisHTML = calculator.generateHTML(results);
+            
+            // Create and append the analysis section
+            const analysisSection = document.createElement('div');
+            analysisSection.className = 'trick-analysis-section';
+            analysisSection.innerHTML = '<h3>Stichanalyse (Double Dummy)</h3>' + analysisHTML;
+            container.appendChild(analysisSection);
+            
+            // Return the results for potential further use
+            return results;
+        } catch (error) {
+            console.error('Error in trick analysis:', error);
+            
+            // Create error message element
+            const errorElement = document.createElement('div');
+            errorElement.className = 'trick-analysis-error';
+            errorElement.textContent = 'Stichanalyse konnte nicht durchgeführt werden.';
+            container.appendChild(errorElement);
+            
+            return null;
+        }
     }
 
     function displayHand(hand, container) {
@@ -376,8 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const cards = document.createElement('span');
             cards.className = 'cards';
-            const suitCards = Array.isArray(formattedHand[suit]) ? formattedHand[suit] : [formattedHand[suit]]; // Sicherstellen, dass es ein Array ist
-            cards.textContent = suitCards.join('') || '-';
+            cards.textContent = formattedHand[suit].join('') || '-';
             suitLine.appendChild(cards);
 
             handDiv.appendChild(suitLine);
@@ -395,28 +438,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function formatDealsForSimpleText(deals) {
-        return deals.map((hands) => {
-            // Rearrange hands to follow clockwise order: North, East, South, West
-            const clockwiseHands = [hands[0], hands[2], hands[3], hands[1]];
-
-            const handStrings = clockwiseHands.map(hand => {
+        return deals.map((hands, gameIndex) => {
+            let output = `# Spiel ${gameIndex + 1}\n`;
+            const handStrings = hands.map(hand => {
                 const formattedHand = formatHandForDisplay(hand);
-                let result = Object.values(formattedHand)
-                    .map(suitCards => suitCards || '-') // Ensure empty suits are represented by a single dash
-                    .join('-'); // Add a single dash for separation
-
-                // Replace sequences of more than two dashes with exactly two
-                result = result.replace(/-{3,}/g, '--');
-
-                // Remove extra dashes at the start and end
-                result = result.replace(/^-+/, '-').replace(/-+$/, '-');
-
-                return result;
+                return Object.values(formattedHand)
+                    .map(suitCards => suitCards.join('') || '-')
+                    .join('-');
             });
-
-            // Ensure no trailing semicolon for empty hands
-            return handStrings.join(';').replace(/;$/, '');
-        }).join('\n'); // Zeilenumbruch nach jedem Spiel
+            output += handStrings.join(';');
+            
+            // Add analysis results if available
+            if (deals.analysisResults && deals.analysisResults[gameIndex]) {
+                output += '\n# Stichanalyse\n';
+                const analysis = deals.analysisResults[gameIndex];
+                for (const [trumpName, result] of Object.entries(analysis)) {
+                    output += `${trumpName}: NS=${result.nsStiche} OW=${result.owStiche} Gewinner=${result.winner}\n`;
+                }
+            }
+            
+            output += '\n====================';
+            return output;
+        }).join('\n\n');
     }
 
     function formatDealsForJSON(deals) {
@@ -465,125 +508,266 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    let fixedHands = [];
-
-    function setFixedHands(fixedHandsInput) {
-        // Parse the fixed hands input in the specified format
-        fixedHands = fixedHandsInput.split(';').map(hand => {
-            const suits = hand.split('-');
-            return {
-                'S': suits[0] === '-' ? [] : suits[0].split(''),
-                'H': suits[1] === '-' ? [] : suits[1].split(''),
-                'D': suits[2] === '-' ? [] : suits[2].split(''),
-                'C': suits[3] === '-' ? [] : suits[3].split('')
-            };
-        });
+    /**
+     * Parse fixed hand input in format "J-QJ-K-J;QT---Q-QT;" into card objects
+     * Format ist: Spades-Hearts-Diamonds-Clubs;
+     * @returns {Array} Array of card objects with player index and card value
+     */
+    function parseFixedHand() {
+        // Get the fixed hand input in new format
+        const fixedHandFormat = document.getElementById('fixedHandFormat').value.trim().toUpperCase();
+        
+        // Check if we have any fixed cards
+        if (!fixedHandFormat) {
+            return [];
+        }
+        
+        // Validate the format (should contain dashes and semicolon)
+        if (!fixedHandFormat.includes('-') || !fixedHandFormat.includes(';')) {
+            alert('Ungültiges Format. Bitte verwenden Sie das Format: Pik-Herz-Karo-Kreuz; (z.B. AK-QJ-KQ-AJ;)');
+            return [];
+        }
+        
+        // Split by semicolon to get each player's fixed cards
+        const playerInputs = fixedHandFormat.split(';').filter(input => input.trim().length > 0);
+        
+        // If no valid inputs, return empty array
+        if (playerInputs.length === 0) {
+            return [];
+        }
+        
+        // Get the selected player
+        const selectedPlayer = playerSelect.value;
+        let playerIndex = -1;
+        
+        if (selectedPlayer !== 'all') {
+            playerIndex = parseInt(selectedPlayer);
+            if (isNaN(playerIndex) || playerIndex < 0 || playerIndex > 3) {
+                return []; // No valid player selected
+            }
+        } else {
+            // Handle "all" players case - show an alert since we need a specific player
+            alert('Bitte wählen Sie einen bestimmten Spieler (Nord, West, Ost oder Süd) aus, um fixierte Karten zu verwenden.');
+            document.getElementById('fixedHandFormat').value = '';
+            return [];
+        }
+        
+        const fixedCards = [];
+        
+        // Process first player input (only support one player's fixed cards for now)
+        const playerInput = playerInputs[0];
+        
+        // Split by dash to get each suit
+        const suitInputs = playerInput.split('-');
+        
+        // Make sure we have exactly 4 entries, even if they're empty
+        while (suitInputs.length < 4) {
+            suitInputs.push('');
+        }
+        
+        // If we have more than 4, combine the extra ones with the last one
+        if (suitInputs.length > 4) {
+            suitInputs[3] = suitInputs.slice(3).join('-');
+            suitInputs.length = 4;
+        }
+        
+        // Parse each suit
+        const suits = ['S', 'H', 'D', 'C']; // Spades, Hearts, Diamonds, Clubs
+        
+        for (let i = 0; i < 4; i++) {
+            const suitInput = suitInputs[i];
+            const suit = suits[i];
+            
+            // Parse cards for this suit
+            for (const card of suitInput) {
+                // Skip invalid characters and check if the card is valid in the current card set
+                if (!values.includes(card)) continue;
+                
+                // Add card
+                fixedCards.push({
+                    playerIndex: playerIndex,
+                    card: card + suit
+                });
+            }
+        }
+        
+        // Check if the fixed cards exceed the selected card count per player
+        const selectedCardCount = values.length;
+        if (fixedCards.length > selectedCardCount) {
+            alert(`Sie haben zu viele Karten fixiert (${fixedCards.length}). Bei ${selectedCardCount} Karten pro Spieler können maximal ${selectedCardCount} Karten fixiert werden.`);
+            return [];
+        }
+        
+        // Check for duplicate cards
+        const cardSet = new Set();
+        const duplicates = [];
+        
+        for (const card of fixedCards) {
+            if (cardSet.has(card.card)) {
+                duplicates.push(card.card);
+            } else {
+                cardSet.add(card.card);
+            }
+        }
+        
+        if (duplicates.length > 0) {
+            alert(`Doppelte Karten gefunden: ${duplicates.join(', ')}. Bitte fixieren Sie jede Karte nur einmal.`);
+            return [];
+        }
+        
+        return fixedCards;
     }
-
-    document.getElementById('setFixedHandBtn').addEventListener('click', () => {
-        const fixedHandInput = document.getElementById('fixedHandInput').value;
-        const fixedHandPlayer = parseInt(document.getElementById('fixedHandPlayer').value);
-
-        if (!fixedHandInput) {
-            alert('Bitte geben Sie eine gültige Fixhand ein.');
-            return;
-        }
-
-        // Parse the fixed hand for the selected player
-        const suits = fixedHandInput.split('-');
-        if (suits.length !== 4) {
-            alert('Die Fixhand muss genau vier Suits enthalten, getrennt durch Bindestriche.');
-            return;
-        }
-
-        const fixedHand = {
-            'S': suits[0] === '-' ? [] : suits[0].split(''),
-            'H': suits[1] === '-' ? [] : suits[1].split(''),
-            'D': suits[2] === '-' ? [] : suits[2].split(''),
-            'C': suits[3] === '-' ? [] : suits[3].split('')
+    
+    // Funktion, um eine Zusammenfassung der fixierten Karten anzuzeigen
+    function showFixedCardsSummary(fixedCards) {
+        if (fixedCards.length === 0) return;
+        
+        // Organisiere die Karten nach Farben
+        const cardsBySuit = {
+            'S': [],
+            'H': [],
+            'D': [],
+            'C': []
         };
-
-        // Ensure the fixedHands array has the correct length
-        while (fixedHands.length < 4) {
-            fixedHands.push({ 'S': [], 'H': [], 'D': [], 'C': [] });
+        
+        // Sammle alle Karten nach Farben
+        for (const fc of fixedCards) {
+            const suit = fc.card.charAt(1);
+            const rank = fc.card.charAt(0);
+            cardsBySuit[suit].push(rank);
         }
-
-        // Assign the fixed hand to the selected player
-        fixedHands[fixedHandPlayer] = fixedHand;
-
-        alert(`Fixhand für Spieler ${['Nord', 'Ost', 'Süd', 'West'][fixedHandPlayer]} gesetzt.`);
-    });
-
+        
+        // Get player name
+        const playerIndex = fixedCards[0]?.playerIndex;
+        const playerNames = ['Nord', 'Ost', 'Süd', 'West'];
+        const playerName = playerNames[playerIndex] || 'Spieler';
+        
+        // Baue die Zusammenfassung
+        let summary = `Fixierte Karten für ${playerName}: `;
+        const suitSymbols = {
+            'S': '♠',
+            'H': '♥',
+            'D': '♦',
+            'C': '♣'
+        };
+        
+        for (const suit in cardsBySuit) {
+            if (cardsBySuit[suit].length > 0) {
+                // Sort cards in descending order of rank for better display
+                cardsBySuit[suit].sort((a, b) => {
+                    const rankOrder = window.values;
+                    return rankOrder.indexOf(a) - rankOrder.indexOf(b);
+                });
+                
+                summary += `${suitSymbols[suit]} ${cardsBySuit[suit].join('')} `;
+            }
+        }
+        
+        // Count total fixed cards
+        const totalFixedCards = fixedCards.length;
+        summary += `(${totalFixedCards} Karten)`;
+        
+        // Zeige einen kurzen Toast/Alert
+        const toast = document.createElement('div');
+        toast.className = 'fixed-cards-toast';
+        
+        // Add an icon
+        const iconSpan = document.createElement('span');
+        iconSpan.className = 'toast-icon';
+        iconSpan.textContent = '📌';
+        toast.appendChild(iconSpan);
+        
+        // Add the message
+        const messageSpan = document.createElement('span');
+        messageSpan.textContent = summary;
+        toast.appendChild(messageSpan);
+        
+        // Add a close button
+        const closeBtn = document.createElement('span');
+        closeBtn.className = 'toast-close';
+        closeBtn.textContent = '×';
+        closeBtn.onclick = () => toast.remove();
+        toast.appendChild(closeBtn);
+        
+        document.body.appendChild(toast);
+        
+        // Lösche den Toast nach 5 Sekunden (länger für mehr Lesbarkeit)
+        setTimeout(() => {
+            toast.classList.add('fade-out');
+            setTimeout(() => toast.remove(), 500);
+        }, 5000);
+    }
+    
     function generateDeal() {
         const maxAttempts = 1000;
         let attempts = 0;
-
+        
+        // Parse fixed hand cards
+        const fixedCards = parseFixedHand();
+        const fixedCardValues = fixedCards.map(fc => fc.card);
+        
+        // Zeige Zusammenfassung der fixierten Karten an
+        showFixedCardsSummary(fixedCards);
+        
         while (attempts < maxAttempts) {
             attempts++;
-            const deck = createDeck();
-
-            console.log('Initial deck:', deck);
-            console.log('Fixed hands:', fixedHands);
-
-            // Remove cards from the deck that are part of fixed hands
-            fixedHands.forEach(fixedHand => {
-                Object.entries(fixedHand).forEach(([suit, cards]) => {
-                    cards.forEach(card => {
-                        const fullCard = card + suit;
-                        const index = deck.indexOf(fullCard);
-                        if (index !== -1) {
-                            deck.splice(index, 1);
-                        }
-                    });
-                });
-            });
-
-            console.log('Deck after removing fixed hands:', deck);
-
+            
+            // Create deck without fixed cards
+            const deck = createDeck().filter(card => !fixedCardValues.includes(card));
             shuffle(deck);
-
+            
+            // Initialize hands
             const hands = [[], [], [], []];
-
-            // Assign fixed hands first
-            fixedHands.forEach((fixedHand, index) => {
-                Object.entries(fixedHand).forEach(([suit, cards]) => {
-                    hands[index].push(...cards.map(card => card + suit));
-                });
-            });
-
-            console.log('Hands after assigning fixed hands:', hands);
-
-            // Distribute remaining cards
-            let deckIndex = 0;
-            for (let i = 0; i < hands.length; i++) {
-                while (hands[i].length < values.length) {
-                    hands[i].push(deck[deckIndex]);
-                    deckIndex++;
-                }
+            
+            // Add fixed cards to the appropriate hands
+            for (const fixedCard of fixedCards) {
+                hands[fixedCard.playerIndex].push(fixedCard.card);
             }
-
-            console.log('Final hands after distribution:', hands);
-
+            
+            // Distribute remaining cards
+            let currentIndex = 0;
+            for (let i = 0; i < deck.length; i++) {
+                // Find next hand that needs cards
+                while (true) {
+                    if (hands[currentIndex % 4].length < values.length) {
+                        break;
+                    }
+                    currentIndex++;
+                }
+                
+                hands[currentIndex % 4].push(deck[i]);
+                currentIndex++;
+            }
+            
             if (hands.every((hand, index) => checkConstraints(hand, index))) {
                 return hands;
             }
         }
-
+        
         return null;
     }
 
+    // Event listener for player selection to show/hide fixed hand
+    playerSelect.addEventListener('change', () => {
+        // Existing player selection logic...
+        const selectedPlayer = playerSelect.value;
+        if (selectedPlayer === 'all') {
+            singlePlayerConstraints.style.display = 'none';
+            allPlayersConstraints.style.display = 'block';
+            // Clear fixed hand input for 'all' selection
+            document.getElementById('fixedHandFormat').value = '';
+        } else {
+            singlePlayerConstraints.style.display = 'block';
+            allPlayersConstraints.style.display = 'none';
+        }
+    });
+    
     // Event Listeners
-    document.getElementById('generateBtn').addEventListener('click', () => {
+    generateBtn.addEventListener('click', () => {
         const noDeals = parseInt(document.getElementById('noDeals').value) || 1;
         const allDeals = [];
         let dealsGenerated = 0;
 
-        // Hide the sidebar completely when generating deals
-        const sidebar = document.querySelector('.sidebar');
-        sidebar.style.display = 'none';
-
-        // Clear the deals container
-        const dealsContainer = document.getElementById('deals-container');
         dealsContainer.innerHTML = '';
 
         for (let i = 0; i < noDeals; i++) {
@@ -603,25 +787,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         dealsContainer.dataset.deals = JSON.stringify(allDeals);
-
-        // Add a button to bring back the sidebar
-        const toggleSidebarBtn = document.getElementById('toggleSidebar');
-        toggleSidebarBtn.style.display = 'block';
     });
-
-    // Add logic to toggle the sidebar back
-    const toggleSidebarBtn = document.getElementById('toggleSidebar');
-    toggleSidebarBtn.addEventListener('click', () => {
-        const sidebar = document.querySelector('.sidebar');
-        if (sidebar.style.display === 'none') {
-            sidebar.style.display = 'block';
-        } else {
-            sidebar.style.display = 'none';
-        }
-    });
-
-    // Ensure the toggle button is hidden initially
-    toggleSidebarBtn.style.display = 'none';
 
     copyBtn.addEventListener('click', () => {
         const allDeals = JSON.parse(dealsContainer.dataset.deals || '[]');
@@ -670,4 +836,170 @@ document.addEventListener('DOMContentLoaded', () => {
         window.URL.revokeObjectURL(textUrl);
         document.body.removeChild(textLink);
     });
+    
+    // Stichanalyse für alle angezeigten Verteilungen
+    analyzeBtn.addEventListener('click', () => {
+        const allDeals = JSON.parse(dealsContainer.dataset.deals || '[]');
+        if (allDeals.length === 0) {
+            alert('Bitte zuerst Kartenverteilungen generieren.');
+            return;
+        }
+        
+        // Find or create status element
+        const statusElement = document.querySelector('.analysis-status') || (() => {
+            const element = document.createElement('div');
+            element.className = 'analysis-status';
+            const controls = document.querySelector('.controls');
+            if (controls) {
+                controls.appendChild(element);
+            }
+            return element;
+        })();
+        
+        // Show status and update
+        statusElement.classList.remove('hidden', 'error', 'success');
+        statusElement.textContent = `Stichanalyse wird gestartet...`;
+        
+        // Save the original button text
+        const originalButtonText = analyzeBtn.innerHTML;
+        analyzeBtn.innerHTML = '<span class="loading-spinner"></span> Analyzing...';
+        analyzeBtn.disabled = true;
+        
+        // Start analysis in the next tick to allow UI update
+        setTimeout(() => {
+            try {
+                // Create instances of the needed classes
+                if (typeof window.BridgeTrickCalculator === 'undefined') {
+                    throw new Error('BridgeTrickCalculator is not defined. Make sure it is loaded before script.js');
+                }
+                if (typeof window.BridgeCardImporter === 'undefined') {
+                    throw new Error('BridgeCardImporter is not defined. Make sure it is loaded before script.js');
+                }
+                
+                const calculator = new window.BridgeTrickCalculator();
+                const importer = new window.BridgeCardImporter();
+                
+                // Store analysis results
+                const analysisResults = [];
+                
+                // Get all deal cards in the container
+                const dealCards = document.querySelectorAll('.deal-card');
+                const totalDeals = dealCards.length;
+                
+                // Update status
+                if (statusElement) {
+                    statusElement.textContent = `Analysiere 0 von ${totalDeals} Verteilungen...`;
+                }
+                
+                dealCards.forEach((dealCard, index) => {
+                    try {
+                        // Import hand from HTML display
+                        const bridgeTable = dealCard.querySelector('.bridge-table');
+                        if (!bridgeTable) return;
+                        
+                        const distribution = importer.importFromHTMLDisplay(bridgeTable);
+                        
+                        // Calculate maximum tricks
+                        const results = calculator.calculateMaxTricks(distribution);
+                        
+                        // Store results
+                        analysisResults[index] = results;
+                        
+                        // Display results in the UI
+                        let existingAnalysis = dealCard.querySelector('.trick-analysis-section');
+                        if (existingAnalysis) {
+                            dealCard.removeChild(existingAnalysis);
+                        }
+                        
+                        // Create and append analysis section
+                        const analysisHTML = calculator.generateHTML(results);
+                        const analysisSection = document.createElement('div');
+                        analysisSection.className = 'trick-analysis-section';
+                        analysisSection.innerHTML = '<h3>Stichanalyse (Double Dummy)</h3>' + analysisHTML;
+                        dealCard.appendChild(analysisSection);
+                        
+                        // Update progress status
+                        if (statusElement) {
+                            statusElement.textContent = `Analysiere ${index + 1} von ${totalDeals} Verteilungen...`;
+                        }
+                    } catch (error) {
+                        console.error(`Error analyzing deal ${index + 1}:`, error);
+                        
+                        // Show error in deal card
+                        const errorElement = document.createElement('div');
+                        errorElement.className = 'trick-analysis-error';
+                        errorElement.textContent = `Fehler bei der Analyse: ${error.message}`;
+                        dealCard.appendChild(errorElement);
+                    }
+                });
+                
+                // Store analysis results in the dataset for later export
+                allDeals.analysisResults = analysisResults;
+                dealsContainer.dataset.deals = JSON.stringify(allDeals);
+                
+                // Reset button state
+                analyzeBtn.innerHTML = originalButtonText;
+                analyzeBtn.disabled = false;
+                
+                // Update completion status
+                if (statusElement) {
+                    statusElement.classList.add('success');
+                    statusElement.textContent = `Stichanalyse abgeschlossen für ${dealCards.length} Verteilungen`;
+                    
+                    // Hide success message after a few seconds
+                    setTimeout(() => {
+                        if (statusElement.classList.contains('success')) {
+                            statusElement.classList.add('hidden');
+                        }
+                    }, 5000);
+                }
+                
+                console.log('Stichanalyse abgeschlossen für', dealCards.length, 'Verteilungen');
+            } catch (error) {
+                console.error('Fehler bei der Stichanalyse:', error);
+                
+                // Show error in status
+                if (statusElement) {
+                    statusElement.classList.add('error');
+                    statusElement.textContent = `Fehler bei der Stichanalyse: ${error.message}`;
+                } else {
+                    alert('Bei der Stichanalyse ist ein Fehler aufgetreten: ' + error.message);
+                }
+                
+                // Reset button state
+                analyzeBtn.innerHTML = originalButtonText;
+                analyzeBtn.disabled = false;
+            }
+        }, 100);
+    });
+
+    // Example button for fixed hand format
+    const exampleBtn = document.getElementById('exampleBtn');
+    if (exampleBtn) {
+        exampleBtn.addEventListener('click', function() {
+            const fixedHandFormatInput = document.getElementById('fixedHandFormat');
+            if (fixedHandFormatInput) {
+                // Generate example based on current card count
+                const selectedCount = parseInt(cardCountSelect.value);
+                let example = '';
+                
+                if (selectedCount === 5) {
+                    // Example for 5-card game: AK-QJ--; (A,K of Spades, Q,J of Hearts)
+                    example = 'AK-QJ--;';
+                } else if (selectedCount === 13) {
+                    // Example for full bridge deck
+                    example = 'AKQ-AKQ-AKQ-AKQ;';
+                } else {
+                    // Generate dynamic example based on card count
+                    const cards = window.values.slice(0, Math.min(4, selectedCount));
+                    example = `${cards.slice(0, 2).join('')}-${cards.slice(0, 2).join('')}-${cards.slice(0, 1).join('')}-;`;
+                }
+                
+                // Insert example format
+                fixedHandFormatInput.value = example;
+                // Focus on the input
+                fixedHandFormatInput.focus();
+            }
+        });
+    }
 });

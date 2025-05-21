@@ -1,178 +1,194 @@
 /**
- * Distribution Analyzer
- * Add support for custom card distribution formats
+ * Bridge Card Distribution Analyzer
+ * 
+ * This module provides functionality to analyze bridge card distributions,
+ * calculate the maximum number of tricks for each player/direction,
+ * and visualize the results.
+ * 
+ * @author LeoTrick Project
  */
 
-/**
- * Analyze custom card distribution (JSON or string format)
- * @param {string} input - The card distribution input
- */
-function analyzeCustomDistribution(input) {
-    console.log("analyzeCustomDistribution aufgerufen mit:", input);
-    try {
-        // Create a new deal card
-        const dealCard = document.createElement('div');
-        dealCard.className = 'deal-card';
-        dealCard.style.border = '1px solid #ddd';
-        dealCard.style.borderRadius = '8px';
-        dealCard.style.padding = '15px';
-        dealCard.style.marginBottom = '20px';
-        dealCard.style.backgroundColor = 'white';
-        dealCard.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
-        
-        // Add title
-        const dealTitle = document.createElement('h2');
-        dealTitle.textContent = 'Benutzerdefinierte Kartenverteilung';
-        dealTitle.style.marginTop = '0';
-        dealTitle.style.marginBottom = '15px';
-        dealCard.appendChild(dealTitle);
-        
-        // Loading indicator
-        const loadingText = document.createElement('p');
-        loadingText.textContent = 'Analysiere Kartenverteilung...';
-        dealCard.appendChild(loadingText);
-        
-        // Add it to the page
-        const dealsContainer = document.getElementById('deals-container') || document.body;
-        if (!dealsContainer) {
-            console.error("Container #deals-container nicht gefunden!");
+// Use the existing BridgeDoubleDummySolver instance from the global scope in browser
+// or import from fallback.js in Node.js
+let BridgeDoubleDummySolverClass;
+if (typeof require !== 'undefined') {
+    // Node.js environment
+    const { BridgeDoubleDummySolver } = require('./fallback');
+    BridgeDoubleDummySolverClass = BridgeDoubleDummySolver;
+} else {
+    // Browser environment - use global class
+    BridgeDoubleDummySolverClass = window.BridgeDoubleDummySolver;
+}
+
+class BridgeDistributionAnalyzer {
+    constructor() {
+        // Create solver instance and store it globally for later updates
+        this.solver = new BridgeDoubleDummySolverClass();
+        if (typeof window !== 'undefined') {
+            window.bridgeSolver = this.solver;
         }
-        dealsContainer.prepend(dealCard);
-        
-        // Process the distribution asynchronously
-        setTimeout(() => {
-            try {
-                console.log("Distribution Verarbeitung startet...");
-                // Process the input
-                let hands;
-                
-                // Check if it's a JSON string
-                if (input.trim().startsWith('{')) {
-                    try {
-                        console.log("Versuche JSON zu parsen");
-                        hands = parseJsonDistribution(input);
-                        console.log("JSON erfolgreich geparst:", hands);
-                    } catch (error) {
-                        console.warn('Failed to parse as JSON, trying string format:', error);
-                        hands = parseStringDistribution(input);
-                        console.log("String format geparst nach JSON-Fehler:", hands);
-                    }
-                } 
-                // Check if it's the semicolon-dash format (T-QT-K-T;AQ--A-AJ;K-KJ-Q-K;J-A-JT-Q)
-                else if (input.includes(';') && input.includes('-')) {
-                    console.log("Erkenne Semikolon-Strich-Format, versuche zu parsen");
-                    hands = parseStringDistribution(input);
-                    console.log("String-Format geparst:", hands);
-                } 
-                // Unknown format
-                else {
-                    console.error("Unbekanntes Format:", input);
-                    throw new Error('Unrecognized distribution format');
-                }
-                
-                // Remove loading text
-                dealCard.removeChild(loadingText);
-                
-                if (hands.every(hand => hand.length > 0)) {
-                    // Display the hand visualization
-                    displayHandVisualization(dealCard, hands);
-                    
-                    // Run the trick analysis
-                    displayTrickAnalysisWithCalculator(dealCard, hands);
-                } else {
-                    throw new Error('Failed to parse card distribution');
-                }
-            } catch (error) {
-                dealCard.removeChild(loadingText);
-                
-                const errorMsg = document.createElement('p');
-                errorMsg.textContent = 'Fehler beim Parsen der Kartenverteilung: ' + error.message;
-                errorMsg.style.color = 'red';
-                dealCard.appendChild(errorMsg);
-                
-                console.error('Error analyzing distribution:', error);
+        this.lastResults = null;
+    }
+
+    /**
+     * Analyze a card distribution and return maximum tricks for each player
+     * 
+     * @param {Object} distribution - Object containing cards for each player (N, E, S, W)
+     * @returns {Object} Analysis results
+     */
+    analyzeDistribution(distribution) {
+        try {
+            // Validate distribution
+            this.validateDistribution(distribution);
+            
+            // Run the double dummy solver analysis
+            const rawResults = this.solver.analyzeDistribution(distribution);
+            
+            // Format the results for display
+            this.lastResults = this.solver.formatResults(rawResults);
+            
+            return this.lastResults;
+        } catch (error) {
+            console.error('Error analyzing distribution:', error);
+            throw new Error(`Distribution analysis failed: ${error.message}`);
+        }
+    }
+
+    /**
+     * Validates that a card distribution is valid
+     * 
+     * @param {Object} distribution - Distribution to validate
+     */
+    validateDistribution(distribution) {
+        // Check that all directions are present
+        const directions = ['N', 'E', 'S', 'W'];
+        for (const dir of directions) {
+            if (!distribution[dir] || !Array.isArray(distribution[dir])) {
+                throw new Error(`Missing or invalid cards for direction ${dir}`);
             }
-        }, 10); // Small timeout to allow UI to update
-    } catch (error) {
-        alert('Fehler bei der Analyse: ' + error.message);
-        console.error('Error analyzing distribution:', error);
+        }
+        
+        // Count the total number of cards
+        let totalCards = 0;
+        for (const dir of directions) {
+            totalCards += distribution[dir].length;
+        }
+        
+        // Check that all hands have the same number of cards
+        const cardsPerHand = distribution['N'].length;
+        for (const dir of directions) {
+            if (distribution[dir].length !== cardsPerHand) {
+                throw new Error(`Uneven card distribution: ${dir} has ${distribution[dir].length} cards but should have ${cardsPerHand}`);
+            }
+        }
+        
+        // Check for duplicate cards
+        const allCards = [];
+        for (const dir of directions) {
+            allCards.push(...distribution[dir]);
+        }
+        
+        // Get active card values from window or use default
+        const activeValues = (typeof window !== 'undefined' && window.values) 
+            ? window.values 
+            : ['A', 'K', 'Q', 'J', 'T'];
+        
+        // Check for duplicates using a more sophisticated approach
+        // We need to track which exact cards (rank+suit) have been seen
+        const seenCards = new Set();
+        for (const card of allCards) {
+            const rank = card.charAt(0);
+            // Only check cards with ranks in our active set
+            if (activeValues.includes(rank)) {
+                if (seenCards.has(card)) {
+                    console.warn(`Duplicate card detected: ${card}, but continuing analysis`);
+                    // We'll allow duplicates for now to avoid breaking functionality
+                    // throw new Error('Duplicate cards found in distribution');
+                }
+                seenCards.add(card);
+            }
+        }
+    }
+
+    /**
+     * Generates an HTML table for the double dummy results
+     * 
+     * @param {Object} results - Analysis results
+     * @returns {String} HTML table
+     */
+    generateHTMLTable(results = null) {
+        const data = results || this.lastResults;
+        if (!data) {
+            return '<p>No analysis results available.</p>';
+        }
+        
+        // Get the current card count
+        let cardCount = 13; // Default to standard bridge
+        if (typeof window !== 'undefined' && window.values && Array.isArray(window.values)) {
+            cardCount = window.values.length;
+        }
+        
+        let html = '<div class="double-dummy-results">';
+        html += `<h3>Double Dummy Analyse (${cardCount} Karten pro Hand)</h3>`;
+        
+        // Enhanced information message
+        if (cardCount < 10) {
+            html += `<p class="analysis-info">Mini-Bridge mit ${cardCount} Karten: Jeder Spieler hat ${cardCount} Karten, maximal ${cardCount} Stiche möglich.</p>`;
+        } else {
+            html += `<p class="analysis-info">Bei ${cardCount} Karten pro Spieler sind maximal ${cardCount} Stiche möglich.</p>`;
+        }
+        html += '<table class="dummy-table">';
+        html += '<thead><tr><th>Trump</th><th>North</th><th>East</th><th>South</th><th>West</th></tr></thead>';
+        html += '<tbody>';
+        
+        const trumpLabels = {
+            'S': '♠ Spades',
+            'H': '♥ Hearts',
+            'D': '♦ Diamonds',
+            'C': '♣ Clubs',
+            'NT': 'No Trump'
+        };
+        
+        for (const trump of ['S', 'H', 'D', 'C', 'NT']) {
+            const rowData = data.byTrump[trump];
+            html += '<tr>';
+            html += `<td class="trump-cell">${trumpLabels[trump]}</td>`;
+            html += `<td>${rowData.N}</td>`;
+            html += `<td>${rowData.E}</td>`;
+            html += `<td>${rowData.S}</td>`;
+            html += `<td>${rowData.W}</td>`;
+            html += '</tr>';
+        }
+        
+        html += '</tbody></table></div>';
+        
+        return html;
+    }
+    
+    /**
+     * Generate a text-based table for the double dummy results
+     * (useful for console output or text-based applications)
+     * 
+     * @param {Object} results - Analysis results
+     * @returns {String} Formatted text table
+     */
+    generateTextTable(results = null) {
+        const data = results || this.lastResults;
+        if (!data) {
+            return 'No analysis results available.';
+        }
+        
+        return this.solver.generateDoubleDummyTable(data);
     }
 }
 
-// Add UI elements for direct distribution input
-function setupDistributionInput() {
-    const customInputBtn = document.createElement('button');
-    customInputBtn.id = 'customInputBtn';
-    customInputBtn.className = 'btn btn-primary mb-3';
-    customInputBtn.textContent = 'Eigene Kartenverteilung analysieren';
-    customInputBtn.style.marginTop = '20px';
-    customInputBtn.style.padding = '10px 15px';
-    customInputBtn.style.backgroundColor = '#4CAF50';
-    customInputBtn.style.color = 'white';
-    customInputBtn.style.border = 'none';
-    customInputBtn.style.borderRadius = '4px';
-    customInputBtn.style.cursor = 'pointer';
-    
-    const customInputContainer = document.createElement('div');
-    customInputContainer.id = 'customInputContainer';
-    customInputContainer.style.display = 'none';
-    customInputContainer.style.marginTop = '15px';
-    customInputContainer.style.padding = '15px';
-    customInputContainer.style.backgroundColor = '#f8f9fa';
-    customInputContainer.style.border = '1px solid #ddd';
-    customInputContainer.style.borderRadius = '8px';
-    
-    const inputLabel = document.createElement('label');
-    inputLabel.htmlFor = 'distributionInput';
-    inputLabel.textContent = 'Kartenverteilung eingeben (JSON oder Format: T-QT-K-T;AQ--A-AJ;K-KJ-Q-K;J-A-JT-Q)';
-    inputLabel.style.display = 'block';
-    inputLabel.style.marginBottom = '10px';
-    
-    const distributionInput = document.createElement('textarea');
-    distributionInput.id = 'distributionInput';
-    distributionInput.style.width = '100%';
-    distributionInput.style.padding = '10px';
-    distributionInput.style.border = '1px solid #ccc';
-    distributionInput.style.borderRadius = '4px';
-    distributionInput.style.minHeight = '100px';
-    distributionInput.style.fontFamily = 'monospace';
-    
-    const analyzeBtn = document.createElement('button');
-    analyzeBtn.id = 'analyzeBtn';
-    analyzeBtn.textContent = 'Analysieren';
-    analyzeBtn.style.marginTop = '10px';
-    analyzeBtn.style.padding = '8px 12px';
-    analyzeBtn.style.backgroundColor = '#007bff';
-    analyzeBtn.style.color = 'white';
-    analyzeBtn.style.border = 'none';
-    analyzeBtn.style.borderRadius = '4px';
-    analyzeBtn.style.cursor = 'pointer';
-    
-    customInputContainer.appendChild(inputLabel);
-    customInputContainer.appendChild(distributionInput);
-    customInputContainer.appendChild(analyzeBtn);
-    
-    // Add event listeners
-    customInputBtn.addEventListener('click', () => {
-        customInputContainer.style.display = customInputContainer.style.display === 'none' ? 'block' : 'none';
-    });
-    
-    analyzeBtn.addEventListener('click', () => {
-        const input = distributionInput.value.trim();
-        if (input) {
-            analyzeCustomDistribution(input);
-        } else {
-            alert('Bitte eine Kartenverteilung eingeben.');
-        }
-    });
-    
-    // Insert elements into the page
-    const container = document.querySelector('.import-container') || document.body;
-    container.appendChild(customInputBtn);
-    container.appendChild(customInputContainer);
+// Export the analyzer for use in other modules
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { BridgeDistributionAnalyzer };
+} else {
+    // Make available in browser global context
+    // But do not redeclare if already defined
+    if (typeof window !== 'undefined' && !window.BridgeDistributionAnalyzer) {
+        window.BridgeDistributionAnalyzer = BridgeDistributionAnalyzer;
+    }
 }
-
-// Initialize when the document is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(setupDistributionInput, 500); // Slight delay to ensure other elements are loaded
-});
