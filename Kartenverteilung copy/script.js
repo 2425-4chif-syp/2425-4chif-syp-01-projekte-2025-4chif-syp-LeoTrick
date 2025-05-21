@@ -1,51 +1,3 @@
-// Example of how to use the distribution analyzer
-// This shows how to analyze a distribution string programmatically
-function exampleDistributionAnalysis() {
-    console.log("Distribution analysis example:");
-    
-    // Example of a distribution string
-    const exampleDistribution = "T-QT-K-T;AQ--A-AJ;K-KJ-Q-K;J-A-JT-Q";
-    
-    try {
-        // Use the static method for simple analysis
-        const results = BridgeTrickCalculator.analyzeDistribution(exampleDistribution);
-        console.log("Analysis results:", results);
-        
-        // Example of JSON format
-        const jsonDistribution = {
-            "North": {
-                "S": "T",
-                "H": "QT",
-                "D": "K",
-                "C": "T"
-            },
-            "East": {
-                "S": "AQ",
-                "H": "",
-                "D": "A",
-                "C": "AJ"
-            },
-            "South": {
-                "S": "K",
-                "H": "KJ",
-                "D": "Q",
-                "C": "K"
-            },
-            "West": {
-                "S": "J",
-                "H": "A",
-                "D": "JT",
-                "C": "Q"
-            }
-        };
-        
-        const jsonResults = analyzeCardDistribution(jsonDistribution);
-        console.log("JSON analysis results:", jsonResults);
-    } catch (error) {
-        console.error("Analysis failed:", error);
-    }
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     // DOM-Elemente
     const generateBtn = document.getElementById('generateBtn');
@@ -56,62 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const singlePlayerConstraints = document.getElementById('single-player-constraints');
     const allPlayersConstraints = document.getElementById('all-players-constraints');
     const cardCountSelect = document.getElementById('cardCount');
-    
-    // Create global reference to dealsContainer for file importer
-    window.dealsContainer = dealsContainer;
-    
-    // Create UI elements for direct distribution input
-    if (!customInputBtn) {
-        const customInputBtn = document.createElement('button');
-        customInputBtn.id = 'customInputBtn';
-        customInputBtn.className = 'btn btn-primary mb-3';
-        customInputBtn.textContent = 'Eigene Kartenverteilung analysieren';
-        
-        const customInputContainer = document.createElement('div');
-        customInputContainer.id = 'customInputContainer';
-        customInputContainer.className = 'mb-3';
-        customInputContainer.style.display = 'none';
-        
-        const inputLabel = document.createElement('label');
-        inputLabel.htmlFor = 'distributionInput';
-        inputLabel.className = 'form-label';
-        inputLabel.textContent = 'Kartenverteilung eingeben (JSON oder Format: T-QT-K-T;AQ--A-AJ;K-KJ-Q-K;J-A-JT-Q)';
-        
-        const distributionInput = document.createElement('textarea');
-        distributionInput.id = 'distributionInput';
-        distributionInput.className = 'form-control';
-        distributionInput.rows = 4;
-        
-        const analyzeBtn = document.createElement('button');
-        analyzeBtn.id = 'analyzeBtn';
-        analyzeBtn.className = 'btn btn-success mt-2';
-        analyzeBtn.textContent = 'Analysieren';
-        
-        customInputContainer.appendChild(inputLabel);
-        customInputContainer.appendChild(distributionInput);
-        customInputContainer.appendChild(analyzeBtn);
-        
-        // Insert elements into the page
-        const controlsContainer = document.querySelector('.container');
-        if (controlsContainer) {
-            controlsContainer.appendChild(customInputBtn);
-            controlsContainer.appendChild(customInputContainer);
-        }
-        
-        // Add event listeners
-        customInputBtn.addEventListener('click', () => {
-            customInputContainer.style.display = customInputContainer.style.display === 'none' ? 'block' : 'none';
-        });
-        
-        analyzeBtn.addEventListener('click', () => {
-            const input = distributionInput.value.trim();
-            if (input) {
-                analyzeCustomDistribution(input);
-            } else {
-                alert('Bitte eine Kartenverteilung eingeben.');
-            }
-        });
-    }
 
     // Kartenwerte und Farben
     const values = ['A', 'K', 'Q', 'J', 'T'];
@@ -354,8 +250,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         dealCard.appendChild(bridgeTable);
         
-        // Add trick analysis to the deal card using the new calculator
-        displayTrickAnalysisWithCalculator(dealCard, hands);
+        // Add trick analysis to the deal card
+        displayTrickAnalysis(dealCard, hands);
         
         return dealCard;
     }

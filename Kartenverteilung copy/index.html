@@ -479,32 +479,7 @@
     </aside>
 
     <main class="main-content">
-        <h2>Kartenverteilungen</h2>
-        <div id="importContainer" class="import-section">
-            <!-- File import controls will be added here -->
-        </div>
-        <div class="example-section" style="margin: 20px 0;">
-            <button id="runExampleBtn" style="padding: 8px 16px; background-color: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">
-                Beispiel ausführen
-            </button>
-            <span id="exampleDistribution" style="font-family: monospace; background-color: #f8f9fa; padding: 5px 10px; border-radius: 4px;">
-                T-QT-K-T;AQ--A-AJ;K-KJ-Q-K;J-A-JT-Q
-            </span>
-        </div>
-        <div class="format-examples" style="margin: 20px 0; background-color: #f8f9fa; padding: 15px; border-radius: 4px; border: 1px solid #e9ecef;">
-            <h4>Unterstützte Formate:</h4>
-            <div style="margin-top: 10px;">
-                <strong>String Format:</strong>
-                <code style="display: block; margin: 5px 0; padding: 8px; background-color: #fff; border: 1px solid #ddd; border-radius: 4px;">T-QT-K-T;AQ--A-AJ;K-KJ-Q-K;J-A-JT-Q</code>
-                <small style="display: block; margin-top: 5px; color: #666;">Jede Hand ist durch Semikolon getrennt und enthält vier Suits mit Bindestrichen zwischen ihnen (Pik-Herz-Karo-Treff)</small>
-            </div>
-            <div style="margin-top: 15px;">
-                <strong>JSON Format:</strong>
-                <code style="display: block; margin: 5px 0; padding: 8px; background-color: #fff; border: 1px solid #ddd; border-radius: 4px;">{"N":{"S":"AKJ","H":"QT9","D":"K7","C":"AQJ2"},"E":{"S":"Q82","H":"A65","D":"AQT5","C":"T53"},"S":{"S":"T93","H":"J87","D":"J932","C":"K87"},"W":{"S":"7654","H":"K432","D":"864","C":"96"}}</code>
-                <small style="display: block; margin-top: 5px; color: #666;">JSON-Format mit Händen N, E, S, W und Suits S, H, D, C</small>
-            </div>
-        </div>
-        <h3>Generierte Verteilungen</h3>
+        <h2>Generierte Verteilungen</h2>
         <div id="deals-container" class="deals-grid">
             <!-- Verteilungen werden hier eingefügt -->
         </div>
@@ -519,64 +494,7 @@
     });
 </script>
 
-<!-- Load scripts -->
-<script src="fallback.js"></script>
-<script src="card-importer.js"></script>
-<script src="bridge-trick-calculator.js"></script>
 <script src="trick-analyzer.js"></script>
-<script src="example-distributions.js"></script>
-<script src="distribution-analyzer.js"></script>
 <script src="script.js"></script>
-
-<script>
-    // Direkten Aufruf für das Beispiel implementieren
-    document.getElementById('runExampleBtn').addEventListener('click', function() {
-        const exampleDistribution = document.getElementById('exampleDistribution').innerText.trim();
-        if (exampleDistribution) {
-            // Hole eine Referenz auf die analyzeCustomDistribution-Funktion
-            if (typeof analyzeCustomDistribution === 'function') {
-                console.log("Rufe analyzeCustomDistribution auf:", exampleDistribution);
-                analyzeCustomDistribution(exampleDistribution);
-            } else {
-                // Fallback: Direkter Aufruf des Trick-Analyzers
-                console.log("analyzeCustomDistribution nicht gefunden, direkter Aufruf");
-                const dealCard = document.createElement('div');
-                dealCard.className = 'deal-card';
-                dealCard.style.border = '1px solid #ddd';
-                dealCard.style.padding = '15px';
-                dealCard.style.marginBottom = '20px';
-                
-                const title = document.createElement('h2');
-                title.textContent = 'Beispielverteilung';
-                dealCard.appendChild(title);
-                
-                const dealsContainer = document.getElementById('deals-container');
-                dealsContainer.prepend(dealCard);
-                
-                try {
-                    // Versuche das Beispiel mit processCardDistribution zu verarbeiten
-                    if (typeof processCardDistribution === 'function') {
-                        const hands = processCardDistribution(exampleDistribution);
-                        displayHandVisualization(dealCard, hands);
-                        displayTrickAnalysisWithCalculator(dealCard, hands);
-                    } else if (exampleDistribution.includes(';') && exampleDistribution.includes('-')) {
-                        // Falls processCardDistribution nicht verfügbar ist, versuche parseStringDistribution
-                        const hands = parseStringDistribution(exampleDistribution);
-                        displayHandVisualization(dealCard, hands);
-                        displayTrickAnalysisWithCalculator(dealCard, hands);
-                    } else {
-                        throw new Error("Distribution konnte nicht verarbeitet werden");
-                    }
-                } catch (error) {
-                    const errorMsg = document.createElement('p');
-                    errorMsg.textContent = 'Fehler bei der Analyse: ' + error.message;
-                    errorMsg.style.color = 'red';
-                    dealCard.appendChild(errorMsg);
-                    console.error("Fehler bei der Verarbeitung:", error);
-                }
-            }
-        }
-    });
-</script>
 </body>
 </html>
