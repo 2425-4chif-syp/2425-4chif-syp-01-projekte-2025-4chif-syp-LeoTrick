@@ -55,6 +55,69 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     `;
     document.head.appendChild(analysisInfoStyle);
+
+    // Add new function to set a specific fixed distribution
+    function setScreenshotDistribution() {
+        // Set card count to 5
+        document.getElementById('cardCount').value = '5';
+        updateCardValues();
+        
+        // We'll generate the distribution directly rather than using the fixed hand format
+        // This bypasses potential parsing issues
+        
+        // Create a test distribution button if it doesn't exist yet
+        if (!document.getElementById('testDistributionBtn')) {
+            const generateBtn = document.getElementById('generateBtn');
+            const testBtn = document.createElement('button');
+            testBtn.id = 'testDistributionBtn';
+            testBtn.className = 'btn btn-warning';
+            testBtn.innerHTML = '<i class="fas fa-vial"></i> Screenshot-Verteilung';
+            testBtn.title = 'Lädt die Verteilung aus dem Screenshot';
+            testBtn.onclick = createScreenshotDistribution;
+            generateBtn.parentNode.insertBefore(testBtn, generateBtn.nextSibling);
+        }
+    }
+    
+    // Function to directly create the distribution without using the fixed format parser
+    function createScreenshotDistribution() {
+        // Get the deals container
+        const dealsContainer = document.getElementById('deals-container');
+        
+        // Clear existing deals
+        dealsContainer.innerHTML = '';
+        
+        // Create the specific hands from the screenshot with proper format
+        const hands = [
+            // North - AQ♠, T♥, -♦, KQ♣
+            ["AS", "QS", "TH", "KC", "QC"],
+            // West - J♠, J♥, KT♦, T♣
+            ["JS", "JH", "KD", "TD", "TC"],
+            // East - K♠, KQ♥, Q♦, J♣
+            ["KS", "KH", "QH", "QD", "JC"],
+            // South - T♠, A♥, AJ♦, A♣
+            ["TS", "AH", "AD", "JD", "AC"]
+        ];
+        
+        // Create and display the distribution
+        const dealCard = createDealCard(hands, 1);
+        dealsContainer.appendChild(dealCard);
+        
+        // Run the trick analysis
+        try {
+            // Add the trick analysis to the deal card
+            displayTrickAnalysis(dealCard, hands);
+            
+            // Scroll to the results
+            dealCard.scrollIntoView({ behavior: 'smooth' });
+            
+            // Show success message
+            alert('Screenshot-Verteilung wurde geladen!');
+        } catch (error) {
+            console.error('Error analyzing tricks:', error);
+            alert('Verteilung geladen, aber Stichanalyse fehlgeschlagen: ' + error.message);
+        }
+    }
+
     // DOM-Elemente
     const generateBtn = document.getElementById('generateBtn');
     const copyBtn = document.getElementById('copyBtn');
@@ -136,6 +199,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialisiere Kartenwerte bei Seitenladung
     updateCardValues();
+    
+    // Add the test distribution button without auto-loading
+    setTimeout(setScreenshotDistribution, 500); // Small delay to ensure DOM is fully ready
     
     // Eventlistener für Kartenzahlauswahl
     cardCountSelect.addEventListener('change', updateCardValues);
@@ -540,12 +606,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedPlayer = playerSelect.value;
         let playerIndex = -1;
         
-        if (selectedPlayer !== 'all') {
+        // Check if we have a special test distribution with multiple players
+        const isTestDistribution = playerInputs.length > 1 && playerInputs.length <= 4;
+        
+        if (selectedPlayer !== 'all' && !isTestDistribution) {
             playerIndex = parseInt(selectedPlayer);
             if (isNaN(playerIndex) || playerIndex < 0 || playerIndex > 3) {
                 return []; // No valid player selected
             }
-        } else {
+        } else if (selectedPlayer === 'all' && !isTestDistribution) {
             // Handle "all" players case - show an alert since we need a specific player
             alert('Bitte wählen Sie einen bestimmten Spieler (Nord, West, Ost oder Süd) aus, um fixierte Karten zu verwenden.');
             document.getElementById('fixedHandFormat').value = '';
@@ -554,40 +623,85 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const fixedCards = [];
         
-        // Process first player input (only support one player's fixed cards for now)
-        const playerInput = playerInputs[0];
-        
-        // Split by dash to get each suit
-        const suitInputs = playerInput.split('-');
-        
-        // Make sure we have exactly 4 entries, even if they're empty
-        while (suitInputs.length < 4) {
-            suitInputs.push('');
-        }
-        
-        // If we have more than 4, combine the extra ones with the last one
-        if (suitInputs.length > 4) {
-            suitInputs[3] = suitInputs.slice(3).join('-');
-            suitInputs.length = 4;
-        }
-        
-        // Parse each suit
-        const suits = ['S', 'H', 'D', 'C']; // Spades, Hearts, Diamonds, Clubs
-        
-        for (let i = 0; i < 4; i++) {
-            const suitInput = suitInputs[i];
-            const suit = suits[i];
-            
-            // Parse cards for this suit
-            for (const card of suitInput) {
-                // Skip invalid characters and check if the card is valid in the current card set
-                if (!values.includes(card)) continue;
+        // If this is a test distribution with multiple players
+        if (isTestDistribution) {
+            // Process each player's input
+            for (let i = 0; i < playerInputs.length; i++) {
+                if (i >= 4) break; // Maximum 4 players
                 
-                // Add card
-                fixedCards.push({
-                    playerIndex: playerIndex,
-                    card: card + suit
-                });
+                const playerIndex = i;
+                const playerInput = playerInputs[i];
+        
+                // Split by dash to get each suit
+                const suitInputs = playerInput.split('-');
+                
+                // Make sure we have exactly 4 entries, even if they're empty
+                while (suitInputs.length < 4) {
+                    suitInputs.push('');
+                }
+                
+                // If we have more than 4, combine the extra ones with the last one
+                if (suitInputs.length > 4) {
+                    suitInputs[3] = suitInputs.slice(3).join('-');
+                    suitInputs.length = 4;
+                }
+                
+                // Parse each suit
+                const suits = ['S', 'H', 'D', 'C']; // Spades, Hearts, Diamonds, Clubs
+                
+                for (let j = 0; j < 4; j++) {
+                    const suitInput = suitInputs[j];
+                    const suit = suits[j];
+                    
+                    // Parse cards for this suit
+                    for (const card of suitInput) {
+                        // Skip invalid characters and check if the card is valid in the current card set
+                        if (!values.includes(card)) continue;
+                        
+                        // Add card
+                        fixedCards.push({
+                            playerIndex: playerIndex,
+                            card: card + suit
+                        });
+                    }
+                }
+            }
+        } else {
+            // Original case - process single player input
+            const playerInput = playerInputs[0];
+            
+            // Split by dash to get each suit
+            const suitInputs = playerInput.split('-');
+            
+            // Make sure we have exactly 4 entries, even if they're empty
+            while (suitInputs.length < 4) {
+                suitInputs.push('');
+            }
+            
+            // If we have more than 4, combine the extra ones with the last one
+            if (suitInputs.length > 4) {
+                suitInputs[3] = suitInputs.slice(3).join('-');
+                suitInputs.length = 4;
+            }
+            
+            // Parse each suit
+            const suits = ['S', 'H', 'D', 'C']; // Spades, Hearts, Diamonds, Clubs
+            
+            for (let i = 0; i < 4; i++) {
+                const suitInput = suitInputs[i];
+                const suit = suits[i];
+                
+                // Parse cards for this suit
+                for (const card of suitInput) {
+                    // Skip invalid characters and check if the card is valid in the current card set
+                    if (!values.includes(card)) continue;
+                    
+                    // Add card
+                    fixedCards.push({
+                        playerIndex: playerIndex,
+                        card: card + suit
+                    });
+                }
             }
         }
         

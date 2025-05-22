@@ -35,7 +35,20 @@ class BridgeDoubleDummySolver {
         
         // Performance optimization settings
         this.USE_MEMOIZATION = true;
-        this.MAX_CALCULATION_TIME = 5000; // 5 seconds per analysis
+        
+        // Adjust calculation time based on card count
+        if (typeof window !== 'undefined' && window.values && Array.isArray(window.values)) {
+            const cardCount = window.values.length;
+            if (cardCount <= 5) {
+                this.MAX_CALCULATION_TIME = 8000; // 8 seconds for mini-bridge (5 cards)
+            } else if (cardCount <= 7) {
+                this.MAX_CALCULATION_TIME = 6000; // 6 seconds for medium hands
+            } else {
+                this.MAX_CALCULATION_TIME = 3000; // 3 seconds for larger hands
+            }
+        } else {
+            this.MAX_CALCULATION_TIME = 5000; // 5 seconds default
+        }
         
         // Cache for memoization
         this.cache = new Map();
@@ -373,7 +386,7 @@ class BridgeDoubleDummySolver {
         // For a 5-card game, no partnership can take more than 5 tricks
         const absoluteMaxTricks = selectedCardCount;
         
-        // Count remaining sure tricks (but respect the card count limit)
+        // Count remaining sure tricks for each partnership with improved accuracy
         for (let i = 0; i < 4; i++) {
             // Only count for players in the partnership
             if (i % 2 === partnership) {
@@ -386,23 +399,66 @@ class BridgeDoubleDummySolver {
                     bySuit[card.suit].push(card);
                 }
                 
-                // Count top cards (Aces and guarded Kings)
+                // Count high cards with more accurate scoring - improved for 5-card game
                 for (const suit in bySuit) {
                     const suitCards = bySuit[suit].map(c => c.rank);
                     
-                    // Aces always win
-                    if (suitCards.includes("A")) {
-                        remainingTricks += 1;
+                    // Check for AK sequence (always 2 tricks)
+                    if (suitCards.includes("A") && suitCards.includes("K")) {
+                        remainingTricks += 2;
                     }
-                    // Kings might win
-                    else if (suitCards.includes("K") && suitCards.length > 1) {
-                        remainingTricks += 0.5; // Partial trick probability
+                    // Ace without King is still a certain trick
+                    else if (suitCards.includes("A")) {
+                        remainingTricks += 1;
+                        // AQ combination can sometimes be 1.5 tricks in a 5-card game
+                        if (selectedCardCount <= 5 && suitCards.includes("Q")) {
+                            remainingTricks += 0.5;
+                        }
+                    }
+                    // King evaluation with more nuance for 5-card game
+                    else if (suitCards.includes("K")) {
+                        // KQ sequence is stronger
+                        if (suitCards.includes("Q")) {
+                            remainingTricks += 1.2; // Almost definitely 1 trick, good chance of 2
+                        }
+                        // Guarded K (with any card)
+                        else if (suitCards.length > 1) {
+                            remainingTricks += 0.8; // Higher probability for guarded K
+                        } 
+                        // Singleton K
+                        else {
+                            remainingTricks += 0.4; // Lower for singleton K
+                        }
+                    }
+                    // Queens with protection
+                    else if (selectedCardCount <= 5) {
+                        // QJ combination
+                        if (suitCards.includes("Q") && suitCards.includes("J")) {
+                            remainingTricks += 0.6; // Good chance of 1 trick in 5-card game
+                        }
+                        // Guarded Q
+                        else if (suitCards.includes("Q") && suitCards.length >= 2) {
+                            remainingTricks += 0.4; // Queens can win tricks in 5-card game sometimes
+                        }
+                        // JT combination in 5-card game
+                        else if (suitCards.includes("J") && suitCards.includes("T") && suitCards.length >= 3) {
+                            remainingTricks += 0.2; // Occasionally wins a trick in 5-card game
+                        }
                     }
                 }
             }
         }
         
         // Make sure we don't exceed the absolute maximum tricks possible
+        // For mini-bridge (5 cards), adjust to be more accurate
+        if (selectedCardCount <= 5) {
+            // For 5-card games, partnership cannot make more than selectedCardCount tricks
+            remainingTricks = Math.min(remainingTricks, absoluteMaxTricks);
+            
+            // Round to nearest 0.5 for more accurate estimation in mini-bridge
+            remainingTricks = Math.round(remainingTricks * 2) / 2;
+        }
+        
         return Math.min(Math.ceil(remainingTricks), maxPossibleTricks, absoluteMaxTricks);
     }
     

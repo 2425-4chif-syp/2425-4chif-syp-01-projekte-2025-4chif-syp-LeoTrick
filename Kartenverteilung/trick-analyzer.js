@@ -482,7 +482,7 @@ class BridgeGameAnalyzer {
     }
     
     /**
-     * Improved estimation function with trump consideration
+     * Improved estimation function with trump consideration and specific 5-card game handling
      */
     estimatePosition(deck, winner, trumpSuit) {
         // Count high cards and trump cards for each team
@@ -491,21 +491,77 @@ class BridgeGameAnalyzer {
         const highCards = "AKQJT"; // Consider more high cards for better estimation
         const trumpSuitNumber = parseInt(trumpSuit);
         
+        // Get the currently selected card count
+        let selectedCardCount = this.CARDS_PER_COLOR;
+        
+        // Enhanced scoring for 5-card mini-bridge game
+        const isMinibridge = selectedCardCount <= 5;
+        
+        // Group cards by partnership and suit for sequence recognition
+        const nsCardsBySuit = [{}, {}];
+        const ewCardsBySuit = [{}, {}];
+        
+        // First, collect cards by partnership and suit
         for (let player = 0; player < 4; player++) {
+            const isNS = player === 0 || player === 2;
+            const partnershipIndex = isNS ? 0 : 1;
+            const cardsBySuit = isNS ? nsCardsBySuit : ewCardsBySuit;
+            
             for (let suit = 0; suit < 4; suit++) {
                 if (!deck[player][suit]) continue;
                 
-                for (const card of deck[player][suit]) {
-                    // High card points
+                if (!cardsBySuit[partnershipIndex][suit]) {
+                    cardsBySuit[partnershipIndex][suit] = [];
+                }
+                
+                cardsBySuit[partnershipIndex][suit].push(...deck[player][suit]);
+            }
+        }
+        
+        // Now analyze patterns and evaluate cards with better context
+        for (let player = 0; player < 4; player++) {
+            const isNS = player === 0 || player === 2;
+            
+            for (let suit = 0; suit < 4; suit++) {
+                if (!deck[player][suit]) continue;
+                
+                // Handle card combinations and sequences
+                const cards = deck[player][suit];
+                const partnershipCards = isNS ? nsCardsBySuit[0][suit] || [] : ewCardsBySuit[1][suit] || [];
+                
+                // Check for card combinations
+                let hasA = cards.includes("A") || (isNS && (player !== 0 ? deck[0][suit] : deck[2][suit])?.includes("A"));
+                let hasK = cards.includes("K") || (isNS && (player !== 0 ? deck[0][suit] : deck[2][suit])?.includes("K"));
+                let hasQ = cards.includes("Q") || (isNS && (player !== 0 ? deck[0][suit] : deck[2][suit])?.includes("Q"));
+                
+                // Individual card evaluation
+                for (const card of cards) {
+                    // Basic high card points
                     if (highCards.includes(card)) {
                         let value = 5 - highCards.indexOf(card); // A=5, K=4, Q=3, J=2, T=1
                         
-                        // Add extra value for trumps
-                        if (suit === trumpSuitNumber && trumpSuit !== "5") {
-                            value *= 1.5; // Trumps are more valuable
+                        // Special handling for 5-card mini-bridge
+                        if (isMinibridge) {
+                            // AK sequence is more valuable
+                            if (card === "A" && partnershipCards.includes("K")) {
+                                value += 1; // Bonus for AK
+                            }
+                            // KQ sequence is more valuable
+                            else if (card === "K" && partnershipCards.includes("Q")) {
+                                value += 0.75; // Bonus for KQ
+                            }
+                            // QJ sequence is more valuable
+                            else if (card === "Q" && partnershipCards.includes("J")) {
+                                value += 0.5; // Bonus for QJ
+                            }
                         }
                         
-                        if (player === 0 || player === 2) { // NS
+                        // Add extra value for trumps
+                        if (suit === trumpSuitNumber && trumpSuit !== "5") {
+                            value *= 1.8; // Trumps are more valuable in mini-bridge
+                        }
+                        
+                        if (isNS) { // NS
                             nsScore += value;
                         } else { // EW
                             ewScore += value;
@@ -513,8 +569,8 @@ class BridgeGameAnalyzer {
                     }
                     // Add small value for low trump cards
                     else if (suit === trumpSuitNumber && trumpSuit !== "5") {
-                        const value = 0.5; // Small value for low trumps
-                        if (player === 0 || player === 2) {
+                        const value = isMinibridge ? 0.8 : 0.5; // Higher small trump value in mini-bridge
+                        if (isNS) {
                             nsScore += value;
                         } else {
                             ewScore += value;
@@ -536,8 +592,30 @@ class BridgeGameAnalyzer {
         if (totalScore === 0) return this.CARDS_PER_COLOR / 2; // Equal
         
         const nsRatio = nsScore / totalScore;
-        // Apply a slight correction to avoid extreme values
-        return Math.round(nsRatio * this.CARDS_PER_COLOR);
+        
+        if (isMinibridge) {
+            // For 5-card mini-bridge, we need more balanced trick distributions
+            // Apply a curve to make the trick distribution more realistic
+            let correctedRatio;
+            
+            // Apply a "smoothing factor" to avoid extreme trick distributions
+            if (nsRatio > 0.65) {
+                // High NS advantage - still not taking all tricks
+                correctedRatio = 0.65 + (nsRatio - 0.65) * 0.7;
+            } else if (nsRatio < 0.35) {
+                // High EW advantage - still not taking all tricks
+                correctedRatio = 0.35 - (0.35 - nsRatio) * 0.7;
+            } else {
+                // More balanced hands - keep ratio as is
+                correctedRatio = nsRatio;
+            }
+            
+            // Calculate tricks based on corrected ratio
+            return Math.round(correctedRatio * this.CARDS_PER_COLOR);
+        } else {
+            // Standard calculation for regular bridge
+            return Math.round(nsRatio * this.CARDS_PER_COLOR);
+        }
     }
     
     /**
