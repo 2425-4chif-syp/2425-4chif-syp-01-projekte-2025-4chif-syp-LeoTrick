@@ -42,3 +42,33 @@ node_modules/
 # Angular
 .angular/
 *.tsbuildinfo
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.sqlite3
+.env
+*.env
+
+# Mitmproxy-Zertifikate (sehr wichtig)
+~/.mitmproxy/
+mitmproxy-ca-cert.cer
+mitmproxy-ca.pem
+*.pem
+*.cer
+*.crt
+*.key
+
+# Output-Dateien (falls temporär erzeugt)
+output.txt
+
+# IDE-spezifisches (optional)
+.vscode/
+.idea/
+*.code-workspace
+
+# Mac-spezifisch
+.DS_Store
