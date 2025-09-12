@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deal request_id="" err="0" errmsg="OK" token="f3987d85-eb97-475b-9a78-8c0ed0b6d28a" dealid="HAND/b6754aad-fae5-11ee-a68e-0cc47a39aeb4/1/4" arcade_hd="YES">
+<sc_deal south="S43HAJ86DJTCAKJ74" west="SHDC" north="SHDC" east="SHDC" dealer="W" board="4" scoring="MP" vul="b" dealid="HAND/b6754aad-fae5-11ee-a68e-0cc47a39aeb4/1/4/ascyt"/>
+<sc_call_made call="p"/>
+<sc_call_made call="1d" explain="Minor suit opening -- 3+ !D; 11-21 HCP; 12-22 total points"/>
+<sc_call_made call="p"/>
+<sc_call_made call="2c" explain="Forcing two over one -- biddable !C; 14+ total points; forcing to 3N"/>
+<sc_call_made call="p"/>
+<sc_call_made call="2d" explain="Opener rebids suit -- 5+ !D; 11-21 HCP; 12-22 total points; forcing to 3N"/>
+<sc_call_made call="p"/>
+<sc_call_made call="2h" explain="5+ !C; 4+ !H; 14+ total points; forcing to 3N"/>
+<sc_call_made call="p"/>
+<sc_call_made call="2s" explain="5+ !D; 4+ !S; 11-21 HCP; 12-22 total points; forcing to 3N"/>
+<sc_call_made call="p"/>
+<sc_call_made call="2n" explain="5+ !C; 4-5 !H; 5- !S; 14+ total points; forcing to 3N"/>
+<sc_call_made call="p"/>
+<sc_call_made call="3n" explain="5+ !D; 5- !H; 4-5 !S; 13-20 HCP; 22- total points"/>
+<sc_call_made call="p"/>
+<sc_call_made call="p"/>
+<sc_call_made call="p"/>
+</deal>

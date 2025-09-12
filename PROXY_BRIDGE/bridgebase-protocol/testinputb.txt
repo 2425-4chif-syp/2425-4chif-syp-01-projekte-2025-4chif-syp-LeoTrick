@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<events request_id="" err="0" errmsg="OK" token="f3987d85-eb97-475b-9a78-8c0ed0b6d28a">
+    
+    <sc_card_played card="C2"  />
+    <sc_dummy_holds dummy="SAQT8HQ3DA9875CT3" />
+</events>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<scores request_id="" err="0" tid="b6754aad-fae5-11ee-a68e-0cc47a39aeb4" format="MP" summary_ns="14.77">
+  <score board="1" result="1NS-3" score="-150" comparisons="29" percentage="1.8"/>
+  <score board="2" result="4SS=" score="620" comparisons="27" percentage="0.0"/>
+  <score board="3" result="4HS-2" score="-100" comparisons="21" percentage="42.5"/>
+</scores>
