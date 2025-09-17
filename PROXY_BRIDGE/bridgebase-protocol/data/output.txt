@@ -1,0 +1,27 @@
+----- Spielverlauf -----
+1. West: ♠J-♠5-♠9-♠Q
+
+----- Spielerstatus -----
+
+North:
+
+Gespielt: ♠5 | ♥ | ♣ | ♦
+Verbleibend: ♠4 | ♥K9862 | ♣KT65 | ♦62
+
+East:
+
+Gespielt: ♠9 | ♥ | ♣ | ♦
+Verbleibend: ♠A7 | ♥T7 | ♣AJ982 | ♦K95
+
+South:
+
+Gespielt: ♠Q6 | ♥ | ♣ | ♦
+Verbleibend: ♠K82 | ♥A43 | ♣Q | ♦QJ87
+
+West:
+
+Gespielt: ♠J | ♥ | ♣ | ♦
+Verbleibend: ♠T3 | ♥QJ5 | ♣743 | ♦AT43
+
+
+<!-- Last updated: 1758091085.1981592 -->
