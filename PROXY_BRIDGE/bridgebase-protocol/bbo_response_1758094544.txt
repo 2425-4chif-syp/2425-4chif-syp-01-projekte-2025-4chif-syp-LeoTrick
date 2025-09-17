@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sc_bm pov="E" d="N" v="-" n="t53.6.q543.aq964" s="94.akj5.akjt.t72" e="j862.q94.8762.kj" w="akq7.t8732.9.853" h="p-p-1c-p-3c-p-p-p-SK-ST-S2-S4-SA-S5" o="" bm="n" ac="n" rc="0" c="n" gv="43">
+  <r type="play" card="S8"/>
+</sc_bm>
+
+

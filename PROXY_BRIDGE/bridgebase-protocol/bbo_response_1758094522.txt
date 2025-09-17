@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sc_deals c="9" err="0" errmsg="">
+  <sc_deal north="ST53H6DQ543CAQ964" east="SJ862HQ94D8762CKJ" south="S94HAKJ5DAKJTCT72" west="SAKQ7HT8732D9C853"/>
+</sc_deals>
