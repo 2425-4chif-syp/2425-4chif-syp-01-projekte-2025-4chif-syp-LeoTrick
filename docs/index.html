@@ -2,26 +2,92 @@
 <html lang="de">
 <head>
   <meta charset="utf-8" />
-  <title>Meine Reveal.js Slides</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet"
-    href="https://unpkg.com/reveal.js/dist/reveal.css" />
-  <link rel="stylesheet"
-    href="https://unpkg.com/reveal.js/dist/theme/black.css" id="theme" />
+  <title>LEOPROX – Slides</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Reveal.js CSS via CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js/dist/reveal.css" />
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js/dist/theme/black.css" id="theme" />
+
+  <style>
+    .title-big { font-size: 4rem; letter-spacing: .08em; }
+    .subtitle { opacity:.85; margin-top:.5rem; }
+    .center { text-align:center; }
+    .muted { opacity:.7; }
+    .img-box img { max-width: 95%; max-height: 75vh; display:block; margin: 0 auto; }
+    .hint { font-size:.9rem; margin-top:1rem; opacity:.7; }
+  </style>
 </head>
 <body>
   <div class="reveal">
     <div class="slides">
-      <section>Slide 1</section>
-      <section>Slide 2</section>
+
+      <!-- 1) TITEL -->
+      <section class="center">
+        <h1 class="title-big">LEOPROX</h1>
+        <p class="subtitle">Lokaler Proxy für vereinfachtes, personalisiertes Browsen</p>
+      </section>
+
+      <!-- 2) TEAM -->
+      <section class="center">
+        <h2>Projektteam</h2>
+        <p style="font-size:1.6rem;margin:.5rem 0;">Luka Ignjatovic</p>
+        <p style="font-size:1.6rem;margin:.2rem 0;">Zinedin Ademi</p>
+      </section>
+
+      <!-- 3) PROJEKT-BESCHREIBUNG -->
+      <section>
+        <h2>Projekt&nbsp;Beschreibung</h2>
+        <p style="line-height:1.6;">
+          Ein lokaler Proxy vereinfacht das Surfen, indem er Webseiten beim Durchleiten nach persönlichen Vorgaben
+          automatisch bereinigt und einheitlich aufbereitet. Die Einstellungen werden über eine sehr einfache HTML/CSS-Seite
+          gesteuert; der Proxy setzt sie in Echtzeit um, ohne die Zielseiten zu verändern. Ergebnis: weniger Ablenkung,
+          bessere Lesbarkeit, konsistentes Erscheinungsbild – lokal, datenschutzfreundlich, modular.
+        </p>
+      </section>
+
+      <!-- 4) USE CASE DIAGRAMM (vertikale Slides: erst Titel, dann Bild per ↓) -->
+      <section>
+        <!-- Oberer Slide (Titel) -->
+        <section class="center">
+          <h2>USE CASE DIAGRAMM</h2>
+          <div class="hint">Nach unten drücken, um das Diagramm zu sehen ↓</div>
+        </section>
+        <!-- Unterer Slide (Bild-Platzhalter) -->
+        <section class="img-box center">
+          <!-- Lege dein Bild unter: assets/usecase-diagram.png -->
+          <img src="assets/usecase-diagram.png" alt="Use Case Diagramm (Platzhalter)">
+          <div class="muted hint">Platzhalter – ersetze <code>assets/usecase-diagram.png</code> durch dein Bild.</div>
+        </section>
+      </section>
+
+      <!-- 5) SYSTEMARCHITEKTUR (vertikal) -->
+      <section>
+        <!-- Oberer Slide (Titel) -->
+        <section class="center">
+          <h2>SYSTEMARCHITEKTUR</h2>
+          <div class="hint">Nach unten drücken, um die Grafik zu sehen ↓</div>
+        </section>
+        <!-- Unterer Slide (Bild-Platzhalter) -->
+        <section class="img-box center">
+          <!-- Lege dein Bild unter: assets/systemarchitektur.png -->
+          <img src="assets/systemarchitektur.png" alt="Systemarchitektur (Platzhalter)">
+          <div class="muted hint">Platzhalter – ersetze <code>assets/systemarchitektur.png</code> durch dein Bild.</div>
+        </section>
+      </section>
+
     </div>
   </div>
 
+  <!-- Reveal.js via CDN -->
   <script src="https://unpkg.com/reveal.js/dist/reveal.js"></script>
   <script>
     Reveal.initialize({
       hash: true,
-      slideNumber: true
+      slideNumber: true,
+      controls: true,
+      progress: true,
+      transition: 'slide' // 'slide', 'fade', 'convex', 'concave', 'zoom'
     });
   </script>
 </body>
