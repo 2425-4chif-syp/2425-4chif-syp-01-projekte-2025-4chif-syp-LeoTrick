@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sc_bm request_id="" t="g" s="P-1C-1H-1n-2H-P-3D-P-4H-P-*" err="0" c="n" ch="n" gv="43">
+  <r b="p" m="No suitable call -- 3+ !D; 5+ !H; 17- HCP; Q+ in !D; 16-18 total points"/>
+  <r b="7n" m="3+ !D; 5+ !H; 17- HCP; Q+ in !D; 18 total points"/>
+  <r b="7s" m="3+ !D; 5+ !H; 17- HCP; biddable !S; Q+ in !D; 16-18 total points"/>
+  <r b="7h" m="3+ !D; 5+ !H; 17 HCP; Q+ in !D; 18 total points"/>
+  <r b="7d" m="5+ !H; 17- HCP; biddable !D; Q+ in !D; 16-18 total points"/>
+  <r b="7c" m="3+ !D; 5+ !H; 17- HCP; biddable !C; Q+ in !D; 16-18 total points"/>
+  <r b="6n" m="3+ !D; 5+ !H; 17- HCP; Q+ in !D; 16-18 total points"/>
+  <r b="6s" m="3+ !D; 5+ !H; 17- HCP; biddable !S; Q+ in !D; 16-18 total points"/>
+  <r b="6h" m="3+ !D; 5+ !H; 17 HCP; Q+ in !D; 18 total points"/>
+  <r b="6d" m="5+ !H; 17- HCP; biddable !D; Q+ in !D; 16-18 total points"/>
+  <r b="6c" m="3+ !D; 5+ !H; 17- HCP; biddable !C; Q+ in !D; 16-18 total points"/>
+  <r b="5n" m="Grand slam force (H trump) -- 3+ !D; 5+ !H; 17 HCP; Q+ in !D; 18 total points"/>
+  <r b="5s" m="3+ !D; 5+ !H; 17- HCP; biddable !S; Q+ in !D; 16-18 total points"/>
+  <r b="5h" m="2+ !C; 3+ !D; 5+ !H; 17 HCP; no !CAK; Q+ in !D; 18 total points"/>
+  <r b="5d" m="Cue bid -- 1+ !C; 3+ !D; 5+ !H; 1+ !S; 17 HCP; no !CA; !DA,no !DK; no !SA; 18 total points; forcing"/>
+  <r b="5c" m="Cue bid -- 3+ !D; 5+ !H; 1+ !S; 17 HCP; !CA; Q+ in !D; no !SA; 18 total points; forcing"/>
+  <r b="4n" m="Blackwood (H) -- 3+ !D; 5+ !H; 17 HCP; Q+ in !D; 18 total points"/>
+  <r b="4s" m="Cue bid -- 3+ !D; 5+ !H; 17 HCP; Q+ in !D; !SA; 18 total points; forcing"/>
+</sc_bm>

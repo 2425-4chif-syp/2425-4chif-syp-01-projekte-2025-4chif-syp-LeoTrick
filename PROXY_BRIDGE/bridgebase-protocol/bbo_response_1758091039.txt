@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sc_bm request_id="" t="g" s="P-1C-*" err="0" c="y" ch="n" gv="43">
+  <r b="p" m="No suitable call -- 16- total points"/>
+  <r b="d" m="Takeout double -- 2- !C; 3-5 !D; 3-4 !H; 3-4 !S; 12+ total points"/>
+  <r b="7n" m="36+ HCP; 35 total points"/>
+  <r b="7s" m="31+ HCP; strong rebiddable !S; 35 total points"/>
+  <r b="7h" m="31+ HCP; strong rebiddable !H; 35 total points"/>
+  <r b="7d" m="31+ HCP; strong rebiddable !D; 35 total points"/>
+  <r b="7c" m="31+ HCP; strong rebiddable !C; 35 total points"/>
+  <r b="6n" m=" "/>
+  <r b="6s" m="strong rebiddable !S; 32+ total points"/>
+  <r b="6h" m="strong rebiddable !H; 32+ total points"/>
+  <r b="6d" m="strong rebiddable !D; 32+ total points"/>
+  <r b="6c" m="strong rebiddable !C; 32+ total points"/>
+  <r b="5n" m=" "/>
+  <r b="5s" m="biddable !S"/>
+  <r b="5h" m="biddable !H"/>
+  <r b="5d" m="Preempt -- 8+ !D; 3-20 total points"/>
+  <r b="5c" m="Preempt -- 8+ !C; 3-20 total points"/>
+  <r b="4n" m=" "/>
+  <r b="4s" m="Aggressive weak jump overcall -- 7+ !S; 11- HCP; 3+ total points"/>
+  <r b="4h" m="Aggressive weak jump overcall -- 7+ !H; 11- HCP; 3+ total points"/>
+  <r b="4d" m="Aggressive weak jump overcall -- 7+ !D; 11- HCP; 3+ total points"/>
+  <r b="4c" m="Preempt -- 7+ !C; 3-20 total points"/>
+  <r b="3n" m="5- !H; 5- !S; 25-32 HCP; likely stop in !C"/>
+  <r b="3s" m="Aggressive weak jump overcall -- 7+ !S; 10- HCP; 3+ total points"/>
+  <r b="3h" m="Aggressive weak jump overcall -- 7+ !H; 10- HCP; 3+ total points"/>
+  <r b="3d" m="Aggressive weak jump overcall -- 7+ !D; 10- HCP; 3+ total points"/>
+  <r b="3c" m="Aggressive weak jump overcall -- 7+ !C; 10- HCP; 3+ total points"/>
+  <r b="2n" m="Unusual notrump overcall -- 3- !C; 5+ !D; 5+ !H; 3- !S; 12+ total points; forcing" a="y"/>
+  <r b="2s" m="Aggressive weak jump overcall -- 6+ !S; 4-9 HCP"/>
+  <r b="2h" m="Aggressive weak jump overcall -- 6+ !H; 4-9 HCP"/>
+  <r b="2d" m="Aggressive weak jump overcall -- 6+ !D; 4-9 HCP"/>
+  <r b="2c" m="Michaels -- 3- !C; 3- !D; 5+ !H; 5+ !S; 9+ total points; forcing" a="y"/>
+  <r b="1n" m="One notrump overcall -- 2-5 !C; 2-5 !D; 2-5 !H; 2-5 !S; 15+ HCP; 18- total points; stop in !C"/>
+  <r b="1s" m="One-level overcall -- 5+ !S; 8-17 HCP; 9-19 total points"/>
+  <r b="1h" m="One-level overcall -- 5+ !H; 8-17 HCP; 9-19 total points"/>
+  <r b="1d" m="One-level overcall -- 5+ !D; 8-17 HCP; 9-19 total points"/>
+</sc_bm>

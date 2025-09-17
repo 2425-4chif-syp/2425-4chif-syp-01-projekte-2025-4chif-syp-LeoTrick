@@ -1,0 +1,440 @@
+[2025-09-17 08:36:54] === Script started ===
+[2025-09-17 08:37:05] JSON detected: {"permissions": {}, "data": {"attachment": {"hash": "7f32769d6bb4e875f58ceb9e2fbfdc9bd6b82397eca7a4c5230b0786e68f1798", "size": 15829, "filename": "asrouter.ftl", "location": "main-workspace/ms-langua...
+[2025-09-17 08:37:05] JSON detected: {"project_name": "Remote Settings PROD", "project_version": "23.1.0", "http_api_version": "1.23", "project_docs": "https://remote-settings.readthedocs.io", "url": "https://firefox.settings.services.mo...
+[2025-09-17 08:37:05] JSON detected: {"newtab_tile_1": [{"format": "tile", "url": "https://www.adidas.at/?cm_mmc=AdieSEM_adMarketplace-_-AT%20CPQV-_-AT%20CPQV-_-AT+privacy+find-_-226583231205478400&cm_mmca1=AT&cm_mmca2=Exact&ds_kid=_dstr...
+[2025-09-17 08:37:05] JSON detected: {}...
+[2025-09-17 08:37:05] JSON detected: {}...
+[2025-09-17 08:37:05] JSON detected: {}...
+[2025-09-17 08:37:08] Request: GET www.bridgebase.com/
+[2025-09-17 08:37:08] Response from www.bridgebase.com: <!doctype html>
+<html>
+<head>
+    <title>Bridge Base Online - Play Online Bridge</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fi...
+[2025-09-17 08:37:09] Request: GET static.bridgebaseonline.com/assets/main.bbde2ee5.css
+[2025-09-17 08:37:09] Response from static.bridgebaseonline.com: @import url(https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900&display=swap);a,abbr,acronym,address,applet,article,aside,audio,b,big,blockquote,body,canvas,caption,center,cite,code,dd,de...
+[2025-09-17 08:37:09] Request: GET static.bridgebaseonline.com/assets/main.3c465f13.js
+[2025-09-17 08:37:09] Response from static.bridgebaseonline.com: /*! For license information please see main.3c465f13.js.LICENSE.txt */
+(()=>{"use strict";var t,e={6609:(t,e,r)=>{var n=r(3988),o=r.n(n);r(9554),r(1539),r(4747),r(6649),r(6078),r(2526),r(1817),r(9653)...
+[2025-09-17 08:37:09] Request: GET static.bridgebaseonline.com/assets/132.5bda43ea.js
+[2025-09-17 08:37:09] Response from static.bridgebaseonline.com: /*! For license information please see 132.5bda43ea.js.LICENSE.txt */
+(self.webpackChunk=self.webpackChunk||[]).push([[132],{4210:function(t,e,n){var r,o,i,s;function a(t){return a="function"==typeof ...
+[2025-09-17 08:37:09] Request: GET static.bridgebaseonline.com/assets/images/icon-chevron.93c66b3a.svg
+[2025-09-17 08:37:09] Response from static.bridgebaseonline.com: <svg xmlns="http://www.w3.org/2000/svg" width="17" height="10" viewBox="0 0 17 10">
+    <g fill="none" fill-rule="evenodd">
+        <path fill="#FFF" stroke="#FFF" d="M1.277.944a.786.786 0 0 1 1.112 0...
+[2025-09-17 08:37:09] Request: GET static.bridgebaseonline.com/assets/images/icon-avatar.0655e1ef.svg
+[2025-09-17 08:37:09] Response from static.bridgebaseonline.com: <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16">
+    <path fill="#FFF" fill-rule="evenodd" d="M5.558 5.333a2.67 2.67 0 0 1 2.667-2.666 2.67 2.67 0 0 1 2.667 2.666A2....
+[2025-09-17 08:37:09] Request: GET static.bridgebaseonline.com/assets/images/icon-bridge-master.526eb165.svg
+[2025-09-17 08:37:09] Response from static.bridgebaseonline.com: <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
+    <path fill="#051E3D" fill-rule="evenodd" d="M40 2c6.278 0 12.557 1.652 18.009 4.626h.495l.33.33.419.242C70.9 14....
+[2025-09-17 08:37:09] Request: GET static.bridgebaseonline.com/assets/images/icon-forums.c612e45e.svg
+[2025-09-17 08:37:09] Response from static.bridgebaseonline.com: <svg xmlns="http://www.w3.org/2000/svg" width="62" height="62" viewBox="0 0 62 62">
+    <path fill="#051E3D" fill-rule="evenodd" d="M35.438 7.446c2.437 0 4.44 1.996 4.44 4.426v8.22H54.46c2.437 0 4.439...
+[2025-09-17 08:37:09] Request: GET static.bridgebaseonline.com/assets/images/icon-just-declare.cd9be168.svg
+[2025-09-17 08:37:09] Response from static.bridgebaseonline.com: <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
+    <path fill="#051E3D" fill-rule="evenodd" d="M36.564 10.782c.381-1.273 1.781-1.91 3.054-1.527l19.855 7c1.145.381 ...
+[2025-09-17 08:37:09] Request: GET static.bridgebaseonline.com/assets/images/icon-bridge-four.acc14095.svg
+[2025-09-17 08:37:09] Response from static.bridgebaseonline.com: <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
+    <path fill="#051E3D" fill-rule="evenodd" d="M69.19 33.576c.625-.469 1.093-1.25 1.093-2.03 0-1.248-1.093-2.341-2....
+[2025-09-17 08:37:09] Request: GET static.bridgebaseonline.com/assets/images/icon-just-play-bridge.ccb9853a.svg
+[2025-09-17 08:37:09] Response from static.bridgebaseonline.com: <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
+    <path fill="#000" fill-rule="evenodd" d="M37.082 9c.267 0 .4.135.533.135l6.538 2.423.1.007c.235.03.483.162.833.3...
+[2025-09-17 08:37:09] Request: GET static.bridgebaseonline.com/assets/images/icon-users-star.4e2299fc.svg
+[2025-09-17 08:37:09] Response from static.bridgebaseonline.com: <svg xmlns="http://www.w3.org/2000/svg" width="71" height="57" viewBox="0 0 71 57">
+  <g fill="none" fill-rule="evenodd" transform="translate(-1 -2)">
+    <path fill="#051E3D" d="M36.4997422 26C43.358...
+[2025-09-17 08:37:09] Request: GET static.bridgebaseonline.com/assets/images/icon-learn.860557ec.svg
+[2025-09-17 08:37:09] Response from static.bridgebaseonline.com: <svg xmlns="http://www.w3.org/2000/svg" width="62" height="62" viewBox="0 0 62 62">
+    <path fill="#051E3D" fill-rule="evenodd" d="M49.83 42.324v.298c-.03.743-.236 1.426-.53 2.11a7.602 7.602 0 0 1-1....
+[2025-09-17 08:37:09] Request: GET static.bridgebaseonline.com/assets/images/icon-imp.52b358f2.svg
+[2025-09-17 08:37:09] Response from static.bridgebaseonline.com: <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
+    <path fill="#051E3D" fill-rule="evenodd" d="M55.759 13.782l.172.006c1.482.094 2.622 1.39 2.622 2.788v42.471c0 1....
+[2025-09-17 08:37:09] Request: GET static.bridgebaseonline.com/assets/images/icon-match-points.26f08e6e.svg
+[2025-09-17 08:37:09] Response from static.bridgebaseonline.com: <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
+    <path fill="#051E3D" fill-rule="evenodd" d="M55.759 13.782c1.565 0 2.794 1.342 2.794 2.794v42.471c0 1.341-.894 2...
+[2025-09-17 08:37:09] Request: GET www.bridgebase.com/js/quantcast-cmp.js
+[2025-09-17 08:37:09] Response from www.bridgebase.com: //InMobi Choice. Consent Manager Tag v3.0 (for TCF 2.2) -->
+  (function() {
+  var host = window.location.hostname;
+  var element = document.createElement('script');
+  var firstScript = document.getEle...
+[2025-09-17 08:37:09] Request: GET www.bridgebase.com/assets/images/icon-or.svg
+[2025-09-17 08:37:09] Response from www.bridgebase.com: <svg xmlns="http://www.w3.org/2000/svg" width="133" height="15" viewBox="0 0 133 15">
+  <g fill="none" fill-rule="evenodd" transform="translate(0 .959)">
+    <rect width="33" height="2" x="100" y="6.0...
+[2025-09-17 08:37:09] Request: GET www.bridgebase.com/assets/images/logo-bbo-2020-horizontal-transparent.svg
+[2025-09-17 08:37:09] Response from www.bridgebase.com: <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 691.3 162"><defs><style>.cls-1{fill:#fff;}.cls-2{fill:#f7c800;}.cls-3{f...
+[2025-09-17 08:37:09] Request: GET webutil.bridgebase.com/v2/user_counts.php
+[2025-09-17 08:37:09] Response from webutil.bridgebase.com: {"success":true,"bm_users":null,"anon_mp_users":null,"anon_tp_users":null,"anon_imp_users":null,"web0_users":5021,"web4_users":3710,"webjd_users":700,"mainsite_users":5447,"mainsite_tables":1964,"vugr...
+[2025-09-17 08:37:09] JSON detected: {"success": true, "bm_users": null, "anon_mp_users": null, "anon_tp_users": null, "anon_imp_users": null, "web0_users": 5021, "web4_users": 3710, "webjd_users": 700, "mainsite_users": 5447, "mainsite_...
+[2025-09-17 08:37:10] Request: GET www.bridgebase.com/assets/images/img-win-acbl.jpg
+[2025-09-17 08:37:10] Response from www.bridgebase.com: ÿØÿà JFIF      ÿÛ  					""*%%*424DD\					""*%%*424DD\ÿÂ   " ÿÄ            ...
+[2025-09-17 08:37:11] Request: GET www.bridgebase.com/assets/images/img-community.jpg
+[2025-09-17 08:37:11] Response from www.bridgebase.com: ÿØÿà JFIF      ÿÛ  					""*%%*424DD\					""*%%*424DD\ÿÂ   " ÿÄ              ...
+[2025-09-17 08:37:11] Request: GET static.bridgebaseonline.com/assets/videos/bbo-hero-1920x806.mp4
+[2025-09-17 08:37:11] Response from static.bridgebaseonline.com:    ftypmp42    mp42mp41  1moov   lmvhd    Úl rÚl r _ ?                                             @                                trak   \tkhd   Úl rÚl r        ?                    ...
+[2025-09-17 08:37:11] Request: GET www.bridgebase.com/assets/images/img-header@2x.jpg
+[2025-09-17 08:37:11] Response from www.bridgebase.com: ÿØÿà JFIF      ÿÛ C 		
+
+	"##!  %*5-%'2(  .?/279<<<$-BFA:F5;<9ÿÛ C
+
+
+9& &99999999999999999999999999999999999999999999999999ÿÂ ®@" ÿÄ             ...
+[2025-09-17 08:37:11] JSON detected: {"country": "aut", "region": "4", "city": "linz"}...
+[2025-09-17 08:37:11] JSON detected: {"lastUpdated": "2025-09-11T16:00:27Z", "cmps": {"2": {"id": 2, "name": "AppConsent by SFBX\u00ae ", "isCommercial": true, "environments": ["Web", "Native App (Mobile)", "Native App (CTV)"]}, "3": {"i...
+[2025-09-17 08:37:11] Request: GET static.bridgebaseonline.com/assets/images/icon-arrow-right.1e4f57f1.svg
+[2025-09-17 08:37:11] Response from static.bridgebaseonline.com: <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16">
+    <path fill="#FFF" fill-rule="evenodd" d="M10.36 4.663l2.81 2.809a.666.666 0 0 1 .119.94.64.64 0 0 1-.096.121l-2....
+[2025-09-17 08:37:12] JSON detected: {"message": "OK"}...
+[2025-09-17 08:37:12] Request: GET www.bridgebase.com/client/web0.php?cb=WMKUqLFylX
+[2025-09-17 08:37:12] Response from www.bridgebase.com: <!doctype html>
+<!--[if lte IE 9]>
+<!doctype html>
+<html>
+  <head>
+    <meta HTTP-EQUIV="REFRESH" content="0; url=<%= url %>">  
+  </head>
+</html>
+<![endif]-->
+
+<![if !IE]>
+<!doctype html>
+<html>
+<hea...
+[2025-09-17 08:37:12] Request: GET www.bridgebase.com/arcade/web0/js/jquery.mobile.custom.js
+[2025-09-17 08:37:12] Response from www.bridgebase.com: /*
+* jQuery Mobile v1.4.5
+* http://jquerymobile.com
+*
+* Copyright 2010, 2014 jQuery Foundation, Inc. and other contributors
+* Released under the MIT license.
+* http://jquery.org/license
+*
+*/
+
+(functio...
+[2025-09-17 08:37:12] Request: GET www.bridgebase.com/arcade/dc3/css/Webtest.css
+[2025-09-17 08:37:12] Response from www.bridgebase.com: 
+.splashPanel {
+	
+  background-color: #E1E1BA;
+  background: -webkit-linear-gradient(#E1E1BA, #B1B18A); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(#E1E1BA, #B1B18A); /* For Opera 11....
+[2025-09-17 08:37:12] Request: GET www.bridgebase.com/arcade/web0/js/Modernizr.js
+[2025-09-17 08:37:12] Response from www.bridgebase.com: /* Modernizr 2.8.3 (Custom Build) | MIT & BSD
+ * Build: http://modernizr.com/download/#-touch-shiv-cssclasses-teststyles-prefixes-load
+ */
+;window.Modernizr=function(a,b,c){function w(a){j.cssText=a}f...
+[2025-09-17 08:37:12] Request: GET www.bridgebase.com/arcade/web0/css/pocketgrid.css
+[2025-09-17 08:37:12] Response from www.bridgebase.com: /*! PocketGrid 1.1.0
+* Copyright 2013 Arnaud Leray
+* MIT License
+*/
+/* Border-box-sizing */
+.block-group, .block, .block-group:after, .block:after, .block-group:before, .block:before {
+  -webkit-box-s...
+[2025-09-17 08:37:12] Request: GET www.bridgebase.com/arcade/web_conversion_modal/modal/modal.css
+[2025-09-17 08:37:12] Response from www.bridgebase.com: .bbo-dialog {
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+}
+.bbo-dialog.bbo-animate {
+    transition: opacity 400ms cubic-bezier(0.25, 0.8, 0.25...
+[2025-09-17 08:37:13] Request: GET www.bridgebase.com/arcade/dc3/webtest/webtest.nocache.js
+[2025-09-17 08:37:13] Response from www.bridgebase.com: function webtest(){var cb='',_=' top: -1000px;',zb='" for "gwt:onLoadErrorFn"',xb='" for "gwt:onPropertyErrorFn"',ib='");',Ab='#',_b='.cache.js',Cb='/',Ib='//',Vb='1C8090806A1078D3DEAD188467D00FB6',Wb...
+[2025-09-17 08:37:13] Request: GET www.bridgebase.com/arcade/web0/js/amazon-apstag.js
+[2025-09-17 08:37:13] Response from www.bridgebase.com: // amazon's apstag initialization
+let q = (c, r) => {
+    window.apstag._Q.push([c, r]);
+};
+
+window.apstag = window.apstag || {
+    init: function () { q("i", arguments); },
+    fetchBids: function ()...
+[2025-09-17 08:37:13] Request: GET www.bridgebase.com/arcade/web0/css/game.css
+[2025-09-17 08:37:13] Response from www.bridgebase.com: body {
+  margin: 0px;
+  padding: 0px;
+  border: 0px;
+  overflow: hidden;
+  overflow-x: hidden;
+  xposition:fixed !important;
+  xposition: absolute;
+  xtop: 0px;
+  xright: 0px;
+  xbottom: 0px;
+  xleft:...
+[2025-09-17 08:37:13] Request: GET www.bridgebase.com/arcade/web0/js/app.js
+[2025-09-17 08:37:13] Response from www.bridgebase.com: // https://javascriptobfuscator.com/Javascript-Obfuscator.aspx
+var appEnv = document.getElementById('main-script').getAttribute('data-appenv');
+
+var baseUrl = 'www.bridgebase.com';
+var webutilBaseUrl ...
+[2025-09-17 08:37:13] Request: GET www.bridgebase.com/arcade/web_conversion_modal/modal/modal.js
+[2025-09-17 08:37:13] Response from www.bridgebase.com: class Modal {
+    content; 
+
+    constructor(
+        content
+    ) {
+        this.content = content;
+    }
+
+    static createModalContentHolder() {
+        const div = document.createElement("div");
+...
+[2025-09-17 08:37:13] Request: GET www.bridgebase.com/arcade/web0/js/autorefresher.js
+[2025-09-17 08:37:13] Response from www.bridgebase.com: /*
+
+Autorefresher for PPI based deployments. 
+Based on the original RTK JITA autorefresher.
+
+*/
+window.AutoRefresherReady = false;
+const events = ['click', 'mousemove', 'mouseenter', 'onkeydown', 'scr...
+[2025-09-17 08:37:13] Request: GET www.bridgebase.com/arcade/dc3/webtest/gwt/clean/clean.css
+[2025-09-17 08:37:13] Response from www.bridgebase.com: /**
+ * The file contains styles for GWT widgets in the Clean theme.
+ *
+ * In order to maintain cross-browser compatibility, the following syntax is
+ * used to create IE6 specific style rules:
+ *    .g...
+[2025-09-17 08:37:13] Request: GET ads.bridgebase.com/common/ads/magnite-ad.php?g=web0&d=desktop&o=landscape2
+[2025-09-17 08:37:13] Response from ads.bridgebase.com: {"result":{"ad_unit_shortcode":"17r2"}}
+[2025-09-17 08:37:13] JSON detected: {"result": {"ad_unit_shortcode": "17r2"}}...
+[2025-09-17 08:37:13] Request: GET ads.bridgebase.com/common/ads/magnite-ad.php?g=web0&d=desktop&o=landscape
+[2025-09-17 08:37:13] Response from ads.bridgebase.com: {"result":{"ad_unit_shortcode":"uMfw"}}
+[2025-09-17 08:37:13] JSON detected: {"result": {"ad_unit_shortcode": "uMfw"}}...
+[2025-09-17 08:37:14] JSON detected: {"country": "aut", "region": "4", "city": "linz"}...
+[2025-09-17 08:37:15] Request: GET www.bridgebase.com/arcade/dc3/webtest/6F88A69A44841E19754E75015D4BDC34.cache.js
+[2025-09-17 08:37:15] Response from www.bridgebase.com: webtest.onScriptDownloaded(["var $wnd = $wnd || window.parent;var __gwtModuleFunction = $wnd.webtest;var $sendStats = __gwtModuleFunction.__sendStats;$sendStats('moduleStartup', 'moduleEvalStart');var...
+[2025-09-17 08:37:15] JSON detected: {"3pvendor": "if (!window.PublisherCommonId) {\n    var pubcommonScript = document.createElement('script');\n    pubcommonScript.src = '//secure.cdn.fastclick.net/js/pubcid/latest/pubcid.min.js';\n   ...
+[2025-09-17 08:37:15] Request: GET webutil.bridgebase.com/v2/languages/lang.php?lang=en&filter=dc
+[2025-09-17 08:37:15] Response from webutil.bridgebase.com: <?xml version="1.0" encoding="UTF-8"?>
+<lang>
+  <m i="A0001" d="OK"/>
+  <m i="A0002" d="Cancel"/>
+  <m i="A0003" d="Close"/>
+  <m i="A0010" d="South"/>
+  <m i="A0011" d="West"/>
+  <m i="A0012" d="Nort...
+[2025-09-17 08:37:16] Request: GET www.bridgebase.com/arcade/web_conversion_modal/index.html
+[2025-09-17 08:37:16] Response from www.bridgebase.com: <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Arcade game popup</title>
+    <link rel="stylesh...
+[2025-09-17 08:37:16] Request: GET www.bridgebase.com/arcade/dc3/sounds/internal/CARDPLAY.mp3
+[2025-09-17 08:37:16] Response from www.bridgebase.com: ID3    vPRIV     PeakValue !   PRIV     AverageLevel {                                                                                                                                             ...
+[2025-09-17 08:37:16] Request: GET www.bridgebase.com/arcade/dc3/sounds/internal/CARDPLAY.mp3
+[2025-09-17 08:37:16] Response from www.bridgebase.com: ID3    vPRIV     PeakValue !   PRIV     AverageLevel {                                                                                                                                             ...
+[2025-09-17 08:37:16] Request: GET www.bridgebase.com/arcade/dc3/sounds/internal/SHUFFLE.mp3
+[2025-09-17 08:37:16] Response from www.bridgebase.com: ID3    vPRIV     PeakValue !L  PRIV     AverageLevel {	  TPE1      SoundJay.com Sound Effects                                                                                                      ...
+[2025-09-17 08:37:16] Request: GET www.bridgebase.com/arcade/dc3/sounds/internal/SHUFFLE.mp3
+[2025-09-17 08:37:16] Response from www.bridgebase.com: ID3    vPRIV     PeakValue !L  PRIV     AverageLevel {	  TPE1      SoundJay.com Sound Effects                                                                                                      ...
+[2025-09-17 08:37:16] Request: GET www.bridgebase.com/arcade/web_conversion_modal/assets/chevron-up-line.svg
+[2025-09-17 08:37:16] Response from www.bridgebase.com: <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M17.2927 14L12.2927 9L7.29272 14" stroke="#DFE2E9" stroke-width="2" stroke-linecap="round" stro...
+[2025-09-17 08:37:16] Request: GET www.bridgebase.com/arcade/web_conversion_modal/styles.css
+[2025-09-17 08:37:16] Response from www.bridgebase.com: html {
+    box-sizing: border-box;
+}
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+html, body {
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+...
+[2025-09-17 08:37:16] Request: GET www.bridgebase.com/arcade/web_conversion_modal/app.js
+[2025-09-17 08:37:16] Response from www.bridgebase.com: function getURLToV3Register() {
+    return `/v3?utm_source=justplaybridge&utm_medium=v${window.contentVariation.trackingId}&utm_campaign=arcade`;
+}
+
+window.addEventListener("DOMContentLoaded", () => {...
+[2025-09-17 08:37:16] JSON detected: {"token": "7070fe74-f7e8-49a9-899c-d709a012df94"}...
+[2025-09-17 08:37:16] JSON detected: {"players": 5027}...
+[2025-09-17 08:37:16] Request: GET www.bridgebase.com/arcade/web_conversion_modal/assets/crown-line.svg
+[2025-09-17 08:37:16] Response from www.bridgebase.com: <svg viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M3.70728 7L5.70728 20H19.7073L21.7073 7L16.7073 10L12.7073 4L8.70728 10L3.70728 7Z" stroke="#1F3266" stroke-width="2" ...
+[2025-09-17 08:37:16] Request: GET www.bridgebase.com/arcade/web_conversion_modal/assets/robot-line.svg
+[2025-09-17 08:37:16] Response from www.bridgebase.com: <svg viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M8.70728 20H5.70728V18M8.70728 20V16H12.7073M8.70728 20H12.7073M16.7073 20H19.7073V18M16.7073 20V16H12.7073M16.7073 20...
+[2025-09-17 08:37:16] Request: GET www.bridgebase.com/arcade/web_conversion_modal/assets/bbocoin.svg
+[2025-09-17 08:37:16] Response from www.bridgebase.com: <svg viewBox="3.5 2.8 22.5 22.5" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M14.7073 24C20.2301 24 24.7073 19.5228 24.7073 14C24.7073 8.47715 20.2301 4 14.7073 4C9.18443 4 4.70728 8.4771...
+[2025-09-17 08:37:16] JSON detected: {"leaders": ["sheryn6", "31350", "cu525", "17950", "olape", "15120", "aphorism33", "14540", "tonny878147", "11240", "portebleue30", "11080", "cnp5302", "10800", "97seville", "10480", "drockleung4", "1...
+[2025-09-17 08:37:17] JSON detected: {"players": 5029}...
+[2025-09-17 08:37:17] Request: GET www.bridgebase.com/arcade/web_conversion_modal/assets/main5.svg
+[2025-09-17 08:37:17] Response from www.bridgebase.com: <svg width="356" height="250" viewBox="0 0 356 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_153_3884)">
+<path d="M19.4399 113.18L81.1699 68.2902L99.7899 85.2402L147.51...
+[2025-09-17 08:37:17] Request: GET gibrest.bridgebase.com/u_dealer/u_dealer.php?reuse=y&n=1&c=hcp(south)%3E%3Dhcp(west)%20%20%26%26%20hcp(south)%3E%3Dhcp(north)%20%26%26%20hcp(south)%3E%3Dhcp(east)%20%2F*%20b%3D0%20*%2F%20&cb=7755453033856308
+[2025-09-17 08:37:17] Response from gibrest.bridgebase.com: <?xml version="1.0" encoding="UTF-8"?>
+<sc_deals c="6" err="0" errmsg="">
+  <sc_deal north="S54HK9862D62CKT65" east="SA97HT7DK95CAJ982" south="SKQ862HA43DQJ87CQ" west="SJT3HQJ5DAT43C743"/>
+</sc_deals>...
+[2025-09-17 08:37:17] Full response saved to bbo_response_1758091037.txt
+[2025-09-17 08:37:17] Found <sc_deal> tag in response
+[2025-09-17 08:37:17] Found deal tag: north="S54HK9862D62CKT65" east="SA97HT7DK95CAJ982" south="SKQ862HA43DQJ87CQ" west="SJT3HQJ5DAT43C743"
+[2025-09-17 08:37:17] Extracted north hand: S54HK9862D62CKT65
+[2025-09-17 08:37:17] Extracted east hand: SA97HT7DK95CAJ982
+[2025-09-17 08:37:17] Extracted south hand: SKQ862HA43DQJ87CQ
+[2025-09-17 08:37:17] Extracted west hand: SJT3HQJ5DAT43C743
+[2025-09-17 08:37:18] Request: GET gibrest.bridgebase.com/u_bm/robot.php?sc=tp&pov=N&d=N&v=-&s=kq862.a43.qj87.q&w=jt3.qj5.at43.743&n=54.k9862.62.kt65&e=a97.t7.k95.aj982&h=
+[2025-09-17 08:37:18] Response from gibrest.bridgebase.com: <?xml version="1.0" encoding="UTF-8"?>
+<sc_bm pov="N" d="N" v="-" n="54.k9862.62.kt65" s="kq862.a43.qj87.q" e="a97.t7.k95.aj982" w="jt3.qj5.at43.743" h="" o="" bm="n" ac="n" rc="0" c="y" gv="43">
+  <r...
+[2025-09-17 08:37:18] Full response saved to bbo_response_1758091038.txt
+[2025-09-17 08:37:18] Found <sc_bm> tag in response
+[2025-09-17 08:37:18] Could not extract h attribute from sc_bm
+[2025-09-17 08:37:18] Request: GET gibrest.bridgebase.com/u_bm/robot.php?sc=tp&pov=E&d=N&v=-&s=kq862.a43.qj87.q&w=jt3.qj5.at43.743&n=54.k9862.62.kt65&e=a97.t7.k95.aj982&h=p
+[2025-09-17 08:37:18] Response from gibrest.bridgebase.com: <?xml version="1.0" encoding="UTF-8"?>
+<sc_bm pov="E" d="N" v="-" n="54.k9862.62.kt65" s="kq862.a43.qj87.q" e="a97.t7.k95.aj982" w="jt3.qj5.at43.743" h="p" o="" bm="n" ac="n" rc="0" c="y" gv="43">
+  <...
+[2025-09-17 08:37:18] Full response saved to bbo_response_1758091038.txt
+[2025-09-17 08:37:18] Found <sc_bm> tag in response
+[2025-09-17 08:37:18] Actions: ['p']
+[2025-09-17 08:37:18] Processing action: p
+[2025-09-17 08:37:19] Request: GET gibrest.bridgebase.com/u_bm/u_bm.php?ios13hack=w02&t=g&s=P-1C-*
+[2025-09-17 08:37:19] Response from gibrest.bridgebase.com: <?xml version="1.0" encoding="UTF-8"?>
+<sc_bm request_id="" t="g" s="P-1C-*" err="0" c="y" ch="n" gv="43">
+  <r b="p" m="No suitable call -- 16- total points"/>
+  <r b="d" m="Takeout double -- 2- !C; ...
+[2025-09-17 08:37:19] Full response saved to bbo_response_1758091039.txt
+[2025-09-17 08:37:19] Found <sc_bm> tag in response
+[2025-09-17 08:37:19] Actions: ['n']
+[2025-09-17 08:37:21] JSON detected: {"metadata": {"bucket": "monitor"}, "timestamp": 1758090988697, "changes": [{"id": "c521b443-368f-2e18-a853-066abaa1e9e3", "last_modified": 1758090988697, "bucket": "blocklists", "collection": "addons...
+[2025-09-17 08:37:21] JSON detected: {"metadata": {"schema": {"type": "object", "properties": {"attachment": {"type": "object", "title": "The attachment itself", "properties": {"hash": {"type": "string", "title": "Hash"}, "size": {"type"...
+[2025-09-17 08:37:21] JSON detected: {"metadata": {"flags": ["startup"], "signature": {"ref": "3tkxjrn80zcka1e02nz9y9qq42", "x5u": "https://content-signature-2.cdn.mozilla.net/g/chains/202402/remote-settings.content-signature.mozilla.org...
+[2025-09-17 08:37:21] JSON detected: {"metadata": {"sort": "-last_modified", "flags": ["startup"], "schema": {"type": "object", "title": "URLClassifierExceptionListEntry", "required": ["bugIds", "category", "urlPattern", "classifierFeatu...
+[2025-09-17 08:37:21] JSON detected: {"metadata": {"flags": ["startup"], "schema": {"type": "object", "required": ["Type", "Name"], "properties": {"Name": {"type": "string", "title": "Tracking list name", "description": "Name of the trac...
+[2025-09-17 08:37:21] JSON detected: {"metadata": {"schema": {"type": "object", "properties": {"name": {"type": "string", "title": "Name", "description": "The name of the browser (e.g. Chrome, Firefox for Android, \u2026)"}, "status": {"...
+[2025-09-17 08:37:21] Request: GET gibrest.bridgebase.com/u_bm/robot.php?sc=tp&pov=W&d=N&v=-&s=kq862.a43.qj87.q&w=jt3.qj5.at43.743&n=54.k9862.62.kt65&e=a97.t7.k95.aj982&h=p-1c-1h
+[2025-09-17 08:37:21] Response from gibrest.bridgebase.com: <?xml version="1.0" encoding="UTF-8"?>
+<sc_bm pov="W" d="N" v="-" n="54.k9862.62.kt65" s="kq862.a43.qj87.q" e="a97.t7.k95.aj982" w="jt3.qj5.at43.743" h="p-1c-1h" o="" bm="n" ac="n" rc="0" c="n" gv="43...
+[2025-09-17 08:37:21] Full response saved to bbo_response_1758091041.txt
+[2025-09-17 08:37:21] Found <sc_bm> tag in response
+[2025-09-17 08:37:21] Actions: ['p', '1c', '1h']
+[2025-09-17 08:37:21] Processing action: 1c
+[2025-09-17 08:37:21] Processing action: 1h
+[2025-09-17 08:37:22] Request: GET gibrest.bridgebase.com/u_bm/robot.php?sc=tp&pov=N&d=N&v=-&s=kq862.a43.qj87.q&w=jt3.qj5.at43.743&n=54.k9862.62.kt65&e=a97.t7.k95.aj982&h=p-1c-1h-1n
+[2025-09-17 08:37:22] Response from gibrest.bridgebase.com: <?xml version="1.0" encoding="UTF-8"?>
+<sc_bm pov="N" d="N" v="-" n="54.k9862.62.kt65" s="kq862.a43.qj87.q" e="a97.t7.k95.aj982" w="jt3.qj5.at43.743" h="p-1c-1h-1n" o="" bm="n" ac="n" rc="0" c="n" gv=...
+[2025-09-17 08:37:22] Full response saved to bbo_response_1758091042.txt
+[2025-09-17 08:37:22] Found <sc_bm> tag in response
+[2025-09-17 08:37:22] Actions: ['p', '1c', '1h', '1n']
+[2025-09-17 08:37:22] Processing action: 1n
+[2025-09-17 08:37:22] Request: GET gibrest.bridgebase.com/u_bm/robot.php?sc=tp&pov=E&d=N&v=-&s=kq862.a43.qj87.q&w=jt3.qj5.at43.743&n=54.k9862.62.kt65&e=a97.t7.k95.aj982&h=p-1c-1h-1n-2h
+[2025-09-17 08:37:22] Response from gibrest.bridgebase.com: <?xml version="1.0" encoding="UTF-8"?>
+<sc_bm pov="E" d="N" v="-" n="54.k9862.62.kt65" s="kq862.a43.qj87.q" e="a97.t7.k95.aj982" w="jt3.qj5.at43.743" h="p-1c-1h-1n-2h" o="" bm="n" ac="n" rc="0" c="n" ...
+[2025-09-17 08:37:22] Full response saved to bbo_response_1758091042.txt
+[2025-09-17 08:37:22] Found <sc_bm> tag in response
+[2025-09-17 08:37:22] Actions: ['p', '1c', '1h', '1n', '2h']
+[2025-09-17 08:37:22] Processing action: 2h
+[2025-09-17 08:37:22] Request: GET gibrest.bridgebase.com/u_bm/u_bm.php?ios13hack=w02&t=g&s=P-1C-1H-1n-2H-P-*
+[2025-09-17 08:37:22] Response from gibrest.bridgebase.com: <?xml version="1.0" encoding="UTF-8"?>
+<sc_bm request_id="" t="g" s="P-1C-1H-1n-2H-P-*" err="0" c="y" ch="n" gv="43">
+  <r b="p" m="No suitable call -- 5+ !H; 8+ HCP; 9-15 total points"/>
+  <r b="7n" ...
+[2025-09-17 08:37:22] Full response saved to bbo_response_1758091042.txt
+[2025-09-17 08:37:22] Found <sc_bm> tag in response
+[2025-09-17 08:37:22] Actions: ['n']
+[2025-09-17 08:37:33] JSON detected: {"metadata": {"bucket": "monitor"}, "timestamp": 1758090988697, "changes": []}...
+[2025-09-17 08:37:33] JSON detected: {"request_time": "2025-09-17T06:37:35.706295624Z", "country": "AT"}...
+[2025-09-17 08:37:39] Request: GET gibrest.bridgebase.com/u_bm/robot.php?sc=tp&pov=W&d=N&v=-&s=kq862.a43.qj87.q&w=jt3.qj5.at43.743&n=54.k9862.62.kt65&e=a97.t7.k95.aj982&h=p-1c-1h-1n-2h-p-3d
+[2025-09-17 08:37:39] Response from gibrest.bridgebase.com: <?xml version="1.0" encoding="UTF-8"?>
+<sc_bm pov="W" d="N" v="-" n="54.k9862.62.kt65" s="kq862.a43.qj87.q" e="a97.t7.k95.aj982" w="jt3.qj5.at43.743" h="p-1c-1h-1n-2h-p-3d" o="" bm="n" ac="n" rc="0" c...
+[2025-09-17 08:37:39] Full response saved to bbo_response_1758091059.txt
+[2025-09-17 08:37:39] Found <sc_bm> tag in response
+[2025-09-17 08:37:39] Actions: ['p', '1c', '1h', '1n', '2h', 'p', '3d']
+[2025-09-17 08:37:39] Processing action: 1c
+[2025-09-17 08:37:39] Processing action: 1h
+[2025-09-17 08:37:39] Processing action: 1n
+[2025-09-17 08:37:39] Processing action: 2h
+[2025-09-17 08:37:39] Processing action: p
+[2025-09-17 08:37:39] Processing action: 3d
+[2025-09-17 08:37:39] Request: GET gibrest.bridgebase.com/u_bm/robot.php?sc=tp&pov=N&d=N&v=-&s=kq862.a43.qj87.q&w=jt3.qj5.at43.743&n=54.k9862.62.kt65&e=a97.t7.k95.aj982&h=p-1c-1h-1n-2h-p-3d-p
+[2025-09-17 08:37:39] Response from gibrest.bridgebase.com: <?xml version="1.0" encoding="UTF-8"?>
+<sc_bm pov="N" d="N" v="-" n="54.k9862.62.kt65" s="kq862.a43.qj87.q" e="a97.t7.k95.aj982" w="jt3.qj5.at43.743" h="p-1c-1h-1n-2h-p-3d-p" o="" bm="n" ac="n" rc="0"...
+[2025-09-17 08:37:39] Full response saved to bbo_response_1758091059.txt
+[2025-09-17 08:37:39] Found <sc_bm> tag in response
+[2025-09-17 08:37:39] Actions: ['p', '1c', '1h', '1n', '2h', 'p', '3d', 'p']
+[2025-09-17 08:37:39] Processing action: p
+[2025-09-17 08:37:39] Request: GET gibrest.bridgebase.com/u_bm/robot.php?sc=tp&pov=E&d=N&v=-&s=kq862.a43.qj87.q&w=jt3.qj5.at43.743&n=54.k9862.62.kt65&e=a97.t7.k95.aj982&h=p-1c-1h-1n-2h-p-3d-p-4h
+[2025-09-17 08:37:39] Response from gibrest.bridgebase.com: <?xml version="1.0" encoding="UTF-8"?>
+<sc_bm pov="E" d="N" v="-" n="54.k9862.62.kt65" s="kq862.a43.qj87.q" e="a97.t7.k95.aj982" w="jt3.qj5.at43.743" h="p-1c-1h-1n-2h-p-3d-p-4h" o="" bm="n" ac="n" rc=...
+[2025-09-17 08:37:39] Full response saved to bbo_response_1758091059.txt
+[2025-09-17 08:37:39] Found <sc_bm> tag in response
+[2025-09-17 08:37:39] Actions: ['p', '1c', '1h', '1n', '2h', 'p', '3d', 'p', '4h']
+[2025-09-17 08:37:39] Processing action: 4h
+[2025-09-17 08:37:40] Request: GET gibrest.bridgebase.com/u_bm/u_bm.php?ios13hack=w02&t=g&s=P-1C-1H-1n-2H-P-3D-P-4H-P-*
+[2025-09-17 08:37:40] Response from gibrest.bridgebase.com: <?xml version="1.0" encoding="UTF-8"?>
+<sc_bm request_id="" t="g" s="P-1C-1H-1n-2H-P-3D-P-4H-P-*" err="0" c="n" ch="n" gv="43">
+  <r b="p" m="No suitable call -- 3+ !D; 5+ !H; 17- HCP; Q+ in !D; 16-18...
+[2025-09-17 08:37:40] Full response saved to bbo_response_1758091060.txt
+[2025-09-17 08:37:40] Found <sc_bm> tag in response
+[2025-09-17 08:37:40] Actions: ['n']
+[2025-09-17 08:37:41] Request: GET gibrest.bridgebase.com/u_bm/robot.php?sc=tp&pov=W&d=N&v=-&s=kq862.a43.qj87.q&w=jt3.qj5.at43.743&n=54.k9862.62.kt65&e=a97.t7.k95.aj982&h=p-1c-1h-1n-2h-p-3d-p-4h-p-p
+[2025-09-17 08:37:41] Response from gibrest.bridgebase.com: <?xml version="1.0" encoding="UTF-8"?>
+<sc_bm pov="W" d="N" v="-" n="54.k9862.62.kt65" s="kq862.a43.qj87.q" e="a97.t7.k95.aj982" w="jt3.qj5.at43.743" h="p-1c-1h-1n-2h-p-3d-p-4h-p-p" o="" bm="n" ac="n"...
+[2025-09-17 08:37:41] Full response saved to bbo_response_1758091061.txt
+[2025-09-17 08:37:41] Found <sc_bm> tag in response
+[2025-09-17 08:37:41] Actions: ['p', '1c', '1h', '1n', '2h', 'p', '3d', 'p', '4h', 'p', 'p']
+[2025-09-17 08:37:41] Processing action: 1c
+[2025-09-17 08:37:41] Processing action: 1h
+[2025-09-17 08:37:41] Processing action: 1n
+[2025-09-17 08:37:41] Processing action: 2h
+[2025-09-17 08:37:41] Processing action: p
+[2025-09-17 08:37:41] Processing action: 3d
+[2025-09-17 08:37:41] Processing action: p
+[2025-09-17 08:37:41] Processing action: 4h
+[2025-09-17 08:37:41] Processing action: p
+[2025-09-17 08:37:41] Processing action: p
+[2025-09-17 08:37:41] Request: GET gibrest.bridgebase.com/u_bm/robot.php?sc=tp&pov=W&d=N&v=-&s=kq862.a43.qj87.q&w=jt3.qj5.at43.743&n=54.k9862.62.kt65&e=a97.t7.k95.aj982&h=p-1c-1h-1n-2h-p-3d-p-4h-p-p-p
+[2025-09-17 08:37:41] Response from gibrest.bridgebase.com: <?xml version="1.0" encoding="UTF-8"?>
+<sc_bm pov="W" d="N" v="-" n="54.k9862.62.kt65" s="kq862.a43.qj87.q" e="a97.t7.k95.aj982" w="jt3.qj5.at43.743" h="p-1c-1h-1n-2h-p-3d-p-4h-p-p-p" o="" bm="n" ac="...
+[2025-09-17 08:37:41] Full response saved to bbo_response_1758091061.txt
+[2025-09-17 08:37:41] Found <sc_bm> tag in response
+[2025-09-17 08:37:41] Actions: ['p', '1c', '1h', '1n', '2h', 'p', '3d', 'p', '4h', 'p', 'p', 'p']
+[2025-09-17 08:37:41] Processing action: p
+[2025-09-17 08:37:48] Request: GET gibrest.bridgebase.com/u_bm/robot.php?sc=tp&pov=E&d=N&v=-&s=kq862.a43.qj87.q&w=jt3.qj5.at43.743&n=54.k9862.62.kt65&e=a97.t7.k95.aj982&h=p-1c-1h-1n-2h-p-3d-p-4h-p-p-p-SJ-S5
+[2025-09-17 08:37:48] Response from gibrest.bridgebase.com: <?xml version="1.0" encoding="UTF-8"?>
+<sc_bm pov="E" d="N" v="-" n="54.k9862.62.kt65" s="kq862.a43.qj87.q" e="a97.t7.k95.aj982" w="jt3.qj5.at43.743" h="p-1c-1h-1n-2h-p-3d-p-4h-p-p-p-SJ-S5" o="" bm="n...
+[2025-09-17 08:37:48] Full response saved to bbo_response_1758091068.txt
+[2025-09-17 08:37:48] Found <sc_bm> tag in response
+[2025-09-17 08:37:48] Actions: ['p', '1c', '1h', '1n', '2h', 'p', '3d', 'p', '4h', 'p', 'p', 'p', 'SJ', 'S5']
+[2025-09-17 08:37:48] Processing action: SJ
+[2025-09-17 08:37:48] Card SJ belongs to West
+[2025-09-17 08:37:48] Processing action: S5
+[2025-09-17 08:37:48] Card S5 belongs to North
+[2025-09-17 08:38:05] Request: GET gibrest.bridgebase.com/u_bm/robot.php?sc=tp&pov=W&d=N&v=-&s=kq862.a43.qj87.q&w=jt3.qj5.at43.743&n=54.k9862.62.kt65&e=a97.t7.k95.aj982&h=p-1c-1h-1n-2h-p-3d-p-4h-p-p-p-SJ-S5-S9-SQ-S6
+[2025-09-17 08:38:05] Response from gibrest.bridgebase.com: <?xml version="1.0" encoding="UTF-8"?>
+<sc_bm pov="W" d="N" v="-" n="54.k9862.62.kt65" s="kq862.a43.qj87.q" e="a97.t7.k95.aj982" w="jt3.qj5.at43.743" h="p-1c-1h-1n-2h-p-3d-p-4h-p-p-p-SJ-S5-S9-SQ-S6" o...
+[2025-09-17 08:38:05] Full response saved to bbo_response_1758091085.txt
+[2025-09-17 08:38:05] Found <sc_bm> tag in response
+[2025-09-17 08:38:05] Actions: ['p', '1c', '1h', '1n', '2h', 'p', '3d', 'p', '4h', 'p', 'p', 'p', 'SJ', 'S5', 'S9', 'SQ', 'S6']
+[2025-09-17 08:38:05] Processing action: S9
+[2025-09-17 08:38:05] Card S9 belongs to East
+[2025-09-17 08:38:05] Processing action: SQ
+[2025-09-17 08:38:05] Card SQ belongs to South
+[2025-09-17 08:38:05] Processing action: S6
+[2025-09-17 08:38:05] Card S6 belongs to South
