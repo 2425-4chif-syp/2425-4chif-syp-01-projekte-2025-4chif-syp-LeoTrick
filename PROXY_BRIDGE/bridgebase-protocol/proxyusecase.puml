@@ -1,0 +1,28 @@
+@startuml
+left to right direction
+
+actor "User" as User
+
+rectangle "Schneller Surfen" {
+  usecase "Häufig geklickte Links memorieren" as UC_Memory
+  usecase "Häufig geklickte Links hervorheben" as UC_Highlight
+}
+
+rectangle "Barrierefreies Browsen" {
+  usecase "Schriftgröße anpassen\n(Mindestens 12, größere bleiben)" as UC_Font
+  usecase "Schimpfwörter filtern\n(***** ersetzen)" as UC_Profanity
+  usecase "Werbung blockieren\n(Banner/Pop-ups entfernen)" as UC_Ads
+  usecase "Farben anpassen\n(Benutzerspezifische Farb-Map)" as UC_Color
+  usecase "Personalisierte Barrierefreiheit" as UC_Personal
+}
+
+' Verbindungen mit Linien statt Pfeilen
+User -- UC_Font
+User -- UC_Profanity
+User -- UC_Ads
+User -- UC_Color
+User -- UC_Personal
+User -- UC_Memory
+User -- UC_Highlight
+
+@enduml
