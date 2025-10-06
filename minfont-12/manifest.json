@@ -1,0 +1,37 @@
+{
+  "manifest_version": 2,
+  "name": "MinFont (clean) + Colorblind + Profanity + Hotlinks",
+  "version": "2.2.0",
+  "description": "Saubere Struktur. Mindest-Schrift (12–50 px) mit Toggle, Farbmodi, Schimpfwort-Filter, Link-Highlight.",
+  "icons": { "48": "icon48.png", "96": "icon96.png" },
+
+  "permissions": ["storage", "tabs", "<all_urls>", "activeTab"],
+
+  "browser_action": {
+    "default_title": "MinFont Controller",
+    "default_popup": "popup.html"
+  },
+
+  "background": {
+    "scripts": ["background.js"]
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "all_frames": true,
+      "run_at": "document_start",
+      "js": [
+        "content/util.js",
+        "content/state.js",
+        "content/font.js",
+        "content/color.js",
+        "content/profanity.js",
+        "content/hotlinks.js",
+        "content/adblocker.js",
+        "content/autofill.js",
+        "content/main.js"
+      ]
+    }
+  ]
+}

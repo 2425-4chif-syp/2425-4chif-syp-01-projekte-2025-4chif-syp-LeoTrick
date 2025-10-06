@@ -1,0 +1,358 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    :root { --gap:8px; }
+    body { font:14px system-ui, sans-serif; margin:12px; width:300px; }
+    h1 { font-size:16px; margin:10px 0 8px; }
+
+    .row { display:flex; gap:var(--gap); margin-bottom:var(--gap); }
+    .btn {
+      flex:1; padding:10px; border-radius:12px; border:1px solid #d0d0d0;
+      background:#f8f8f8; cursor:pointer; text-align:left; transition:background .15s, border-color .15s, color .15s;
+    }
+    .btn strong { display:block; font-size:14px; }
+    .btn small { display:block; opacity:.85; font-size:12px; }
+
+    /* Toggle: klar grün/rot */
+    #toggle.on  { background:#eaffee; border-color:#2ecc71; color:#0b5; }
+    #toggle.off { background:#ffefef; border-color:#e74c3c; color:#b31212; }
+
+    /* Aktive Farbenblindheit-Modi - leuchtende Hervorhebung */
+    .btn.on {
+      background: linear-gradient(135deg, #3498db, #2980b9) !important;
+      border-color: #2980b9 !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 15px rgba(52, 152, 219, 0.6), 0 0 25px rgba(52, 152, 219, 0.3) !important;
+      transform: translateY(-1px);
+      position: relative;
+    }
+    .btn.on::before {
+      content: '';
+      position: absolute;
+      top: -2px; left: -2px; right: -2px; bottom: -2px;
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      border-radius: 14px;
+      z-index: -1;
+      opacity: 0.3;
+      animation: glow-pulse 2s ease-in-out infinite alternate;
+    }
+    @keyframes glow-pulse {
+      from { box-shadow: 0 0 20px rgba(52, 152, 219, 0.4); }
+      to { box-shadow: 0 0 30px rgba(52, 152, 219, 0.8); }
+    }
+    .btn.on strong { color: #ffffff !important; }
+    .btn.on small { color: #ecf0f1 !important; opacity: 0.9; }
+
+    .toggleline { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+    .toggleline label { flex:1; cursor:pointer; user-select:none; }
+
+    /* Moderne Toggle-Schalter */
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+      cursor: pointer; /* Ganzer Schalter ist klickbar */
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ccc;
+      border-radius: 26px;
+      transition: all 0.3s ease;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    /* Hover-Effekte */
+    .toggle-switch:hover .toggle-slider {
+      background-color: #bbb;
+      transform: scale(1.02);
+    }
+    .toggle-switch:hover .toggle-slider:before {
+      box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+    }
+    
+    /* Aktiver Zustand - mit der gleichen Farbe wie die Farbmodus-Buttons */
+    input:checked + .toggle-slider {
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      box-shadow: 0 0 10px rgba(52, 152, 219, 0.4);
+    }
+    input:checked + .toggle-slider:before {
+      transform: translateX(24px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    
+    /* Hover bei aktivem Zustand */
+    input:checked + .toggle-slider:hover {
+      background: linear-gradient(135deg, #2980b9, #3498db);
+      box-shadow: 0 0 15px rgba(52, 152, 219, 0.6);
+    }
+    
+    /* Fokus-Ring für Accessibility */
+    .toggle-switch input:focus + .toggle-slider {
+      outline: 2px solid #3498db;
+      outline-offset: 2px;
+    }
+
+    /* Ausgrauen wenn Extension deaktiviert ist */
+    body.extension-disabled {
+      pointer-events: none;
+    }
+    body.extension-disabled .toggleline,
+    body.extension-disabled #sizeWrap,
+    body.extension-disabled .row,
+    body.extension-disabled h1:not(:first-child),
+    body.extension-disabled #note {
+      opacity: 0.3;
+      filter: grayscale(100%);
+      transition: opacity 0.3s ease, filter 0.3s ease;
+    }
+    body.extension-disabled #toggle {
+      pointer-events: auto; /* Toggle-Button soll weiterhin klickbar bleiben */
+    }
+
+    /* Runder Slider mit schöner grüner Füllung */
+    #sizeWrap { display:flex; flex-direction:column; gap:8px; }
+    #valueRow { display:flex; align-items:center; gap:8px; }
+    #pxLabel { font-weight:600; min-width:70px; text-align:center; }
+    #pxInput { width:80px; padding:6px; border-radius:999px; border:1px solid #ccc; text-align:center; }
+
+    #slider { width:100%; height:24px; background:transparent; cursor:pointer; -webkit-appearance:none; appearance:none; outline:none; }
+    
+    /* Firefox - native runde Füllung */
+    #slider::-moz-range-track { 
+      height:14px; 
+      border-radius:7px; 
+      background:#e8e8e8; 
+      border:1px solid #ddd; 
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    }
+    #slider::-moz-range-progress { 
+      height:14px; 
+      border-radius:7px; 
+      background:linear-gradient(90deg, #2ecc71 0%, #27ae60 100%); 
+      border:none;
+      box-shadow: 0 1px 3px rgba(46,204,113,0.3);
+    }
+    #slider::-moz-range-thumb { 
+      width:22px; 
+      height:22px; 
+      border-radius:50%; 
+      border:3px solid #fff; 
+      background:linear-gradient(135deg, #2ecc71, #27ae60); 
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2), 0 1px 3px rgba(46,204,113,0.4);
+      cursor:pointer;
+    }
+    
+    /* WebKit - simulierte runde Füllung */
+    #slider::-webkit-slider-runnable-track {
+      height:14px; 
+      border-radius:7px; 
+      background:#e8e8e8;
+      border:1px solid #ddd;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+      position:relative;
+    }
+    #slider::-webkit-slider-thumb {
+      -webkit-appearance:none; 
+      appearance:none;
+      width:22px; 
+      height:22px; 
+      border-radius:50%; 
+      border:3px solid #fff; 
+      background:linear-gradient(135deg, #2ecc71, #27ae60); 
+      margin-top:-5px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2), 0 1px 3px rgba(46,204,113,0.4);
+      cursor:pointer;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+    #slider::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.25), 0 2px 4px rgba(46,204,113,0.5);
+    }
+    #slider::-webkit-slider-thumb:active {
+      transform: scale(0.95);
+    }
+
+    /* Deaktiviert-Styles für den ganzen Block */
+    .disabled { opacity:.5; filter:grayscale(100%); pointer-events:none; user-select:none; }
+    #note { font-size:12px; opacity:.8; margin-top:6px; }
+
+    /* Auto-Fill Section */
+    .autofill-section {
+      margin-top: 12px;
+      border-top: 1px solid #e0e0e0;
+      padding-top: 12px;
+    }
+    .autofill-section h2 {
+      font-size: 14px;
+      margin: 0 0 8px 0;
+      color: #333;
+    }
+    .login-list {
+      max-height: 150px;
+      overflow-y: auto;
+    }
+    .login-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px;
+      margin-bottom: 4px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      border: 1px solid #e9ecef;
+    }
+    .login-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .login-domain {
+      font-weight: 600;
+      font-size: 12px;
+      color: #495057;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .login-username {
+      font-size: 11px;
+      color: #6c757d;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .login-delete {
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 10px;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    .login-delete:hover {
+      background: #c82333;
+    }
+    .no-logins {
+      text-align: center;
+      color: #6c757d;
+      font-size: 12px;
+      padding: 16px;
+      font-style: italic;
+    }
+    .autofill-info {
+      margin-top: 8px;
+      padding: 8px;
+      background: #e3f2fd;
+      border-radius: 6px;
+      border-left: 3px solid #2196f3;
+    }
+    .autofill-info small {
+      color: #1976d2;
+      font-size: 11px;
+      line-height: 1.3;
+    }
+  </style>
+</head>
+<body>
+  <h1>Darstellung</h1>
+  <button id="toggle" class="btn off">
+    <strong>Aktivieren</strong>
+    <small>Add-on ist aus</small>
+  </button>
+
+  <div class="toggleline">
+    <label for="fontEnabled">Schrift-Zoom aktivieren</label>
+    <div class="toggle-switch">
+      <input type="checkbox" id="fontEnabled">
+      <span class="toggle-slider"></span>
+    </div>
+  </div>
+
+  <div id="sizeWrap" class="">
+    <div id="valueRow">
+      <span id="pxLabel">16 px</span>
+      <input id="slider" type="range" min="12" max="50" step="1" value="16" />
+      <input id="pxInput" type="number" min="12" max="50" step="1" value="16" />
+    </div>
+  </div>
+
+  <h1>Farbenblindheit</h1>
+  <div class="row">
+    <button class="btn" data-mode="off"><strong>Aus</strong><small>Keine Farbänderung</small></button>
+    <button class="btn" data-mode="achroma"><strong>Graustufen</strong><small>Achromatopsie</small></button>
+  </div>
+  <div class="row">
+    <button class="btn" data-mode="deuter"><strong>Rot-Grün-Schwäche</strong><small>Deuteranopie</small></button>
+    <button class="btn" data-mode="prot"><strong>Rot-Schwäche</strong><small>Protanopie</small></button>
+  </div>
+  <div class="row">
+    <button class="btn" data-mode="trit"><strong>Blau-Gelb-Schwäche</strong><small>Tritanopie</small></button>
+  </div>
+
+  <div class="toggleline">
+    <label for="compat">Kompatibilitätsmodus (Inline-!important einmalig)</label>
+    <div class="toggle-switch">
+      <input type="checkbox" id="compat">
+      <span class="toggle-slider"></span>
+    </div>
+  </div>
+  <div class="toggleline">
+    <label for="profanity">Schimpfwörter filtern (******)</label>
+    <div class="toggle-switch">
+      <input type="checkbox" id="profanity">
+      <span class="toggle-slider"></span>
+    </div>
+  </div>
+  <div class="toggleline">
+    <label for="adBlocker">🚫 Werbung blockieren (Ad Blocker)</label>
+    <div class="toggle-switch">
+      <input type="checkbox" id="adBlocker">
+      <span class="toggle-slider"></span>
+    </div>
+  </div>
+  <div class="toggleline">
+    <label for="autoFill">🔐 Auto-Fill (Login-Daten speichern)</label>
+    <div class="toggle-switch">
+      <input type="checkbox" id="autoFill">
+      <span class="toggle-slider"></span>
+    </div>
+  </div>
+
+  <div id="autoFillSection" class="autofill-section" style="display: none;">
+    <h2>Gespeicherte Logins</h2>
+    <div id="loginList" class="login-list">
+      <div class="no-logins">Noch keine Login-Daten gespeichert</div>
+    </div>
+    <div class="autofill-info">
+      <small>💡 Gib einfach Username + Passwort ein und drücke "Anmelden" - beim nächsten Besuch werden die Daten automatisch ausgefüllt!</small>
+    </div>
+  </div>
+
+  <div id="note">Grün/Rot zeigt den Master-Status. Wenn Schrift-Zoom aus ist, ist der ganze Block deaktiviert.</div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

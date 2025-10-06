@@ -23,12 +23,12 @@ Make sure the location of your Python installation is in the PATH environment va
 1. Open up Firefox and put `about:preferences` in the address bar. 
 
 2. Search for "Proxy" in the "Find in Settings" search bar:
-![firefox preferences search](./readme-images/firefox-preferences-search.png)
+![firefox preferences search](docs/readme-images/firefox-preferences-search.png)
 
 3. The first result is what we need. Click on the "Settings..." button that is highlighted. 
 
 4. A window will open. You need to input following information:
-![firefox connection settings](./readme-images/firefox-connection-settings.png)
+![firefox connection settings](docs/readme-images/firefox-connection-settings.png)
 
 A quick overview of what you'll need to do:
 - Check "Manual proxy configuration"
@@ -44,18 +44,18 @@ A quick overview of what you'll need to do:
 
 1. Go to `about:preferences` again.
 2. Search for "certificates":
-![firefox preferences search certificates](./readme-images/firefox-prefences-search-certificates.png)
+![firefox preferences search certificates](docs/readme-images/firefox-prefences-search-certificates.png)
 3. Click on "View Certificates...". A window will pop up:
-![firefox certificate manager](./readme-images/firefox-certificate-manager.png) 
+![firefox certificate manager](docs/readme-images/firefox-certificate-manager.png) 
 4. Make sure you are in the "Authorities" tab and click on "Import..."
 5. A file selection screen will open. Type in `%USERPROFILE%\.mitmproxy` into the explorer bar. Select the `mitmproxy-ca-cert.cer` file and press on Open.
-![import certificate](./readme-images/import-certificate.png)
+![import certificate](docs/readme-images/import-certificate.png)
 6. Press on "OK" and you should be good to go! You will only need to do this step once.
 
 ### Step 3: Running the program
 
 Now you should be able to simply double-click `startproxy.bat` in the explorer to run the proxy! You don't need to touch the console window that appears, just don't close it until you're done. 
-![explorer run proxy](./readme-images/explorer-run-proxy.png)
+![explorer run proxy](docs/readme-images/explorer-run-proxy.png)
 
 ### Step 4: Playing BBO and Logging
 
@@ -70,6 +70,6 @@ The log is updated real-time in `./output.txt`.
 Simply close the console window that appeared in step 3 to close the proxy. 
 
 **However**, if you're trying to use Firefox without the proxy enabled, it will tell you that "The proxy server is refusing connections". To fix this, simply repeat points 1-3 of step #2, and make sure to check "No proxy" and click "OK":
-![firefox preferences disable proxy](./readme-images/firefox-preferences-disable-proxy.png)
+![firefox preferences disable proxy](docs/readme-images/firefox-preferences-disable-proxy.png)
 
 To then run the program again you'll have to check "Manual proxy configuration" again using step #2.
