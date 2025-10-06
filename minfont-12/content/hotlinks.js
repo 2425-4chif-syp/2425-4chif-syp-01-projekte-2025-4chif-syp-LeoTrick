@@ -3,8 +3,41 @@ window.MF = window.MF || {};
   const CLICK_LIMIT = 5;
 
   function keyFor(a){
-    try { const u = new URL(a.href, location.href); return `${u.origin}|${u.pathname}${u.search}${u.hash}`; }
-    catch { return (a.getAttribute('href') || '').trim(); }
+    // Eindeutige Identifikation für exakt dieses Element
+    // Verwende URL + Text-Inhalt + Position im DOM für Eindeutigkeit
+    try { 
+      const u = new URL(a.href, location.href);
+      const text = a.textContent.trim().substring(0, 50); // Erste 50 Zeichen des Textes
+      const xpath = getElementXPath(a);
+      return `${u.origin}|${u.pathname}${u.search}${u.hash}|${text}|${xpath}`;
+    }
+    catch { 
+      const text = a.textContent.trim().substring(0, 50);
+      const xpath = getElementXPath(a);
+      return `${(a.getAttribute('href') || '').trim()}|${text}|${xpath}`; 
+    }
+  }
+  
+  function getElementXPath(element) {
+    // Erstelle einen kurzen aber eindeutigen XPath für das Element
+    if (!element || !element.parentNode) return '';
+    
+    let path = '';
+    let current = element;
+    
+    // Nur die letzten 3 Ebenen verwenden für Eindeutigkeit ohne zu lang zu werden
+    for (let i = 0; i < 3 && current && current.parentNode; i++) {
+      let index = 1;
+      for (let sibling = current.previousSibling; sibling; sibling = sibling.previousSibling) {
+        if (sibling.nodeType === 1 && sibling.tagName === current.tagName) {
+          index++;
+        }
+      }
+      path = `/${current.tagName.toLowerCase()}[${index}]${path}`;
+      current = current.parentNode;
+    }
+    
+    return path;
   }
   function applyHot(a){
     // Nur echte Links mit href-Attribut
@@ -76,4 +109,5 @@ window.MF = window.MF || {};
   }
 
   MF.hotlinksInit = () => { clicks(); watchNew(); initialPass(); };
+  MF.applyHot = applyHot; // Exportiere für andere Module
 })();
