@@ -3,17 +3,28 @@
 <head>
   <meta charset="utf-8">
   <style>
-    :root { --gap:8px; }
-    body { font:14px system-ui, sans-serif; margin:12px; width:300px; }
-    h1 { font-size:16px; margin:10px 0 8px; }
-
-    .row { display:flex; gap:var(--gap); margin-bottom:var(--gap); }
-    .btn {
-      flex:1; padding:10px; border-radius:12px; border:1px solid #d0d0d0;
-      background:#f8f8f8; cursor:pointer; text-align:left; transition:background .15s, border-color .15s, color .15s;
+    :root { --gap:8px; --popup-scale: 1; }
+    body { 
+      font: calc(14px * var(--popup-scale)) system-ui, sans-serif; 
+      margin: calc(12px * var(--popup-scale)); 
+      width: calc(300px * var(--popup-scale)); 
+      min-height: calc(600px * var(--popup-scale));
+      transition: all 0.2s ease;
+      box-sizing: border-box;
     }
-    .btn strong { display:block; font-size:14px; }
-    .btn small { display:block; opacity:.85; font-size:12px; }
+    h1 { font-size: calc(16px * var(--popup-scale)); margin: calc(10px * var(--popup-scale)) 0 calc(8px * var(--popup-scale)); }
+
+    .row { display:flex; gap: calc(var(--gap) * var(--popup-scale)); margin-bottom: calc(var(--gap) * var(--popup-scale)); }
+    .btn {
+      flex:1; 
+      padding: calc(10px * var(--popup-scale)); 
+      border-radius: calc(12px * var(--popup-scale)); 
+      border: calc(1px * var(--popup-scale)) solid #d0d0d0;
+      background:#f8f8f8; cursor:pointer; text-align:left; 
+      transition:background .15s, border-color .15s, color .15s;
+    }
+    .btn strong { display:block; font-size: calc(14px * var(--popup-scale)); }
+    .btn small { display:block; opacity:.85; font-size: calc(12px * var(--popup-scale)); }
 
     /* Toggle: klar grün/rot */
     #toggle.on  { background:#eaffee; border-color:#2ecc71; color:#0b5; }
@@ -24,36 +35,46 @@
       background: linear-gradient(135deg, #3498db, #2980b9) !important;
       border-color: #2980b9 !important;
       color: #ffffff !important;
-      box-shadow: 0 0 15px rgba(52, 152, 219, 0.6), 0 0 25px rgba(52, 152, 219, 0.3) !important;
-      transform: translateY(-1px);
+      box-shadow: 
+        0 0 calc(15px * var(--popup-scale)) rgba(52, 152, 219, 0.6), 
+        0 0 calc(25px * var(--popup-scale)) rgba(52, 152, 219, 0.3) !important;
+      transform: translateY(calc(-1px * var(--popup-scale)));
       position: relative;
     }
     .btn.on::before {
       content: '';
       position: absolute;
-      top: -2px; left: -2px; right: -2px; bottom: -2px;
+      top: calc(-2px * var(--popup-scale)); 
+      left: calc(-2px * var(--popup-scale)); 
+      right: calc(-2px * var(--popup-scale)); 
+      bottom: calc(-2px * var(--popup-scale));
       background: linear-gradient(135deg, #3498db, #2980b9);
-      border-radius: 14px;
+      border-radius: calc(14px * var(--popup-scale));
       z-index: -1;
       opacity: 0.3;
       animation: glow-pulse 2s ease-in-out infinite alternate;
     }
     @keyframes glow-pulse {
-      from { box-shadow: 0 0 20px rgba(52, 152, 219, 0.4); }
-      to { box-shadow: 0 0 30px rgba(52, 152, 219, 0.8); }
+      from { box-shadow: 0 0 calc(20px * var(--popup-scale)) rgba(52, 152, 219, 0.4); }
+      to { box-shadow: 0 0 calc(30px * var(--popup-scale)) rgba(52, 152, 219, 0.8); }
     }
     .btn.on strong { color: #ffffff !important; }
     .btn.on small { color: #ecf0f1 !important; opacity: 0.9; }
 
-    .toggleline { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+    .toggleline { 
+      display:flex; 
+      align-items:center; 
+      gap: calc(8px * var(--popup-scale)); 
+      margin-bottom: calc(8px * var(--popup-scale)); 
+    }
     .toggleline label { flex:1; cursor:pointer; user-select:none; }
 
     /* Moderne Toggle-Schalter */
     .toggle-switch {
       position: relative;
       display: inline-block;
-      width: 50px;
-      height: 26px;
+      width: calc(50px * var(--popup-scale));
+      height: calc(26px * var(--popup-scale));
       cursor: pointer; /* Ganzer Schalter ist klickbar */
     }
     .toggle-switch input {
@@ -66,21 +87,21 @@
       cursor: pointer;
       top: 0; left: 0; right: 0; bottom: 0;
       background-color: #ccc;
-      border-radius: 26px;
+      border-radius: calc(26px * var(--popup-scale));
       transition: all 0.3s ease;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: inset 0 calc(2px * var(--popup-scale)) calc(4px * var(--popup-scale)) rgba(0,0,0,0.1);
     }
     .toggle-slider:before {
       position: absolute;
       content: "";
-      height: 20px;
-      width: 20px;
-      left: 3px;
-      bottom: 3px;
+      height: calc(20px * var(--popup-scale));
+      width: calc(20px * var(--popup-scale));
+      left: calc(3px * var(--popup-scale));
+      bottom: calc(3px * var(--popup-scale));
       background-color: white;
       border-radius: 50%;
       transition: all 0.3s ease;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      box-shadow: 0 calc(2px * var(--popup-scale)) calc(4px * var(--popup-scale)) rgba(0,0,0,0.2);
     }
     
     /* Hover-Effekte */
@@ -89,29 +110,29 @@
       transform: scale(1.02);
     }
     .toggle-switch:hover .toggle-slider:before {
-      box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+      box-shadow: 0 calc(3px * var(--popup-scale)) calc(6px * var(--popup-scale)) rgba(0,0,0,0.3);
     }
     
     /* Aktiver Zustand - mit der gleichen Farbe wie die Farbmodus-Buttons */
     input:checked + .toggle-slider {
       background: linear-gradient(135deg, #3498db, #2980b9);
-      box-shadow: 0 0 10px rgba(52, 152, 219, 0.4);
+      box-shadow: 0 0 calc(10px * var(--popup-scale)) rgba(52, 152, 219, 0.4);
     }
     input:checked + .toggle-slider:before {
-      transform: translateX(24px);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      transform: translateX(calc(24px * var(--popup-scale)));
+      box-shadow: 0 calc(2px * var(--popup-scale)) calc(8px * var(--popup-scale)) rgba(0,0,0,0.3);
     }
     
     /* Hover bei aktivem Zustand */
     input:checked + .toggle-slider:hover {
       background: linear-gradient(135deg, #2980b9, #3498db);
-      box-shadow: 0 0 15px rgba(52, 152, 219, 0.6);
+      box-shadow: 0 0 calc(15px * var(--popup-scale)) rgba(52, 152, 219, 0.6);
     }
     
     /* Fokus-Ring für Accessibility */
     .toggle-switch input:focus + .toggle-slider {
-      outline: 2px solid #3498db;
-      outline-offset: 2px;
+      outline: calc(2px * var(--popup-scale)) solid #3498db;
+      outline-offset: calc(2px * var(--popup-scale));
     }
 
     /* Ausgrauen wenn Extension deaktiviert ist */
@@ -132,63 +153,97 @@
     }
 
     /* Runder Slider mit schöner grüner Füllung */
-    #sizeWrap { display:flex; flex-direction:column; gap:8px; }
-    #valueRow { display:flex; align-items:center; gap:8px; }
-    #pxLabel { font-weight:600; min-width:70px; text-align:center; }
-    #pxInput { width:80px; padding:6px; border-radius:999px; border:1px solid #ccc; text-align:center; }
+    #sizeWrap { 
+      display:flex; 
+      flex-direction:column; 
+      gap: calc(8px * var(--popup-scale)); 
+    }
+    #valueRow { 
+      display:flex; 
+      align-items:center; 
+      gap: calc(8px * var(--popup-scale)); 
+    }
+    #pxLabel { 
+      font-weight:600; 
+      min-width: calc(70px * var(--popup-scale)); 
+      text-align:center; 
+      font-size: calc(14px * var(--popup-scale));
+    }
+    #pxInput { 
+      width: calc(80px * var(--popup-scale)); 
+      padding: calc(6px * var(--popup-scale)); 
+      border-radius: calc(999px * var(--popup-scale)); 
+      border: calc(1px * var(--popup-scale)) solid #ccc; 
+      text-align:center;
+      font-size: calc(14px * var(--popup-scale));
+    }
 
-    #slider { width:100%; height:24px; background:transparent; cursor:pointer; -webkit-appearance:none; appearance:none; outline:none; }
+    #slider { 
+      width:100%; 
+      height: calc(24px * var(--popup-scale)); 
+      background:transparent; 
+      cursor:pointer; 
+      -webkit-appearance:none; 
+      appearance:none; 
+      outline:none; 
+    }
     
     /* Firefox - native runde Füllung */
     #slider::-moz-range-track { 
-      height:14px; 
-      border-radius:7px; 
+      height: calc(14px * var(--popup-scale)); 
+      border-radius: calc(7px * var(--popup-scale)); 
       background:#e8e8e8; 
-      border:1px solid #ddd; 
-      box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+      border: calc(1px * var(--popup-scale)) solid #ddd; 
+      box-shadow: inset 0 calc(1px * var(--popup-scale)) calc(2px * var(--popup-scale)) rgba(0,0,0,0.1);
     }
     #slider::-moz-range-progress { 
-      height:14px; 
-      border-radius:7px; 
+      height: calc(14px * var(--popup-scale)); 
+      border-radius: calc(7px * var(--popup-scale)); 
       background:linear-gradient(90deg, #2ecc71 0%, #27ae60 100%); 
       border:none;
-      box-shadow: 0 1px 3px rgba(46,204,113,0.3);
+      box-shadow: 0 calc(1px * var(--popup-scale)) calc(3px * var(--popup-scale)) rgba(46,204,113,0.3);
     }
     #slider::-moz-range-thumb { 
-      width:22px; 
-      height:22px; 
+      width: calc(22px * var(--popup-scale)); 
+      height: calc(22px * var(--popup-scale)); 
       border-radius:50%; 
-      border:3px solid #fff; 
+      border: calc(3px * var(--popup-scale)) solid #fff; 
       background:linear-gradient(135deg, #2ecc71, #27ae60); 
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2), 0 1px 3px rgba(46,204,113,0.4);
+      box-shadow: 
+        0 calc(2px * var(--popup-scale)) calc(6px * var(--popup-scale)) rgba(0,0,0,0.2), 
+        0 calc(1px * var(--popup-scale)) calc(3px * var(--popup-scale)) rgba(46,204,113,0.4);
       cursor:pointer;
     }
     
     /* WebKit - simulierte runde Füllung */
     #slider::-webkit-slider-runnable-track {
-      height:14px; 
-      border-radius:7px; 
+      height: calc(14px * var(--popup-scale)); 
+      border-radius: calc(7px * var(--popup-scale)); 
       background:#e8e8e8;
-      border:1px solid #ddd;
-      box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+      border: calc(1px * var(--popup-scale)) solid #ddd;
+      box-shadow: inset 0 calc(1px * var(--popup-scale)) calc(2px * var(--popup-scale)) rgba(0,0,0,0.1);
       position:relative;
     }
     #slider::-webkit-slider-thumb {
       -webkit-appearance:none; 
       appearance:none;
-      width:22px; 
-      height:22px; 
+      width: calc(22px * var(--popup-scale)); 
+      height: calc(22px * var(--popup-scale)); 
       border-radius:50%; 
-      border:3px solid #fff; 
+      border: calc(3px * var(--popup-scale)) solid #fff; 
       background:linear-gradient(135deg, #2ecc71, #27ae60); 
-      margin-top:-5px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2), 0 1px 3px rgba(46,204,113,0.4);
+      margin-top: calc(-5px * var(--popup-scale));
+      box-shadow: 
+        0 calc(2px * var(--popup-scale)) calc(6px * var(--popup-scale)) rgba(0,0,0,0.2), 
+        0 calc(1px * var(--popup-scale)) calc(3px * var(--popup-scale)) rgba(46,204,113,0.4);
       cursor:pointer;
       transition: transform 0.1s ease, box-shadow 0.1s ease;
     }
     #slider::-webkit-slider-thumb:hover {
       transform: scale(1.1);
-      box-shadow: 0 3px 8px rgba(0,0,0,0.25), 0 2px 4px rgba(46,204,113,0.5);
+      box-shadow: 
+        0 calc(3px * var(--popup-scale)) calc(8px * var(--popup-scale)) rgba(0,0,0,0.25), 
+        0 calc(2px * var(--popup-scale)) calc(4px * var(--popup-scale)) rgba(46,204,113,0.5);
     }
     #slider::-webkit-slider-thumb:active {
       transform: scale(0.95);
@@ -196,87 +251,106 @@
 
     /* Deaktiviert-Styles für den ganzen Block */
     .disabled { opacity:.5; filter:grayscale(100%); pointer-events:none; user-select:none; }
-    #note { font-size:12px; opacity:.8; margin-top:6px; }
+    #note { font-size: calc(12px * var(--popup-scale)); opacity:.8; margin-top: calc(6px * var(--popup-scale)); }
 
-    /* Auto-Fill Section */
-    .autofill-section {
-      margin-top: 12px;
-      border-top: 1px solid #e0e0e0;
-      padding-top: 12px;
-    }
-    .autofill-section h2 {
-      font-size: 14px;
-      margin: 0 0 8px 0;
-      color: #333;
-    }
-    .login-list {
-      max-height: 150px;
-      overflow-y: auto;
-    }
-    .login-item {
+    /* Vergrößerungsleiste */
+    .resize-bar {
+      position: sticky;
+      top: 0;
+      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+      border-bottom: calc(1px * var(--popup-scale)) solid #dee2e6;
+      padding: calc(8px * var(--popup-scale)) calc(12px * var(--popup-scale));
+      margin: calc(-12px * var(--popup-scale)) calc(-12px * var(--popup-scale)) calc(12px * var(--popup-scale)) calc(-12px * var(--popup-scale));
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 8px;
-      margin-bottom: 4px;
-      background: #f8f9fa;
-      border-radius: 6px;
-      border: 1px solid #e9ecef;
+      gap: calc(10px * var(--popup-scale));
+      z-index: 1000;
+      box-shadow: 0 calc(2px * var(--popup-scale)) calc(4px * var(--popup-scale)) rgba(0,0,0,0.1);
     }
-    .login-info {
-      flex: 1;
-      min-width: 0;
-    }
-    .login-domain {
+    .resize-bar .resize-label {
+      font-size: calc(12px * var(--popup-scale));
       font-weight: 600;
-      font-size: 12px;
       color: #495057;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      min-width: calc(60px * var(--popup-scale));
     }
-    .login-username {
-      font-size: 11px;
-      color: #6c757d;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+    .resize-bar .resize-slider {
+      flex: 1;
+      height: calc(20px * var(--popup-scale));
+      background: transparent;
+      cursor: pointer;
+      -webkit-appearance: none;
+      appearance: none;
+      outline: none;
     }
-    .login-delete {
-      background: #dc3545;
+    .resize-bar .resize-slider::-webkit-slider-runnable-track {
+      height: calc(6px * var(--popup-scale));
+      border-radius: calc(3px * var(--popup-scale));
+      background: linear-gradient(90deg, #6c757d 0%, #495057 100%);
+      border: none;
+    }
+    .resize-bar .resize-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: calc(18px * var(--popup-scale));
+      height: calc(18px * var(--popup-scale));
+      border-radius: 50%;
+      background: linear-gradient(135deg, #007bff, #0056b3);
+      border: calc(2px * var(--popup-scale)) solid #fff;
+      margin-top: calc(-6px * var(--popup-scale));
+      box-shadow: 0 calc(2px * var(--popup-scale)) calc(4px * var(--popup-scale)) rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+    .resize-bar .resize-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+    .resize-bar .resize-slider::-moz-range-track {
+      height: calc(6px * var(--popup-scale));
+      border-radius: calc(3px * var(--popup-scale));
+      background: linear-gradient(90deg, #6c757d 0%, #495057 100%);
+      border: none;
+    }
+    .resize-bar .resize-slider::-moz-range-thumb {
+      width: calc(18px * var(--popup-scale));
+      height: calc(18px * var(--popup-scale));
+      border-radius: 50%;
+      background: linear-gradient(135deg, #007bff, #0056b3);
+      border: calc(2px * var(--popup-scale)) solid #fff;
+      box-shadow: 0 calc(2px * var(--popup-scale)) calc(4px * var(--popup-scale)) rgba(0,0,0,0.2);
+      cursor: pointer;
+    }
+    .resize-bar .resize-value {
+      font-size: calc(12px * var(--popup-scale));
+      font-weight: 600;
+      color: #007bff;
+      min-width: calc(40px * var(--popup-scale));
+      text-align: right;
+    }
+    .resize-bar .resize-reset {
+      background: #6c757d;
       color: white;
       border: none;
-      border-radius: 4px;
-      padding: 4px 8px;
-      font-size: 10px;
+      border-radius: calc(4px * var(--popup-scale));
+      padding: calc(4px * var(--popup-scale)) calc(8px * var(--popup-scale));
+      font-size: calc(11px * var(--popup-scale));
       cursor: pointer;
-      margin-left: 8px;
+      transition: background 0.2s ease;
     }
-    .login-delete:hover {
-      background: #c82333;
+    .resize-bar .resize-reset:hover {
+      background: #5a6268;
     }
-    .no-logins {
-      text-align: center;
-      color: #6c757d;
-      font-size: 12px;
-      padding: 16px;
-      font-style: italic;
-    }
-    .autofill-info {
-      margin-top: 8px;
-      padding: 8px;
-      background: #e3f2fd;
-      border-radius: 6px;
-      border-left: 3px solid #2196f3;
-    }
-    .autofill-info small {
-      color: #1976d2;
-      font-size: 11px;
-      line-height: 1.3;
-    }
+
   </style>
 </head>
 <body>
+  <!-- Vergrößerungsleiste -->
+  <div class="resize-bar">
+    <span class="resize-label">Größe:</span>
+    <input type="range" class="resize-slider" id="popupSizeSlider" min="0.7" max="1.5" step="0.1" value="1">
+    <span class="resize-value" id="popupSizeValue">100%</span>
+    <button class="resize-reset" id="popupSizeReset" title="Zurücksetzen">⟲</button>
+  </div>
+  
   <h1>Darstellung</h1>
   <button id="toggle" class="btn off">
     <strong>Aktivieren</strong>
@@ -312,13 +386,7 @@
     <button class="btn" data-mode="trit"><strong>Blau-Gelb-Schwäche</strong><small>Tritanopie</small></button>
   </div>
 
-  <div class="toggleline">
-    <label for="compat">Kompatibilitätsmodus (Inline-!important einmalig)</label>
-    <div class="toggle-switch">
-      <input type="checkbox" id="compat">
-      <span class="toggle-slider"></span>
-    </div>
-  </div>
+
   <div class="toggleline">
     <label for="profanity">Schimpfwörter filtern (******)</label>
     <div class="toggle-switch">
@@ -333,26 +401,6 @@
       <span class="toggle-slider"></span>
     </div>
   </div>
-  <div class="toggleline">
-    <label for="autoFill">🔐 Auto-Fill (Login-Daten speichern)</label>
-    <div class="toggle-switch">
-      <input type="checkbox" id="autoFill">
-      <span class="toggle-slider"></span>
-    </div>
-  </div>
-
-  <div id="autoFillSection" class="autofill-section" style="display: none;">
-    <h2>Gespeicherte Logins</h2>
-    <div id="loginList" class="login-list">
-      <div class="no-logins">Noch keine Login-Daten gespeichert</div>
-    </div>
-    <div class="autofill-info">
-      <small>💡 Gib einfach Username + Passwort ein und drücke "Anmelden" - beim nächsten Besuch werden die Daten automatisch ausgefüllt!</small>
-    </div>
-  </div>
-
-  <div id="note">Grün/Rot zeigt den Master-Status. Wenn Schrift-Zoom aus ist, ist der ganze Block deaktiviert.</div>
-
   <script src="popup.js"></script>
 </body>
 </html>

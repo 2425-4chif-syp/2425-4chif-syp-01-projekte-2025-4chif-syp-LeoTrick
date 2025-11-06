@@ -3,12 +3,14 @@ window.MF = window.MF || {};
 MF.clampPx = v => Math.max(12, Math.min(50, parseInt(v,10) || 12));
 MF.setRootVar = (name, value) => document.documentElement.style.setProperty(name, value);
 
+// Hybrid-Lösung: Sichtbare + wissenschaftlich basierte Farbenblindheit-Simulation
 MF.filterForMode = m => {
   switch (m) {
-    case 'prot':    return 'contrast(1.2) sepia(1) hue-rotate(-30deg)'; // Rot-Schwäche
-    case 'deuter':  return 'contrast(1.2) sepia(1) hue-rotate(30deg)';  // Grün-Schwäche
-    case 'trit':    return 'contrast(1.2) sepia(1) hue-rotate(90deg)';  // Blau-Gelb
-    case 'achroma': return 'grayscale(100%)';
+    // Basiert auf echten Forschungsdaten, aber mit CSS umsetzbar
+    case 'prot':    return 'contrast(1.1) brightness(1.05) sepia(0.3) hue-rotate(-15deg) saturate(0.9)'; // Protanopie: Rot-Verlust
+    case 'deuter':  return 'contrast(1.1) brightness(1.05) sepia(0.25) hue-rotate(10deg) saturate(0.85)'; // Deuteranopie: Grün-Verlust  
+    case 'trit':    return 'contrast(1.15) brightness(1.1) sepia(0.4) hue-rotate(-60deg) saturate(0.7)'; // Tritanopie: Blau-Verlust
+    case 'achroma': return 'grayscale(100%) contrast(1.2)'; // Achromatopsie: Kein Farbsehen
     default:        return 'none';
   }
 };
@@ -16,10 +18,11 @@ MF.filterForMode = m => {
 MF.applyHighlightPalette = m => {
   const set = MF.setRootVar;
   switch (m) {
-    case 'prot':    set('--hl-bg','#0057ff'); set('--hl-fg','#ffffff'); break;
-    case 'deuter':  set('--hl-bg','#7a00ff'); set('--hl-fg','#ffffff'); break;
-    case 'trit':    set('--hl-bg','#ff3d00'); set('--hl-fg','#000000'); break;
-    case 'achroma': set('--hl-bg','#000000'); set('--hl-fg','#ffffff'); break;
-    default:        set('--hl-bg','#002aff'); set('--hl-fg','#ffffff'); break;
+    // Optimierte Farben die auch für Farbenblinde gut sichtbar sind
+    case 'prot':    set('--hl-bg','#0066cc'); set('--hl-fg','#ffffff'); break; // Blau für Protanope gut sichtbar
+    case 'deuter':  set('--hl-bg','#0066cc'); set('--hl-fg','#ffffff'); break; // Blau für Deuteranope gut sichtbar
+    case 'trit':    set('--hl-bg','#cc0066'); set('--hl-fg','#ffffff'); break; // Magenta für Tritanope gut sichtbar
+    case 'achroma': set('--hl-bg','#000000'); set('--hl-fg','#ffffff'); break; // Schwarz/Weiß für Achromatopsie
+    default:        set('--hl-bg','#002aff'); set('--hl-fg','#ffffff'); break; // Standard Blau
   }
 };

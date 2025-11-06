@@ -29,7 +29,6 @@
         "content/profanity.js",
         "content/hotlinks.js",
         "content/adblocker.js",
-        "content/autofill.js",
         "content/main.js"
       ]
     }

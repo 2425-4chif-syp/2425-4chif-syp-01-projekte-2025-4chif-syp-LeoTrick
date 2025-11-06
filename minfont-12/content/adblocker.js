@@ -1,82 +1,88 @@
 window.MF = window.MF || {};
 (() => {
-  // Nur offensichtliche Werbe-Pop-ups - sehr konservativ
+  // Erweiterte Werbe-Selektoren - viel umfassender
   const AD_SELECTORS = [
-    // Offensichtliche Pop-up Overlays
-    '.popup-overlay[style*="position: fixed"]',
-    '.modal-overlay[style*="position: fixed"]', 
-    '[class*="popup-ad"][style*="position: fixed"]',
-    '[class*="overlay-ad"][style*="position: fixed"]',
+    // Standard Werbung
+    '[class*="ad-"], [id*="ad-"], [class*="ads-"], [id*="ads-"]',
+    '[class*="banner"], [class*="popup"], [class*="overlay"]',
+    '[class*="sponsored"], [class*="promotion"]',
     
-    // Cookie Banner - nur störende mit fixed position
-    '[class*="cookie-banner"][style*="position: fixed"]',
-    '[id*="cookieConsent"][style*="position: fixed"]',
+    // Pop-ups und Overlays
+    '.popup-overlay, .modal-overlay, .ad-overlay',
+    '[style*="position: fixed"][style*="z-index"]',
     
-    // Newsletter Pop-ups - nur mit fixed position
-    '[class*="newsletter-popup"][style*="position: fixed"]',
-    '[class*="subscribe-modal"][style*="position: fixed"]',
+    // Cookie und Newsletter Banner
+    '[class*="cookie"], [class*="gdpr"], [class*="consent"]',
+    '[class*="newsletter"], [class*="subscribe"]',
     
-    // Interstitial Ads - ganze Seite blockierend
-    '[class*="interstitial"][style*="position: fixed"]',
-    '[class*="takeover"][style*="position: fixed"]',
+    // Spezifische Werbenetzwerke
+    '[class*="google-ad"], [class*="doubleclick"]',
+    '[class*="adsystem"], [class*="adnxs"]',
     
-    // Sehr spezifische Google Ads nur in iFrames
-    'iframe[src*="googleads.g.doubleclick.net"]',
-    'iframe[src*="googlesyndication.com/pagead"]'
+    // Social Media Werbung
+    '[data-testid*="placementTracking"]',
+    '[class*="promoted"], [class*="sponsor"]',
+    
+    // Video Ads (nicht YouTube - das ist zu komplex)
+    '.video-ads, .preroll-ads, .midroll-ads',
+    
+    // Sidebar und Banner Ads
+    '.sidebar-ad, .header-ad, .footer-ad',
+    '.leaderboard, .skyscraper, .rectangle',
+    
+    // Mobile Ads
+    '.mobile-banner, .sticky-banner',
+    
+    // Tracking und Analytics (optional)
+    '[class*="tracking"], [class*="analytics"]'
   ];
 
-  // Nur die aggressivsten Werbe-Domains - sehr begrenzt
+  // Erweiterte Werbe-Domains
   const AD_DOMAINS = [
-    'googleads.g.doubleclick.net',  // Google Ads iFrames
-    'pagead2.googlesyndication.com', // Google AdSense
-    'tpc.googlesyndication.com'     // Google Tag Partner
-  ];
-
-  // Wichtige Content-Container die NIEMALS blockiert werden dürfen
-  const CONTENT_WHITELIST = [
-    // YouTube spezifisch
-    '#movie_player', '.html5-video-player', '.video-stream',
-    '[id*="player"]', '.ytp-chrome-bottom', '.ytp-chrome-top',
+    // Google Ads
+    'googleads.g.doubleclick.net', 'googlesyndication.com', 'googleadservices.com',
+    'google-analytics.com', 'googletagmanager.com',
     
-    // Video-Player allgemein
-    'video', 'audio', '.video-player', '.media-player',
-    '[class*="video-container"]', '[class*="player-container"]',
+    // Facebook/Meta Ads
+    'facebook.com/tr', 'connect.facebook.net',
     
-    // Hauptcontent-Bereiche
-    'main', '[role="main"]', '.main-content', '#main', '#content',
-    'article', '[role="article"]', '.post-content', '.article-content',
+    // Amazon Ads
+    'amazon-adsystem.com', 'media-amazon.com',
     
-    // Navigation
-    'nav', '[role="navigation"]', '.navigation', '.menu',
-    'header', '[role="banner"]', 'footer', '[role="contentinfo"]',
+    // Microsoft Ads
+    'bat.bing.com', 'ads.microsoft.com',
     
-    // Formulare und wichtige UI
-    'form', '[role="form"]', '.form', '.search',
-    'button:not([class*="ad"])', 'input', 'textarea', 'select',
+    // Andere große Werbenetzwerke
+    'adsystem.com', 'advertising.com', 'adsrvr.org',
+    'criteo.com', 'outbrain.com', 'taboola.com',
+    'scorecardresearch.com', 'quantserve.com',
     
-    // Social Media Content
-    '[data-testid="tweet"]', '.post', '.story', '.feed-item',
-    
-    // E-Commerce
-    '.product', '.cart', '.checkout', '.price'
+    // Tracking
+    'hotjar.com', 'mouseflow.com', 'fullstory.com'
   ];
 
   let blockedCount = 0;
   let observer = null;
-  let deletedElements = new Map(); // Speichert gelöschte Elemente für Wiederherstellung
+  let deletedElements = new Map();
+  let blockingEnabled = false;
 
   function isProtectedElement(el) {
-    // Prüfe ob Element in Whitelist ist
-    for (const selector of CONTENT_WHITELIST) {
+    // Basis-Schutz für wichtige Inhalte
+    const importantSelectors = [
+      'video', 'audio', 'main', 'article', 'nav', 'header', 'footer',
+      '[role="main"]', '[role="article"]', '[role="navigation"]',
+      '.video-player', '.main-content', '#content', '.post-content'
+    ];
+    
+    for (const selector of importantSelectors) {
       try {
         if (el.matches && el.matches(selector)) return true;
         if (el.closest && el.closest(selector)) return true;
       } catch {}
     }
     
-    // YouTube spezifische Prüfungen
+    // YouTube-spezifischer Schutz (Player, aber nicht Ads)
     if (window.location.hostname.includes('youtube.com')) {
-      // Video-Player und Controls schützen
       if (el.closest('#movie_player') || 
           el.closest('.html5-video-player') ||
           el.id === 'movie_player' ||
@@ -85,41 +91,93 @@ window.MF = window.MF || {};
       }
     }
     
+    // Schutz vor zu kleinen oder zu großen Elementen (wahrscheinlich wichtig)
+    const rect = el.getBoundingClientRect();
+    if (rect.width > window.innerWidth * 0.8 || rect.height > window.innerHeight * 0.8) {
+      return true; // Zu groß = wahrscheinlich Hauptcontent
+    }
+    
     return false;
   }
 
-  function removeElement(el, reason = 'ad-selector') {
-    if (el && !el.hasAttribute('data-mf-blocked')) {
-      
-      // Schutz vor wichtigen Elementen
-      if (isProtectedElement(el)) {
-        console.log('🛡️ MinFont AdBlocker: Geschütztes Element nicht blockiert', el);
-        return;
+  function isAdElement(el) {
+    if (!el || !el.tagName) return false;
+    
+    // Klassen- und ID-basierte Erkennung
+    const className = (el.className || '').toLowerCase();
+    const id = (el.id || '').toLowerCase();
+    const adKeywords = ['ad', 'ads', 'banner', 'popup', 'sponsored', 'promotion', 
+                       'google-ad', 'doubleclick', 'adsystem', 'adnxs'];
+    
+    for (const keyword of adKeywords) {
+      if (className.includes(keyword) || id.includes(keyword)) {
+        return true;
       }
-      
-      // Element für Wiederherstellung speichern
-      const elementInfo = {
-        element: el.cloneNode(true), // Deep clone
-        parent: el.parentNode,
-        nextSibling: el.nextSibling,
-        reason: reason
-      };
-      
-      // Eindeutige ID für das Element erstellen
-      const elementId = 'mf-deleted-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
-      deletedElements.set(elementId, elementInfo);
-      
-      // Markierung hinzufügen bevor gelöscht wird
-      el.setAttribute('data-mf-deleted-id', elementId);
-      
-      // Element komplett aus DOM entfernen
+    }
+    
+    // Domain-basierte Erkennung für iFrames
+    if (el.tagName === 'IFRAME') {
+      const src = el.src || '';
+      for (const domain of AD_DOMAINS) {
+        if (src.includes(domain)) return true;
+      }
+    }
+    
+    // Große Overlays mit fixed position (wahrscheinlich Pop-ups)
+    const style = getComputedStyle(el);
+    if (style.position === 'fixed' && style.zIndex > 1000) {
+      const rect = el.getBoundingClientRect();
+      if (rect.width > 300 && rect.height > 200) {
+        return true;
+      }
+    }
+    
+    // Tracking-Pixel (1x1 Bilder)
+    if (el.tagName === 'IMG') {
+      if ((el.width <= 1 && el.height <= 1) || 
+          (el.style.width === '1px' && el.style.height === '1px')) {
+        return true;
+      }
+    }
+    
+    return false;
+  }
+
+  function removeElement(el, reason = 'ad-detected') {
+    if (!el || el.hasAttribute('data-mf-blocked') || !blockingEnabled) return;
+    
+    // Doppelte Prüfung auf Schutz
+    if (isProtectedElement(el)) {
+      console.log('🛡️ MinFont AdBlocker: Geschütztes Element nicht blockiert', el);
+      return;
+    }
+    
+    // Element für Wiederherstellung speichern
+    const elementInfo = {
+      element: el.cloneNode(true),
+      parent: el.parentNode,
+      nextSibling: el.nextSibling,
+      reason: reason
+    };
+    
+    const elementId = 'mf-deleted-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+    deletedElements.set(elementId, elementInfo);
+    
+    el.setAttribute('data-mf-deleted-id', elementId);
+    el.setAttribute('data-mf-blocked', 'true');
+    
+    // Sanfte Entfernung mit Animation
+    el.style.transition = 'opacity 0.3s ease';
+    el.style.opacity = '0';
+    
+    setTimeout(() => {
       if (el.parentNode) {
         el.parentNode.removeChild(el);
       }
-      
-      blockedCount++;
-      console.log(`🗑️ MinFont AdBlocker: Element gelöscht (${reason})`, el);
-    }
+    }, 300);
+    
+    blockedCount++;
+    console.log(`🗑️ MinFont AdBlocker: Element entfernt (${reason})`, el);
   }
 
   function restoreDeletedElements() {
@@ -146,126 +204,174 @@ window.MF = window.MF || {};
     }
   }
 
-  function blockBySelectors() {
-    try {
-      AD_SELECTORS.forEach(selector => {
-        const elements = document.querySelectorAll(selector);
-        elements.forEach(el => {
-          // Doppelte Prüfung auf Schutz
+  // Einfache aber effektive Blockierung
+  function simpleAdBlock() {
+    if (!blockingEnabled) return;
+    
+    console.log('🚫 Starting simple ad block...');
+    let blocked = 0;
+    
+    // 1. Direkte Selektor-Blockierung
+    const simpleSelectors = [
+      '[class*="ad"]:not(main):not(article):not(header):not(nav)',
+      '[id*="ad"]:not(main):not(article):not(header):not(nav)', 
+      '[class*="banner"]', '[class*="popup"]', '[class*="overlay"]',
+      '[class*="sponsored"]', '[class*="promotion"]',
+      'iframe[src*="doubleclick"]', 'iframe[src*="googlesyndication"]',
+      'iframe[src*="google-analytics"]', 'iframe[src*="facebook.com/tr"]'
+    ];
+    
+    simpleSelectors.forEach(selector => {
+      try {
+        document.querySelectorAll(selector).forEach(el => {
           if (!isProtectedElement(el)) {
-            removeElement(el, `selector: ${selector}`);
+            el.style.display = 'none !important';
+            el.style.visibility = 'hidden !important';
+            el.style.opacity = '0 !important';
+            blocked++;
+            console.log('🗑️ Blocked:', selector, el);
           }
         });
-      });
-    } catch (e) {
-      console.warn('MinFont AdBlocker selector error:', e);
-    }
+      } catch (e) {}
+    });
+    
+    // 2. Tracking-Pixel entfernen
+    document.querySelectorAll('img').forEach(img => {
+      if ((img.width <= 1 && img.height <= 1) || 
+          (img.style.width === '1px' && img.style.height === '1px')) {
+        img.remove();
+        blocked++;
+      }
+    });
+    
+    // 3. Werbe-Scripts stoppen
+    document.querySelectorAll('script[src]').forEach(script => {
+      const src = script.src || '';
+      if (src.includes('googleads') || src.includes('doubleclick') || 
+          src.includes('analytics') || src.includes('facebook.com')) {
+        script.remove();
+        blocked++;
+        console.log('🚫 Script blocked:', src);
+      }
+    });
+    
+    console.log(`✅ Simple AdBlock: ${blocked} items blocked`);
+    return blocked;
   }
 
-  function blockByDomain(el) {
+  function blockByContent() {
+    if (!blockingEnabled) return;
+    
     try {
-      // Nur blockieren wenn nicht geschützt
-      if (isProtectedElement(el)) return false;
+      // Text-basierte Erkennung
+      const adTexts = ['advertisement', 'sponsored', 'promoted', 'anzeige', 'werbung'];
+      const walker = document.createTreeWalker(
+        document.body,
+        NodeFilter.SHOW_TEXT,
+        null,
+        false
+      );
       
-      const src = el.src || el.href || '';
-      if (src) {
-        const isBlocked = AD_DOMAINS.some(domain => src.includes(domain));
-        if (isBlocked) {
-          removeElement(el, `domain: ${src}`);
-          return true;
+      let node;
+      while (node = walker.nextNode()) {
+        const text = node.textContent.toLowerCase();
+        for (const adText of adTexts) {
+          if (text.includes(adText)) {
+            let element = node.parentElement;
+            while (element && element !== document.body) {
+              if (isAdElement(element) && !isProtectedElement(element)) {
+                removeElement(element, `content: ${adText}`);
+                break;
+              }
+              element = element.parentElement;
+            }
+            break;
+          }
         }
       }
     } catch (e) {
-      console.warn('MinFont AdBlocker domain error:', e);
+      console.warn('MinFont AdBlocker content error:', e);
     }
-    return false;
   }
 
   function blockNetworkRequests() {
+    if (!blockingEnabled) return;
+    
     try {
-      // Nur offensichtliche Werbe-iFrames blockieren
+      // iFrame-Blockierung
       document.querySelectorAll('iframe[src]').forEach(el => {
         const src = el.src || '';
-        if (src && AD_DOMAINS.some(domain => src.includes(domain))) {
-          if (!isProtectedElement(el)) {
-            blockByDomain(el);
+        for (const domain of AD_DOMAINS) {
+          if (src.includes(domain) && !isProtectedElement(el)) {
+            removeElement(el, `domain: ${domain}`);
+            break;
           }
         }
       });
 
-      // Nur 1x1 Tracking-Pixel blockieren (eindeutig Tracking)
+      // Script-Blockierung (vorsichtig)
+      document.querySelectorAll('script[src]').forEach(el => {
+        const src = el.src || '';
+        for (const domain of AD_DOMAINS) {
+          if (src.includes(domain)) {
+            el.remove();
+            console.log('🚫 MinFont AdBlocker: Script blockiert', src);
+            break;
+          }
+        }
+      });
+
+      // Tracking-Pixel
       document.querySelectorAll('img[src]').forEach(el => {
-        if ((el.width <= 1 && el.height <= 1) && !isProtectedElement(el)) {
-          const src = el.src || '';
-          if (src.includes('tracking') || src.includes('pixel') || 
-              AD_DOMAINS.some(domain => src.includes(domain))) {
-            removeElement(el, 'tracking-pixel');
-          }
+        if (isAdElement(el) && !isProtectedElement(el)) {
+          removeElement(el, 'tracking-pixel');
         }
       });
-
-      // KEINE Link-Blockierung mehr - zu aggressiv
     } catch (e) {
       console.warn('MinFont AdBlocker network error:', e);
     }
   }
 
   function startObserver() {
-    if (observer) return;
+    if (observer || !blockingEnabled) return;
 
     observer = new MutationObserver(mutations => {
       mutations.forEach(mutation => {
         if (mutation.type === 'childList') {
           mutation.addedNodes.forEach(node => {
             if (node.nodeType === 1) { // Element node
-              // Erstmal prüfen ob es geschützt ist
-              if (isProtectedElement(node)) return;
-              
-              // NUR bei offensichtlichen Pop-ups eingreifen
-              const hasFixedPosition = node.style && node.style.position === 'fixed';
-              const isOverlay = node.className && (
-                node.className.includes('popup-overlay') ||
-                node.className.includes('modal-overlay') ||
-                node.className.includes('popup-ad') ||
-                node.className.includes('overlay-ad')
-              );
-              
-              if (hasFixedPosition && isOverlay) {
-                // Prüfe das Element gegen unsere begrenzten Selektoren
-                AD_SELECTORS.forEach(selector => {
-                  try {
-                    if (node.matches && node.matches(selector)) {
-                      removeElement(node, `new-popup: ${selector}`);
-                    }
-                  } catch (e) {}
-                });
+              // Sofortiger Check für neue Ads
+              if (isAdElement(node) && !isProtectedElement(node)) {
+                removeElement(node, 'new-ad-detected');
               }
-
-              // Prüfe nur auf Werbe-Domains bei iFrames
-              if (node.tagName === 'IFRAME') {
-                blockByDomain(node);
+              
+              // Check für Kinder-Elemente
+              if (node.querySelectorAll) {
+                node.querySelectorAll('iframe, img, div').forEach(child => {
+                  if (isAdElement(child) && !isProtectedElement(child)) {
+                    removeElement(child, 'new-child-ad');
+                  }
+                });
               }
             }
           });
         }
 
-        // Nur bei src-Änderungen von iFrames reagieren
         if (mutation.type === 'attributes' && 
-            mutation.attributeName === 'src' && 
-            mutation.target.tagName === 'IFRAME') {
-          if (!isProtectedElement(mutation.target)) {
-            blockByDomain(mutation.target);
+            ['src', 'class', 'id'].includes(mutation.attributeName)) {
+          const target = mutation.target;
+          if (isAdElement(target) && !isProtectedElement(target)) {
+            removeElement(target, 'attribute-change');
           }
         }
       });
     });
 
-    // Weniger invasive Überwachung
     observer.observe(document.documentElement, {
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ['src'] // Nur src-Änderungen
+      attributeFilter: ['src', 'class', 'id']
     });
   }
 
@@ -276,69 +382,127 @@ window.MF = window.MF || {};
     }
   }
 
-  // Öffentliche API
+  // Öffentliche API - vereinfacht und direkt
   MF.adBlockerApply = () => {
-    // KEINE interne State-Prüfung mehr - wird von main.js gesteuert
-    console.log('🚫 MinFont AdBlocker: Aktiviert');
-    blockBySelectors();
-    blockNetworkRequests();
-    startObserver();
-
-    // Statistik nach 2 Sekunden
+    blockingEnabled = true;
+    console.log('🚫 MinFont AdBlocker: AKTIVIERT - Einfache aber effektive Blockierung');
+    
+    // Sofortige Blockierung
+    const blocked1 = simpleAdBlock();
+    
+    // Wiederholung nach kurzer Zeit für nachlaufende Ads
     setTimeout(() => {
-      if (blockedCount > 0) {
-        console.log(`🚫 MinFont AdBlocker: ${blockedCount} Werbungen blockiert`);
-      } else {
-        console.log('🚫 MinFont AdBlocker: Bereit, aber keine Werbung gefunden');
-      }
-    }, 2000);
+      const blocked2 = simpleAdBlock();
+      console.log(`� Total blockiert: ${blocked1 + blocked2} Elemente`);
+    }, 1000);
+    
+    // Observer für neue Ads
+    startObserver();
   };
 
-  // Neue Stop-Funktion
   MF.adBlockerStop = () => {
-    console.log('⭕ MinFont AdBlocker: Deaktiviert');
+    console.log('⛔ MinFont AdBlocker: DEAKTIVIERT');
+    blockingEnabled = false;
     stopObserver();
     restoreDeletedElements();
     blockedCount = 0;
+    
+    // Versteckte Elemente wieder anzeigen
+    document.querySelectorAll('[style*="display: none"]').forEach(el => {
+      if (el.style.display === 'none') {
+        el.style.display = '';
+        el.style.visibility = '';
+        el.style.opacity = '';
+      }
+    });
   };
 
-  // CSS nur für offensichtliche Pop-ups - sehr konservativ
+  // Verstärktes CSS für sofortige Werbungsblockierung
   const adBlockCSS = `
-    /* Nur störende Pop-ups mit fixed position */
-    [class*="popup-overlay"][style*="position: fixed"],
-    [class*="modal-overlay"][style*="position: fixed"],
-    [class*="popup-ad"][style*="position: fixed"],
-    [class*="overlay-ad"][style*="position: fixed"] {
+    /* Banner-Werbung und Anzeigen */
+    [class*="ad-"]:not([class*="ad-m"]):not([class*="ad-s"]),
+    [id*="ad-"]:not([id*="ad-m"]):not([id*="ad-s"]),
+    [class*="ads-"], [id*="ads-"],
+    [class*="banner"], [class*="popup"], [class*="overlay"],
+    [class*="sponsored"], [class*="promotion"],
+    [class*="google-ad"], [class*="doubleclick"],
+    [class*="adsystem"], [class*="adnxs"] {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      height: 0 !important;
+      width: 0 !important;
+      position: absolute !important;
+      left: -9999px !important;
+    }
+    
+    /* Pop-ups und Overlays */
+    .popup-overlay, .modal-overlay, .ad-overlay,
+    [class*="popup-ad"], [class*="overlay-ad"],
+    [class*="interstitial"], [class*="takeover"] {
       display: none !important;
     }
     
-    /* Cookie Banner nur wenn störend positioniert */
-    [class*="cookie-banner"][style*="position: fixed"],
-    [id*="cookieConsent"][style*="position: fixed"] {
+    /* Cookie und GDPR Banner */
+    [class*="cookie"]:not([class*="cookie-"]):not(.cookie-policy),
+    [class*="gdpr"], [class*="consent"],
+    [id*="cookieConsent"], [id*="gdprConsent"] {
       display: none !important;
     }
     
-    /* Newsletter Pop-ups nur mit fixed position */
-    [class*="newsletter-popup"][style*="position: fixed"],
-    [class*="subscribe-modal"][style*="position: fixed"] {
+    /* Newsletter Pop-ups */
+    [class*="newsletter"]:not(.newsletter-content):not(.newsletter-article),
+    [class*="subscribe"]:not(.subscribe-button):not(.subscribe-link),
+    [class*="signup-modal"], [class*="email-popup"] {
       display: none !important;
     }
     
-    /* Interstitials - ganze Seite blockierend */
-    [class*="interstitial"][style*="position: fixed"],
-    [class*="takeover"][style*="position: fixed"] {
-      display: none !important;
-    }
-    
-    /* Nur Google Ads in iFrames */
+    /* Spezifische Werbenetzwerke */
     iframe[src*="googleads.g.doubleclick.net"],
-    iframe[src*="googlesyndication.com/pagead"] {
+    iframe[src*="googlesyndication.com"],
+    iframe[src*="google-analytics.com"],
+    iframe[src*="facebook.com/tr"],
+    iframe[src*="amazon-adsystem.com"],
+    iframe[src*="advertising.com"],
+    iframe[src*="criteo.com"],
+    iframe[src*="outbrain.com"],
+    iframe[src*="taboola.com"] {
       display: none !important;
     }
     
-    /* Nur 1x1 Tracking Pixel */
+    /* Tracking-Pixel */
     img[width="1"][height="1"],
+    img[style*="width: 1px"],
+    img[style*="height: 1px"],
     iframe[width="1"][height="1"] {
+      display: none !important;
+    }
+    
+    /* Video-Ads (nicht YouTube) */
+    .video-ads, .preroll-ads, .midroll-ads,
+    [class*="video-ad"], [id*="video-ad"] {
+      display: none !important;
+    }
+    
+    /* Sidebar und Position-basierte Ads */
+    .sidebar-ad, .header-ad, .footer-ad,
+    .leaderboard, .skyscraper, .rectangle,
+    .mobile-banner, .sticky-banner {
+      display: none !important;
+    }
+    
+    /* Social Media Promoted Content */
+    [class*="promoted"], [data-testid*="placementTracking"],
+    [class*="sponsor"] {
+      display: none !important;
+    }
+    
+    /* Tracking und Analytics */
+    [class*="tracking"], [class*="analytics"],
+    script[src*="google-analytics.com"],
+    script[src*="googletagmanager.com"],
+    script[src*="hotjar.com"],
+    script[src*="mouseflow.com"] {
       display: none !important;
     }
   `;

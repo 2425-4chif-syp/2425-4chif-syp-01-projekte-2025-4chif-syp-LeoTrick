@@ -2,26 +2,32 @@ const clamp = v => Math.max(12, Math.min(50, parseInt(v,10) || 12));
 const setKV = (k,v) => new Promise(res => chrome.storage.local.set({ [k]: v }, res));
 const getKV = def   => new Promise(res => chrome.storage.local.get(def, res));
 
+// Popup-Größe Funktionen
+function setPopupScale(scale) {
+  document.documentElement.style.setProperty('--popup-scale', scale);
+  // Entferne die manuelle Breiten-/Höhenänderung da CSS das jetzt übernimmt
+}
+
+function updatePopupSizeDisplay(scale) {
+  const percentage = Math.round(scale * 100);
+  document.getElementById('popupSizeValue').textContent = `${percentage}%`;
+}
+
 (async function init(){
   const state = await getKV({
     enabled:true,
     fontEnabled:true,
     mode:"off",
     minPx:16,
-    compat:false,
     profanityEnabled:true,
     adBlockerEnabled:false,
-    autoFillEnabled:false
+    popupScale:1
   });
 
   const toggleBtn   = document.getElementById('toggle');
   const fontChk     = document.getElementById('fontEnabled');
-  const compatChk   = document.getElementById('compat');
   const profChk     = document.getElementById('profanity');
   const adBlockChk  = document.getElementById('adBlocker');
-  const autoFillChk = document.getElementById('autoFill');
-  const autoFillSection = document.getElementById('autoFillSection');
-  const loginList = document.getElementById('loginList');
 
   const sizeWrap    = document.getElementById('sizeWrap');
   const slider      = document.getElementById('slider');
@@ -29,6 +35,11 @@ const getKV = def   => new Promise(res => chrome.storage.local.get(def, res));
   const pxLabel     = document.getElementById('pxLabel');
 
   const modeButtons = [...document.querySelectorAll('.btn[data-mode]')];
+  
+  // Popup-Größe Elemente
+  const popupSizeSlider = document.getElementById('popupSizeSlider');
+  const popupSizeValue = document.getElementById('popupSizeValue');
+  const popupSizeReset = document.getElementById('popupSizeReset');
 
   function renderToggleColors() {
     toggleBtn.classList.toggle('on',  state.enabled);
@@ -75,16 +86,8 @@ const getKV = def   => new Promise(res => chrome.storage.local.get(def, res));
   function render() {
     renderToggleColors();
     fontChk.checked   = !!state.fontEnabled;
-    compatChk.checked = !!state.compat;
     profChk.checked   = !!state.profanityEnabled;
     adBlockChk.checked = !!state.adBlockerEnabled;
-    autoFillChk.checked = !!state.autoFillEnabled;
-    
-    // Auto-Fill Section anzeigen/verstecken
-    autoFillSection.style.display = state.autoFillEnabled ? 'block' : 'none';
-    if (state.autoFillEnabled) {
-      loadLoginList();
-    }
 
     modeButtons.forEach(b => b.classList.toggle('on', b.dataset.mode === state.mode));
 
@@ -92,6 +95,11 @@ const getKV = def   => new Promise(res => chrome.storage.local.get(def, res));
     slider.value = state.minPx;
     pxInput.value = state.minPx;
     pxLabel.textContent = `${state.minPx} px`;
+
+    // Popup-Größe rendern
+    popupSizeSlider.value = state.popupScale || 1;
+    setPopupScale(state.popupScale || 1);
+    updatePopupSizeDisplay(state.popupScale || 1);
 
     renderSliderFill();
     renderDisableState();
@@ -114,12 +122,7 @@ const getKV = def   => new Promise(res => chrome.storage.local.get(def, res));
     render();
   });
 
-  // Kompatibilitätsmodus
-  compatChk.addEventListener('change', async ()=>{
-    state.compat = !!compatChk.checked;
-    await setKV('compat', state.compat);
-    chrome.runtime.sendMessage({ type:"MINFONT_STATE_CHANGED" });
-  });
+
 
   // Schimpfwörter-Filter
   profChk.addEventListener('change', async ()=>{
@@ -128,18 +131,7 @@ const getKV = def   => new Promise(res => chrome.storage.local.get(def, res));
     chrome.runtime.sendMessage({ type:"MINFONT_STATE_CHANGED" });
   });
 
-  // Auto-Fill
-  autoFillChk.addEventListener('change', async ()=>{
-    state.autoFillEnabled = !!autoFillChk.checked;
-    await setKV('autoFillEnabled', state.autoFillEnabled);
-    chrome.runtime.sendMessage({ type:"MINFONT_STATE_CHANGED" });
-    
-    // Auto-Fill Section anzeigen/verstecken
-    autoFillSection.style.display = state.autoFillEnabled ? 'block' : 'none';
-    if (state.autoFillEnabled) {
-      loadLoginList();
-    }
-  });
+
 
   // Ad Blocker Event Listener (war vergessen!)
   adBlockChk.addEventListener('change', async ()=>{
@@ -203,68 +195,28 @@ const getKV = def   => new Promise(res => chrome.storage.local.get(def, res));
     chrome.runtime.sendMessage({ type:"MINFONT_STATE_CHANGED" });
   });
 
-  // Login-Liste laden und anzeigen
-  async function loadLoginList() {
-    try {
-      const autoFillData = await getKV({ mf_autoFillData: {} });
-      const logins = autoFillData.mf_autoFillData || {};
-      
-      if (Object.keys(logins).length === 0) {
-        loginList.innerHTML = '<div class="no-logins">Noch keine Login-Daten gespeichert</div>';
-        return;
-      }
+  // Popup-Größe Event Listeners
+  popupSizeSlider.addEventListener('input', (e) => {
+    const scale = parseFloat(e.target.value);
+    state.popupScale = scale;
+    setPopupScale(scale);
+    updatePopupSizeDisplay(scale);
+  });
 
-      let html = '';
-      Object.keys(logins).forEach(domain => {
-        const login = logins[domain];
-        // Einfache Entschlüsselung für Anzeige (username)
-        const username = simpleDecryptForDisplay(login.username);
-        const passwordMask = '•'.repeat(Math.min(simpleDecryptForDisplay(login.password).length, 12));
-        
-        html += `
-          <div class="login-item">
-            <div class="login-info">
-              <div class="login-domain">${domain}</div>
-              <div class="login-username">${username} • ${passwordMask}</div>
-            </div>
-            <button class="login-delete" data-domain="${domain}">🗑️</button>
-          </div>
-        `;
-      });
-      
-      loginList.innerHTML = html;
-      
-      // Delete-Buttons Event-Listener
-      loginList.querySelectorAll('.login-delete').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-          const domain = e.target.getAttribute('data-domain');
-          if (confirm(`Login-Daten für ${domain} löschen?`)) {
-            const autoFillData = await getKV({ mf_autoFillData: {} });
-            const logins = autoFillData.mf_autoFillData || {};
-            delete logins[domain];
-            await setKV('mf_autoFillData', logins);
-            loadLoginList(); // Liste neu laden
-          }
-        });
-      });
-    } catch (error) {
-      console.error('Fehler beim Laden der Login-Liste:', error);
-      loginList.innerHTML = '<div class="no-logins">Fehler beim Laden der Daten</div>';
-    }
-  }
+  popupSizeSlider.addEventListener('change', async (e) => {
+    const scale = parseFloat(e.target.value);
+    state.popupScale = scale;
+    await setKV('popupScale', scale);
+    console.log('💾 Popup-Größe gespeichert:', `${Math.round(scale * 100)}%`);
+  });
 
-  // Vereinfachte Entschlüsselung nur für Anzeige
-  function simpleDecryptForDisplay(encrypted) {
-    try {
-      const ENCRYPT_KEY = 'MinFont2024SecureKey';
-      const decoded = atob(encrypted);
-      let result = '';
-      for (let i = 0; i < decoded.length; i++) {
-        result += String.fromCharCode(decoded.charCodeAt(i) ^ ENCRYPT_KEY.charCodeAt(i % ENCRYPT_KEY.length));
-      }
-      return result;
-    } catch {
-      return 'Fehler';
-    }
-  }
+  popupSizeReset.addEventListener('click', async () => {
+    state.popupScale = 1;
+    popupSizeSlider.value = 1;
+    setPopupScale(1);
+    updatePopupSizeDisplay(1);
+    await setKV('popupScale', 1);
+    console.log('🔄 Popup-Größe zurückgesetzt');
+  });
+
 })();

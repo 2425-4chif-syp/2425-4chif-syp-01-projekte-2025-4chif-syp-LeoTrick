@@ -7,13 +7,14 @@
       MF.fontDetach();
       MF.adBlockerDetachCSS();
       MF.profanityApply(); // stoppt sich selbst
-      MF.adBlockerApply(); // stoppt sich selbst
+      // Ad Blocker explizit stoppen wenn Extension deaktiviert
+      if (MF.adBlockerStop) MF.adBlockerStop();
       return;
     }
     MF.fontAttach();
     MF.colorApply();
     MF.fontApply();
-    MF.profanityApply();
+    MF.profanityApply(); // Jetzt wieder synchron
     
     // Ad Blocker separat behandeln
     if (S.adBlockerEnabled) {
@@ -25,24 +26,19 @@
       if (MF.adBlockerStop) MF.adBlockerStop();
     }
     
-    if (S.autoFillEnabled) {
-      MF.autoFillInit();
-    }
     MF.fontReevalIfNeeded(oldMin);
   }
 
   // Initial laden
   chrome.storage.local.get(
-    { enabled:true, fontEnabled:true, mode:"off", minPx:16, compat:false, profanityEnabled:true, adBlockerEnabled:false, autoFillEnabled:false, mf_linkClicks:{} },
+    { enabled:true, fontEnabled:true, mode:"off", minPx:16, profanityEnabled:true, adBlockerEnabled:false, mf_linkClicks:{} },
     s => {
       S.enabled = !!s.enabled;
       S.fontEnabled = !!s.fontEnabled;
       S.mode = s.mode || "off";
       S.minPx = MF.clampPx(s.minPx);
-      S.compat = !!s.compat;
       S.profanityEnabled = !!s.profanityEnabled;
       S.adBlockerEnabled = !!s.adBlockerEnabled;
-      S.autoFillEnabled = !!s.autoFillEnabled;
       S.linkClicks = s.mf_linkClicks || {};
 
       // Hotlinks NACH dem Laden der Daten initialisieren
@@ -70,17 +66,15 @@
   chrome.runtime.onMessage.addListener(msg => {
     if (msg && msg.type === "MINFONT_STATE_CHANGED") {
       chrome.storage.local.get(
-        { enabled:true, fontEnabled:true, mode:"off", minPx:16, compat:false, profanityEnabled:true, adBlockerEnabled:false, autoFillEnabled:false, mf_linkClicks:{} },
+        { enabled:true, fontEnabled:true, mode:"off", minPx:16, profanityEnabled:true, adBlockerEnabled:false, mf_linkClicks:{} },
         s => {
           const oldMin = S.minPx;
           S.enabled = !!s.enabled;
           S.fontEnabled = !!s.fontEnabled;
           S.mode = s.mode || "off";
           S.minPx = MF.clampPx(s.minPx);
-          S.compat = !!s.compat;
           S.profanityEnabled = !!s.profanityEnabled;
           S.adBlockerEnabled = !!s.adBlockerEnabled;
-          S.autoFillEnabled = !!s.autoFillEnabled;
           // Wichtig: Hotlink-Daten auch bei Updates synchronisieren
           S.linkClicks = s.mf_linkClicks || {};
           applyAll(oldMin);

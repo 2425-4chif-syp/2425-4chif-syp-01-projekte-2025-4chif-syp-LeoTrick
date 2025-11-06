@@ -1,12 +1,123 @@
 window.MF = window.MF || {};
 (() => {
-  const WORDS = [
+  // Umfassende hardcodierte Schimpfwörterliste (über 200 Wörter)
+  const PROFANITY_WORDS = [
+    // Deutsche Schimpfwörter - Basis
     "scheiße","scheisse","arsch","arschloch","hurensohn","wichser","fotze","miststück",
     "fick","ficken","ficker","schlampe","spasti","spast","drecksau","penner",
-    "fuck","fucking","motherfucker","shit","bitch","bastard","asshole","dick","pussy","slut","whore","cunt","wanker"
+    "bastard","pisser","kackbratze","vollpfosten","vollidiot","dummkopf","blödmann",
+    "arschgesicht","scheißkerl","dreckssau","hurenbock","fickschnitzel","wixe","wixen",
+    
+    // Deutsche Schimpfwörter - Erweitert
+    "aas","abschaum","afterlecker","analritter","arschficker","arschkriecher","arschlecker",
+    "arschlochmongo","backpfeifengesicht","bauerntrampel","bescheuert","bimbo","blödian",
+    "brainlet","bratze","charakterschwein","deppenkind","dickschädel","doofkopf",
+    "dreckskerl","dreckstück","dummbatz","dummrian","eierkopf","eierlutscher",
+    "fettarsch","fickfehler","flachwichser","fotzenknecht","frechdachs","vollhonk",
+    "gelbschnabel","gestörter","schwachmat","hirnverbrannt","hohlbirne","honk",
+    "hutzel","jammerlappen","kacknase","kacknoob","kakerlake","kaputtnik",
+    "knalltüte","knülch","korinthenkacker","lauch","loser","lump","maulheld",
+    "memme","missgeburt","mongo","mutterficker","naivling","nervensäge",
+    "nichtsnutz","niete","nullchecker","nulpe","oberaffe","pfeife","plebejer",
+    "pseudointellektueller","quatschkopf","randerscheinung","saftladen","sauladen",
+    "scheißhaufen","schlemihl","schleimer","schnarchnase","schnösel","schwanzlutscher",
+    "schwuchtel","spack","spießer","stinkstiefel","stümper","trantüte","trotzkopf",
+    "tunte","uhrensohn","unmensch","versager","vögel","vollhorst","volltrottel",
+    "warmduscher","weichei","wichtigtuer","wixxer","wurst","zipfelklatscher",
+    
+    // Deutsche Vulgäre Begriffe
+    "anal","vagina","penis","muschi","schwanz","pimmel","titten","möse","porno",
+    "bumsen","vögeln","rammen","stechen","orgasmus","masturbieren","onanieren",
+    "geil","horny","versaut","pervers","sperma","samen","ejakulation","kondome",
+    "dildos","vibrator","sexspielzeug","gruppensex","fetisch","bdsm","sm",
+    
+    // Deutsche Religiöse Flüche
+    "verdammt","verflucht","himmelherrgott","gottverdammt","scheinheilig",
+    "herrgottsakrament","kruzifix","heilandszack","donnerwetter","potzblitz",
+    
+    // Deutsche Diskriminierende Begriffe
+    "schwuchtel","tunte","kampflesbe","asylant","kanacke","polacke","itaker",
+    "spaghettifresser","froschfresser","inselaffe","ami","schlitzauge","neger",
+    
+    // Englische Schimpfwörter - Basis
+    "fuck","fucking","motherfucker","shit","bitch","bastard","asshole","dick",
+    "pussy","slut","whore","cunt","wanker","cocksucker","douchebag","prick",
+    "damn","goddamn","hell","bloody","crap","piss","tits","boobs","ass",
+    
+    // Englische Schimpfwörter - Erweitert
+    "shithead","fuckface","dickhead","asswipe","shitbag","fucktard","shitstain",
+    "dumbfuck","fuckwit","cumslut","cockslave","bitchboy","fuckboy","manwhore",
+    "dickwad","asslicker","buttmunch","dicksucker","cumface","shitface","turd",
+    "douchebucket","fucknugget","shitlord","dickweasel","assnugget","buttface",
+    "cumstain","shitcock","fucknut","dickbag","asshat","shitbrick","turdface",
+    "dickless","ballsack","nutjob","jackoff","jerkoff","wanker","tosser",
+    "bellend","knobhead","pillock","plonker","muppet","nonce","tosspot",
+    "bawbag","fanny","minge","gash","snatch","twat","slag","scrubber",
+    
+    // Englische Diskriminierende Begriffe
+    "retard","retarded","moron","imbecile","mongoloid","spastic","cripple",
+    "faggot","fag","dyke","lesbo","tranny","shemale","homo","queer",
+    "nigger","nigga","spic","wetback","beaner","chink","gook","slope",
+    "kike","heeb","raghead","towelhead","sandnigger","camel",
+    
+    // Englische Vulgäre Begriffe
+    "sex","porn","xxx","nude","naked","orgasm","masturbate","horny","kinky",
+    "blowjob","handjob","footjob","titjob","anal","oral","vaginal","penetration",
+    "cumshot","facial","creampie","gangbang","threesome","foursome","orgy",
+    "bdsm","bondage","fetish","kink","dildo","vibrator","fleshlight","sextoy",
+    "erotic","erection","aroused","climax","ejaculate","squirt","moan","groan",
+    
+    // Englische Religiöse Begriffe
+    "jesus","christ","god","lord","holy","sacred","church","bible","christian",
+    "muslim","jewish","buddhist","hindu","atheist","blasphemy","heretic",
+    
+    // Gewalt und Bedrohungen
+    "kill","murder","die","death","suicide","bomb","terrorist","weapon","gun",
+    "knife","stab","shoot","torture","rape","assault","violence","hurt","pain",
+    "blood","gore","corpse","dead","killing","slaughter","massacre","genocide",
+    
+    // Drogen
+    "weed","marijuana","cannabis","joint","blunt","bong","cocaine","heroin",
+    "crack","meth","ecstasy","lsd","acid","shrooms","drugs","dealer","junkie",
+    "high","stoned","blazed","trip","overdose","addiction","rehab",
+    
+    // Zusätzliche vulgäre und beleidigende Begriffe
+    "kotzen","kotz","kotze","furzen","furz","pups","pupsen","kacken","kacke",
+    "pinkeln","pinkel","urin","blut","wunde","verletzt","tot","sterben",
+    "umbringen","erschießen","erstechen","erhängen","vergiften","foltern",
+    "vergewaltigen","missbrauchen","schlagen","prügeln","treten","boxen",
+    "spucken","speichel","rotz","schleim","eiter","pickel","warze","krätze",
+    "läuse","flöhe","ungeziefer","parasit","bakterie","virus","seuche","pest",
+    
+    // Neue deutsche Schimpfwörter - Zusätzliche Kategorie 1
+    "kackboon","vollarsch","drecksfotze","pissnelke","scheißdreck","arschfurz",
+    "schweinearsch","kackbrocken","rotzbremse","sabberlatz","pisshasser","drecksfink",
+    "kackspecht","rotzpickel","furzkissen","kotzhaufen","stinkaffe","dreckschwein",
+    "pisser","scheißladen","volldepp","arschkanal","fickwurst","wichsgriff",
+    "schlampentod","hurenprügel","arschkriecher","kackverein","pissnase","rotzkugel",
+    
+    // Neue deutsche Schimpfwörter - Internet/Gaming Slang
+    "keksrolle","lowbob","kekskrümel","noobcake","randstein","hartzer","mongo",
+    "spast","behinderter","körperbehinderter","geistigbehinderter","downie","autist",
+    "retardiert","krebsgeschwür","hurenkind","hackfresse","visage","fratze","vogel",
+    "spinner","psycho","verrückter","irrer","bekloppter","durchgeknallter","bekloppt",
+    
+    // Neue deutsche Obszönitäten
+    "blasen","lutschen","lecken","fingern","reiben","wichsen","abspritzen","kommen",
+    "feucht","nass","tropfen","sabbern","leckerchen","saftsack","spritzpistole",
+    "schwengel","prügel","knüppel","stab","rohr","säule","mast","pfahl",
+    
+    // Neue englische Vulgaritäten
+    "fingering","licking","sucking","jerking","stroking","rubbing","pounding",
+    "banging","drilling","hammering","nailing","screwing","plowing","ramming",
+    "thrusting","pumping","grinding","humping","mounting","riding","bouncing"
   ];
-  const RE = new RegExp(`\\b(${WORDS.map(w => w.replace(/[.*+?^${}()|[\\]\\\\]/g,"\\$&")).join("|")})\\b`, "giu");
-  const mask = m => "*".repeat(m.length);
+
+  const PROFANITY_RE = new RegExp(`\\b(${PROFANITY_WORDS.map(w => w.replace(/[.*+?^${}()|[\\]\\\\]/g,"\\$&")).join("|")})\\b`, "giu");
+  
+  // Cache für bereits gefilterte Texte
+  const textCache = new Map();
+  const CACHE_MAX_SIZE = 1000;
 
   function skippable(node){
     const p = node.parentNode;
@@ -16,36 +127,146 @@ window.MF = window.MF || {};
     if (p.isContentEditable) return true;
     return false;
   }
-  function batch(nodes){
-    for (const n of nodes) {
-      const old = n.nodeValue; if (!old) continue;
-      const nu = old.replace(RE, mask); if (nu !== old) n.nodeValue = nu;
+
+  // Reine lokale Filterung
+  const filterText = (text) => {
+    if (!text || text.length < 3) return text;
+    
+    // Cache prüfen
+    const cacheKey = text.toLowerCase().trim();
+    if (textCache.has(cacheKey)) {
+      return textCache.get(cacheKey);
     }
+    
+    const originalText = text;
+    const filteredText = text.replace(PROFANITY_RE, match => {
+      console.log(`🚫 [HARDCODED] Schimpfwort erkannt: "${match}" → "${"*".repeat(match.length)}"`);
+      return "*".repeat(match.length);
+    });
+    
+    // Cache speichern
+    if (textCache.size >= CACHE_MAX_SIZE) {
+      const firstKey = textCache.keys().next().value;
+      textCache.delete(firstKey);
+    }
+    textCache.set(cacheKey, filteredText);
+    
+    if (filteredText !== originalText) {
+      console.log(`📝 [GEFILTERT] "${originalText.substring(0, 30)}..." → "${filteredText.substring(0, 30)}..."`);
+    }
+    
+    return filteredText;
+  };
+
+  // Batch-Verarbeitung
+  function batchProcess(nodes) {
+    let filtered = 0;
+    const foundWords = [];
+    
+    for (const n of nodes) {
+      const old = n.nodeValue;
+      if (!old || old.length < 3) continue;
+      
+      // Wort-Tracking vor Filterung
+      const matches = old.match(PROFANITY_RE);
+      if (matches) {
+        foundWords.push(...matches);
+      }
+      
+      const filteredText = filterText(old);
+      if (filteredText !== old) {
+        n.nodeValue = filteredText;
+        filtered++;
+      }
+    }
+    
+    if (filtered > 0) {
+      console.log(`🚫 [BATCH] ${filtered} Textstellen gefiltert, gefundene Wörter:`, foundWords);
+    }
+    
+    return filtered;
   }
+
   function initial(){
     try {
-      const root = document.body || document.documentElement; if (!root) return;
+      const root = document.body || document.documentElement; 
+      if (!root) return;
+      
       const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false);
-      const arr = []; let n;
-      while ((n = w.nextNode())) { if (!skippable(n)) arr.push(n); if (arr.length >= 2000){ batch(arr); arr.length=0; } }
-      if (arr.length) batch(arr);
-    } catch {}
+      const arr = []; 
+      let n;
+      let totalNodes = 0;
+      
+      console.log(`🔍 Starte Schimpfwort-Scan mit ${PROFANITY_WORDS.length} hardcodierten Wörtern...`);
+      
+      while ((n = w.nextNode())) { 
+        if (!skippable(n)) {
+          arr.push(n); 
+          totalNodes++;
+        }
+        
+        if (arr.length >= 100) { 
+          console.log(`🔄 [BATCH ${Math.ceil(totalNodes/100)}] Verarbeite ${arr.length} Textstellen...`);
+          batchProcess(arr);
+          arr.length = 0; 
+        } 
+      }
+      
+      if (arr.length) {
+        console.log(`🔄 [FINAL-BATCH] Verarbeite ${arr.length} verbleibende Textstellen...`);
+        batchProcess(arr);
+      }
+      
+      console.log(`✅ Hardcodierte Schimpfwort-Filterung abgeschlossen für ${totalNodes} Textstellen`);
+      
+    } catch (error) {
+      console.error('❌ Filter error:', error);
+    }
   }
+
   let obs=null;
+  
   function start(){
     if (obs) return;
     let queue=new Set(), scheduled=false;
-    function flush(){ try { batch(Array.from(queue)); } finally { queue.clear(); scheduled=false; } }
+    
+    function flushSync() {
+      try { 
+        const nodes = Array.from(queue);
+        console.log(`🔄 [LIVE-UPDATE] Verarbeite ${nodes.length} neue/geänderte Textstellen...`);
+        batchProcess(nodes);
+      } finally { 
+        queue.clear(); 
+        scheduled=false; 
+      } 
+    }
+    
     obs = new MutationObserver(muts=>{
       for (const m of muts){
-        if (m.type==="characterData"){ const n=m.target; if (n && n.nodeType===3 && !skippable(n)) queue.add(n); }
-        else if (m.type==="childList"){ m.addedNodes && m.addedNodes.forEach(nd => collect(nd, queue)); }
+        if (m.type==="characterData"){ 
+          const n=m.target; 
+          if (n && n.nodeType===3 && !skippable(n)) queue.add(n); 
+        }
+        else if (m.type==="childList"){ 
+          m.addedNodes && m.addedNodes.forEach(nd => collect(nd, queue)); 
+        }
       }
-      if (!scheduled && queue.size){ scheduled=true; setTimeout(flush, 50); }
+      if (!scheduled && queue.size){ 
+        scheduled=true; 
+        setTimeout(flushSync, 100);
+      }
     });
+    
     obs.observe(document.documentElement, { subtree:true, childList:true, characterData:true });
   }
-  function stop(){ if (obs){ obs.disconnect(); obs=null; } }
+  
+  function stop(){ 
+    if (obs){ 
+      obs.disconnect(); 
+      obs=null; 
+    } 
+  }
+  
   function collect(root,set){
     if (!root) return;
     if (root.nodeType===3){ if(!skippable(root)) set.add(root); return; }
@@ -58,7 +279,47 @@ window.MF = window.MF || {};
   }
 
   MF.profanityApply = () => {
-    if (!MF.state.enabled) { stop(); return; }
-    if (MF.state.profanityEnabled) { initial(); start(); } else { stop(); }
+    if (!MF.state.enabled) { 
+      stop(); 
+      console.log('🔴 Profanity Filter deaktiviert (Extension aus)');
+      return; 
+    }
+    
+    if (MF.state.profanityEnabled) { 
+      console.log('🟢 Starte hardcodierte Schimpfwort-Filterung...');
+      console.log(`📋 Verfügbare Wörter: ${PROFANITY_WORDS.length} (keine API mehr)`);
+      initial(); 
+      start(); 
+    } else { 
+      console.log('🟡 Profanity Filter deaktiviert (Feature aus)');
+      stop(); 
+    }
+  };
+
+  // Cache-Management
+  MF.profanityClearCache = () => {
+    textCache.clear();
+    console.log('🗑️ Profanity-Cache geleert');
+  };
+
+  // Debug-Info
+  MF.profanityInfo = () => {
+    console.log('📊 Profanity Filter Info:', {
+      enabled: MF.state.profanityEnabled,
+      cacheSize: textCache.size,
+      totalWords: PROFANITY_WORDS.length,
+      mode: 'HARDCODED (keine API)',
+      sampleWords: PROFANITY_WORDS.slice(0, 10)
+    });
+  };
+
+  // Test-Funktion
+  MF.profanityTest = (testText = "This hurensohn is fucking shit test vollpfosten") => {
+    console.log('🧪 Testing hardcoded filter with:', testText);
+    
+    const result = filterText(testText);
+    console.log('📝 Result:', result);
+    
+    return { original: testText, filtered: result, wordsFound: PROFANITY_WORDS.length };
   };
 })();

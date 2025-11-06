@@ -242,11 +242,6 @@ window.MF = window.MF || {};
       resetMinFontSize();
       stopMinFontObserver();
     }
-    
-    // Kompatibilitätsmodus für inline-styles
-    if (s.compat && s.fontEnabled) {
-      setTimeout(() => compatPassOnce(s.minPx), 100);
-    }
   };
   
   MF.fontReevalIfNeeded = (oldMin) => {
@@ -256,52 +251,8 @@ window.MF = window.MF || {};
       resetMinFontSize();
       setTimeout(() => {
         applyMinFontSize(s.minPx);
-        if (s.compat) compatReevaluate(s.minPx);
       }, 50);
     }
   };
 
-  // Vereinfachte Kompatibilitätsfunktion für inline-styles
-  function compatPassOnce(minPx) {
-    if (!MF.state.fontEnabled) return;
-    
-    try {
-      document.querySelectorAll('[style*="font-size"]').forEach(el => {
-        if (isIconElement(el)) return;
-        
-        const currentPx = parseFloat(getComputedStyle(el).fontSize);
-        if (currentPx < minPx) {
-          if (!el.hasAttribute('data-mf-compat')) {
-            el.setAttribute('data-mf-compat', el.style.fontSize || '');
-          }
-          el.style.setProperty('font-size', minPx + 'px', 'important');
-        }
-      });
-    } catch {}
-  }
-
-  function compatReevaluate(minPx) {
-    if (!MF.state.fontEnabled) return;
-    
-    try {
-      document.querySelectorAll('[data-mf-compat]').forEach(el => {
-        const original = el.getAttribute('data-mf-compat');
-        
-        // Temporär zurücksetzen
-        if (original) el.style.fontSize = original;
-        else el.style.removeProperty('font-size');
-        
-        const currentPx = parseFloat(getComputedStyle(el).fontSize);
-        
-        if (currentPx < minPx) {
-          el.style.setProperty('font-size', minPx + 'px', 'important');
-        } else {
-          // Nicht mehr nötig
-          if (original) el.style.fontSize = original;
-          else el.style.removeProperty('font-size');
-          el.removeAttribute('data-mf-compat');
-        }
-      });
-    } catch {}
-  }
 })();
