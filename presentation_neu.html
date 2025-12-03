@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proxy vs Extension</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/black.css">
+    <style>
+        .reveal h1, .reveal h2, .reveal h3 { 
+            text-transform: none; 
+            font-weight: 700;
+        }
+        .reveal { 
+            font-size: 28px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        .reveal h2 { 
+            font-size: 2.2em; 
+            margin-bottom: 0.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .reveal h3 { 
+            font-size: 1.4em; 
+            margin-bottom: 0.4em;
+            font-weight: 600;
+        }
+        .reveal p, .reveal li { 
+            font-size: 1em; 
+            line-height: 1.5; 
+        }
+        
+        /* Professional Cards */
+        .card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            padding: 0.8em;
+            margin: 0.5em 0.8em;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-red {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.25), rgba(192, 57, 43, 0.15));
+            border-color: rgba(231, 76, 60, 0.5);
+        }
+        
+        .card-blue {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.25), rgba(41, 128, 185, 0.15));
+            border-color: rgba(52, 152, 219, 0.5);
+        }
+        
+        .card-green {
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.25), rgba(39, 174, 96, 0.15));
+            border-color: rgba(46, 204, 113, 0.5);
+        }
+        
+        .card-yellow {
+            background: linear-gradient(135deg, rgba(241, 196, 15, 0.25), rgba(243, 156, 18, 0.15));
+            border-color: rgba(241, 196, 15, 0.5);
+        }
+        
+        /* Professional Text Styles */
+        .highlight-red { color: #e74c3c; font-weight: 600; }
+        .highlight-blue { color: #3498db; font-weight: 600; }
+        .highlight-green { color: #2ecc71; font-weight: 600; }
+        .highlight-yellow { color: #f1c40f; font-weight: 600; }
+        
+        /* Icons & Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.3em 0.8em;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin: 0.3em;
+        }
+        
+        .badge-success { background: rgba(46, 204, 113, 0.3); border: 2px solid #2ecc71; }
+        .badge-danger { background: rgba(231, 76, 60, 0.3); border: 2px solid #e74c3c; }
+        .badge-info { background: rgba(52, 152, 219, 0.3); border: 2px solid #3498db; }
+        
+        /* Grid Layout */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1em;
+            margin: 0.8em 1.5em;
+        }
+        
+        /* Feature List */
+        .feature-list {
+            text-align: left;
+            font-size: 0.7em;
+            line-height: 1.6;
+            padding-left: 1.2em;
+        }
+        
+        .feature-list li {
+            margin: 0.3em 0;
+        }
+        
+        /* Comparison Table */
+        .vs-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2em;
+            margin: 2em;
+        }
+        
+        .vs-badge {
+            font-size: 2.5em;
+            font-weight: 900;
+            color: #f39c12;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            
+            <!-- Folie 1: Titel -->
+            <section>
+                <h1 style="font-size: 3em; margin-bottom: 0.3em;">🌐 Website-Modifikation</h1>
+                <h2 style="font-size: 1.8em; color: #3498db; font-weight: 400;">MITM Proxy vs. Browser Extension</h2>
+                <div style="margin-top: 3em; font-size: 1.2em; opacity: 0.9;">
+                    <p><strong>Luka Ignjatovic</strong> | 5CHIF</p>
+                    <p>HTL Leonding | Systemprogrammierung</p>
+                    <p style="font-size: 0.9em; margin-top: 0.3em; opacity: 0.7;">November 2025</p>
+                </div>
+            </section>
+
+            <!-- Folie 2: Das Problem -->
+            <section>
+                <h2>🎯 Problemstellung</h2>
+                <div style="margin: 2em;">
+                    <div class="card card-red">
+                        <h3>📏 Barrierefreiheit</h3>
+                        <p>Schriftgrößen oft zu klein für komfortable Lesbarkeit</p>
+                    </div>
+                    <div class="card card-yellow">
+                        <h3>🎨 Personalisierung</h3>
+                        <p>Farben und Kontraste entsprechen nicht individuellen Bedürfnissen</p>
+                    </div>
+                    <div class="card card-blue">
+                        <h3>💡 Zielsetzung</h3>
+                        <p>Dynamische Website-Modifikation ohne Code-Änderungen</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Folie 3: Zwei Lösungen -->
+            <section>
+                <h2>💡 Zwei Lösungsansätze</h2>
+                <div class="grid-2">
+                    <div class="card card-red">
+                        <h3 class="highlight-red">🔴 MITM Proxy</h3>
+                        <p style="margin-top: 0.3em;">Netzwerk-Ebene</p>
+                        <p style="font-size: 0.7em; opacity: 0.8;">Modifikation zwischen Browser und Server</p>
+                    </div>
+                    <div class="card card-blue">
+                        <h3 class="highlight-blue">🔵 Browser Extension</h3>
+                        <p style="margin-top: 0.3em;">Client-Ebene</p>
+                        <p style="font-size: 0.7em; opacity: 0.8;">Modifikation direkt im Browser</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Folie 4: Proxy Architektur -->
+            <section>
+                <h2>🔴 MITM Proxy: Architektur</h2>
+                <div style="margin: 0.5em 2em;">
+                    <div class="card card-red">
+                        <h3>Man-in-the-Middle Prinzip</h3>
+                        <p style="font-size: 1.8em; margin: 0.5em 0;">Browser ↔ <span class="highlight-red">Proxy</span> ↔ Server</p>
+                    </div>
+                    <div class="grid-2" style="margin-top: 1.5em;">
+                        <div class="card">
+                            <p><strong>⚡ Technologie</strong></p>
+                            <p>Python (mitmproxy)</p>
+                        </div>
+                        <div class="card">
+                            <p><strong>🔄 Zeitpunkt</strong></p>
+                            <p>Vor Browser-Rendering</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Folie 5: Extension Architektur -->
+            <section>
+                <h2>🔵 Browser Extension: Architektur</h2>
+                <div style="margin: 0.5em 2em;">
+                    <div class="card card-blue">
+                        <h3>Content Script Prinzip</h3>
+                        <p style="font-size: 1.8em; margin: 0.5em 0;">Server → Browser → <span class="highlight-blue">Extension</span> → DOM</p>
+                    </div>
+                    <div class="grid-2" style="margin-top: 1.5em;">
+                        <div class="card">
+                            <p><strong>⚡ Technologie</strong></p>
+                            <p>JavaScript (WebExtensions API)</p>
+                        </div>
+                        <div class="card">
+                            <p><strong>🔄 Zeitpunkt</strong></p>
+                            <p>Nach Browser-Rendering</p>
+                        </div>
+                    </div>
+                    <div class="card card-green" style="margin-top: 1em;">
+                        <h3 style="font-size: 1em;">💡 Wie es funktioniert</h3>
+                        <ul class="feature-list" style="font-size: 0.85em; line-height: 1.8; text-align: left; margin: 0.5em 1em;">
+                            <li>🌐 Website lädt <strong>normal</strong> vom Server</li>
+                            <li>⚡ Extension injiziert <strong>Content Script</strong> in die Seite</li>
+                            <li>✏️ Script <strong>manipuliert DOM</strong> (Schrift, Farben, etc.)</li>
+                            <li>👁️ <strong>MutationObserver</strong> überwacht dynamische Änderungen</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Folie 6: Extension - Pro & Contra -->
+         
+
+            <!-- Folie 7: Proxy - Pro & Contra -->
+          
+
+        
+
+                                    <!-- Folie 9: Was Proxy NICHT kann -->
+            <section>
+                <h2>❌ Was der Proxy NICHT kann</h2>
+                <p style="font-size: 1.1em; margin: 1em 2em; opacity: 0.9;">Der Proxy hat auch Grenzen:</p>
+                <div style="margin: 0.5em 2em;">
+                    <div class="card card-red" style="margin-bottom: 1em;">
+                        <h3>👤 <strong>User-Friendly Installation</strong></h3>
+                        <p style="font-size: 0.95em; line-height: 1.8; margin: 0.5em;">
+                            Proxy braucht kompliziertes Setup (Python, Zertifikat, Config)<br>
+                            <span style="opacity: 0.7;">→ Extension: <strong>1-Klick Installation</strong>, sofort einsatzbereit</span>
+                        </p>
+                    </div>
+                    <div class="card card-red" style="margin-bottom: 1em;">
+                        <h3>🌐 <strong>Cross-Browser Support</strong></h3>
+                        <p style="font-size: 0.95em; line-height: 1.8; margin: 0.5em;">
+                            Proxy funktioniert nur mit Firefox (Chrome-Problem)<br>
+                            <span style="opacity: 0.7;">→ Extension: <strong>Firefox, Chrome, Edge</strong> mit gleichem Code</span>
+                        </p>
+                    </div>
+                    <div class="card card-red">
+                        <h3>💾 <strong>Einstellungen speichern</strong></h3>
+                        <p style="font-size: 0.95em; line-height: 1.8; margin: 0.5em;">
+                            Proxy: Einstellungen im Code ändern & neu starten<br>
+                            <span style="opacity: 0.7;">→ Extension: <strong>Benutzer-Menü</strong>, Settings automatisch gespeichert</span>
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Folie 10: Was Extension NICHT kann -->
+            <section>
+                <h2>❌ Was die Extension NICHT kann</h2>
+                <p style="font-size: 1.1em; margin: 1em 2em; opacity: 0.9;">Die Extension ist begrenzt durch die Browser-API:</p>
+                <div style="margin: 0.5em 2em;">
+                    <div class="card card-red" style="margin-bottom: 1em;">
+                        <h3>🚫 <strong>Request Blocking</strong></h3>
+                        <p style="font-size: 0.95em; line-height: 1.8; margin: 0.5em;">
+                            Extension kann Werbung nur <strong>verstecken</strong> (nach dem Laden)<br>
+                            <span style="opacity: 0.7;">→ Proxy kann Werbung <strong>komplett verhindern</strong> (nie laden)</span>
+                        </p>
+                    </div>
+                    <div class="card card-red" style="margin-bottom: 1em;">
+                        <h3>🔍 <strong>Netzwerk-Traffic lesen</strong></h3>
+                        <p style="font-size: 0.95em; line-height: 1.8; margin: 0.5em;">
+                            Extension sieht nur fertiges Ergebnis im Browser<br>
+                            <span style="opacity: 0.7;">→ Proxy sieht <strong>alle Daten</strong> zwischen Browser ↔ Server</span>
+                        </p>
+                    </div>
+                    <div class="card card-red">
+                        <h3>💾 <strong>System-Dateien ändern</strong></h3>
+                        <p style="font-size: 0.95em; line-height: 1.8; margin: 0.5em;">
+                            Extension kann keine Dateien auf Computer speichern<br>
+                            <span style="opacity: 0.7;">→ Proxy kann <strong>Logs speichern</strong>, Dateien lesen/schreiben</span>
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Folie 11: Proxy Setup & Technik -->
+            <section>
+                <h2>🔧 Proxy: Wie funktioniert's?</h2>
+                <div style="margin: 1em 2em;">
+                    <div class="card card-red" style="margin-bottom: 1em;">
+                        <h3>📡 Setup</h3>
+                        <p style="font-size: 0.85em; margin: 0.5em 0;"><strong>1.</strong> Proxy starten: <code style="background: rgba(0,0,0,0.3); padding: 0.2em 0.5em; border-radius: 4px;">localhost:8081</code></p>
+                        <p style="font-size: 0.85em; margin: 0.5em 0;"><strong>2.</strong> Firefox konfigurieren: Proxy-Einstellungen</p>
+                        <p style="font-size: 0.85em; margin: 0.5em 0;"><strong>3.</strong> Zertifikat installieren (HTTPS)</p>
+                    </div>
+                    <div class="card card-yellow">
+                        <h3>⚡ So funktioniert's</h3>
+                        <p style="font-size: 0.9em; margin: 0.5em 0; line-height: 1.6;">
+                            Browser → <strong>Proxy fängt ab</strong> → <strong>Python ändert</strong> → Browser zeigt geänderte Seite
+                        </p>
+                        <p style="font-size: 0.8em; margin-top: 0.8em; opacity: 0.9;">
+                            💻 Proxy sitzt <strong>zwischen</strong> Browser und Internet<br>
+                            ✏️ Ändert Daten <strong>bevor</strong> Browser sie sieht
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Folie 12: Entscheidungshilfe -->
+            <section>
+                <h2>🎯 Wann welche Lösung?</h2>
+                <div class="grid-2" style="margin: 0.5em;">
+                    <div class="card card-red">
+                        <h3 class="highlight-red">🔴 MITM Proxy</h3>
+                        <div style="text-align: left; margin: 1em;">
+                            <p style="font-size: 0.95em; margin: 0.8em 0;"><strong>✅ Perfekt für:</strong></p>
+                            <ul style="font-size: 0.85em; line-height: 1.8;">
+                                <li>🚫 <strong>Request Blocking</strong><br><span style="opacity: 0.7;">Werbung/Tracking komplett verhindern</span></li>
+                                <li>🔧 <strong>Development & Testing</strong><br><span style="opacity: 0.7;">Code testen & API-Responses manipulieren</span></li>
+                                <li>📊 <strong>Traffic Analysis</strong><br><span style="opacity: 0.7;">Alle Netzwerk-Daten sehen</span></li>
+                            </ul>
+                            <p style="font-size: 0.8em; margin-top: 1.5em; padding: 0.8em; background: rgba(0,0,0,0.3); border-radius: 6px;">
+                                ⚠️ <strong>Nachteil:</strong> Setup erforderlich (Python, Proxy-Config, Zertifikat)
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card card-blue">
+                        <h3 class="highlight-blue">🔵 Web Extension</h3>
+                        <div style="text-align: left; margin: 1em;">
+                            <p style="font-size: 0.95em; margin: 0.8em 0;"><strong>✅ Perfekt für:</strong></p>
+                            <ul style="font-size: 0.85em; line-height: 1.8;">
+                                <li>� <strong>Mobile-Support</strong><br><span style="opacity: 0.7;">Funktioniert auch auf Firefox Mobile</span></li>
+                                <li>⚡ <strong>Performance</strong><br><span style="opacity: 0.7;">Kein Extra-Prozess, läuft nativ im Browser</span></li>
+                                <li>🎨 <strong>UI-Integration</strong><br><span style="opacity: 0.7;">Toolbar-Icon, Popup-Menü, Settings-Seite</span></li>
+                                <li>👤 <strong>End-User Friendly</strong><br><span style="opacity: 0.7;">1-Klick Installation, kein Setup</span></li>
+                                <li>🏪 <strong>Store-Distribution</strong><br><span style="opacity: 0.7;">Millionen Nutzer erreichen</span></li>
+                            </ul>
+                            <p style="font-size: 0.8em; margin-top: 1.5em; padding: 0.8em; background: rgba(0,0,0,0.3); border-radius: 6px;">
+                                ⚠️ <strong>Nachteil:</strong> Kann Requests nicht blocken (nur verstecken)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+           
+
+            <!-- Folie 14: Abschluss -->
+            <section>
+                <h1 style="font-size: 3.5em; margin-bottom: 0.5em;">Vielen Dank!</h1>
+                <div style="margin-top: 3em;">
+                    <div class="card" style="display: inline-block; padding: 1.5em 3em;">
+                        <h2 style="font-size: 2em; margin: 0;">💬 Fragen?</h2>
+                    </div>
+                </div>
+                <div style="margin-top: 3em; font-size: 1.1em; opacity: 0.7;">
+                    <p>Luka Ignjatovic | 5CHIF | HTL Leonding</p>
+                    <p style="font-size: 0.9em;">Systemprogrammierung | November 2025</p>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            transition: 'slide',
+            backgroundTransition: 'fade'
+        });
+    </script>
+</body>
+</html>
