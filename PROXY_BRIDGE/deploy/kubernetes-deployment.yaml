@@ -1,0 +1,130 @@
+---
+# PersistentVolumeClaim für dauerhaftes Zertifikat
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mitm-cert-storage
+  namespace: student-he200101
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+
+---
+# Nutze deinen student-he200101 Namespace (kein neuer Namespace nötig)
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mitm-proxy
+  namespace: student-he200101  # Dein LeoCloud Namespace
+  labels:
+    app: mitm-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mitm-proxy
+  template:
+    metadata:
+      labels:
+        app: mitm-proxy
+    spec:
+      containers:
+      - name: mitm-proxy
+        image: mitmproxy/mitmproxy:latest
+        command: ["mitmdump"]  # Nutze mitmdump statt mitmproxy (kein TTY nötig)
+        args: 
+          - "-p"
+          - "8081"
+          - "--listen-host"
+          - "0.0.0.0"
+          - "-s"
+          - "/app/website_modifier.py"
+        ports:
+        - containerPort: 8081
+          name: proxy
+          protocol: TCP
+        volumeMounts:
+        - name: proxy-script
+          mountPath: /app
+          readOnly: true
+        - name: cert-storage
+          mountPath: /root/.mitmproxy
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+      volumes:
+      - name: proxy-script
+        configMap:
+          name: proxy-script
+      - name: cert-storage
+        persistentVolumeClaim:
+          claimName: mitm-cert-storage
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mitm-proxy-service
+  namespace: student-he200101  # Dein LeoCloud Namespace
+  annotations:
+    metallb.universe.tf/allow-shared-ip: "leocloud"
+spec:
+  type: LoadBalancer
+  externalTrafficPolicy: Local
+  selector:
+    app: mitm-proxy
+  ports:
+  - protocol: TCP
+    port: 8081
+    targetPort: 8081
+    name: proxy
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: proxy-script
+  namespace: student-he200101  # Dein LeoCloud Namespace
+data:
+  website_modifier.py: |
+    from mitmproxy import http
+
+    AD_DOMAINS = [
+        'doubleclick.net', 'googlesyndication.com', 'googleadservices.com',
+        'google-analytics.com', 'facebook.net', 'facebook.com/tr',
+        'scorecardresearch.com', 'adnxs.com', 'advertising.com',
+        'criteo.com', 'outbrain.com', 'taboola.com',
+        'bet365.com', 'tipico.com', 'bwin.com', 'unibet.com',
+    ]
+
+    def request(flow: http.HTTPFlow) -> None:
+        url = flow.request.pretty_url.lower()
+        for ad_domain in AD_DOMAINS:
+            if ad_domain in url:
+                flow.response = http.Response.make(204, b"", {"Content-Type": "text/plain"})
+                print(f"🚫 AD BLOCKED: {ad_domain}")
+                return
+
+    def response(flow: http.HTTPFlow) -> None:
+        if not (flow.response and "text/html" in flow.response.headers.get("content-type", "")):
+            return
+        try:
+            content = flow.response.get_text()
+            if "htl-leonding.at" in flow.request.host:
+                content = content.replace("TOP NEWS", "SUPER NEWS")
+                css = """<style>body{background:linear-gradient(135deg,#74b9ff,#0984e3)!important}</style>"""
+                content = content.replace("</head>", css + "</head>")
+            adblocker = """<style>[class*="ad-"],[id*="ad-"],[class*="banner"],[class*="bet365"],[class*="spinit"],.ad,.ads{display:none!important;visibility:hidden!important;height:0!important;width:0!important}</style>"""
+            if "</head>" in content:
+                content = content.replace("</head>", adblocker + "</head>")
+            flow.response.set_text(content)
+        except:
+            pass

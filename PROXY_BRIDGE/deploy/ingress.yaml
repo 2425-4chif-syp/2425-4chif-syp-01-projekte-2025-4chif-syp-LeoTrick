@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mitm-proxy-ingress
+  namespace: student-he200101
+  annotations:
+    # Nginx Ingress (falls LeoCloud das nutzt)
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+spec:
+  ingressClassName: nginx  # Oder was LeoCloud nutzt
+  rules:
+  - host: he200101.cloud.htl-leonding.ac.at
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: mitm-proxy-service
+            port:
+              number: 8081

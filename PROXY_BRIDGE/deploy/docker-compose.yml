@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  mitm-proxy:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    container_name: mitm-proxy
+    ports:
+      - "8081:8081"
+    volumes:
+      - ../bridgebase-protocol/src/website/website_modifier.py:/app/website_modifier.py:ro
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Vienna
