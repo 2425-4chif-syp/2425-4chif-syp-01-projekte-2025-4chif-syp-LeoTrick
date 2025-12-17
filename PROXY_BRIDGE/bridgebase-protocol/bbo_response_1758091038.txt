@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sc_bm pov="E" d="N" v="-" n="54.k9862.62.kt65" s="kq862.a43.qj87.q" e="a97.t7.k95.aj982" w="jt3.qj5.at43.743" h="p" o="" bm="n" ac="n" rc="0" c="y" gv="43">
-  <r type="bid" bid="1C" meaning="Minor suit opening -- 3+ !C; 11-21 HCP; 12-22 total points"/>
-</sc_bm>
-
-

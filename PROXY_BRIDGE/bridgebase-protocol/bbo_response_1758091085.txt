@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sc_bm pov="W" d="N" v="-" n="54.k9862.62.kt65" s="kq862.a43.qj87.q" e="a97.t7.k95.aj982" w="jt3.qj5.at43.743" h="p-1c-1h-1n-2h-p-3d-p-4h-p-p-p-SJ-S5-S9-SQ-S6" o="" bm="n" ac="n" rc="0" c="n" gv="43">
-  <r type="play" card="S3"/>
-</sc_bm>
-
-
