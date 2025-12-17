@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bridge Analyzer - Businessplan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/black.min.css">
+    <style>
+        :root {
+            --color-primary: #667eea;
+            --color-secondary: #764ba2;
+            --color-accent: #f093fb;
+            --color-green: #4ade80;
+            --color-blue: #60a5fa;
+            --color-yellow: #fbbf24;
+            --color-purple: #a78bfa;
+            --color-orange: #fb923c;
+        }
+
+        .reveal {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .reveal h1, .reveal h2, .reveal h3 {
+            text-transform: none;
+            font-weight: 700;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            padding: 0.3em;
+            margin: 0.15em;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .card-green {
+            border-color: var(--color-green);
+            background: linear-gradient(135deg, rgba(74, 222, 128, 0.1), rgba(34, 197, 94, 0.05));
+        }
+
+        .card-blue {
+            border-color: var(--color-blue);
+            background: linear-gradient(135deg, rgba(96, 165, 250, 0.1), rgba(59, 130, 246, 0.05));
+        }
+
+        .card-yellow {
+            border-color: var(--color-yellow);
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.05));
+        }
+
+        .card-purple {
+            border-color: var(--color-purple);
+            background: linear-gradient(135deg, rgba(167, 139, 250, 0.1), rgba(139, 92, 246, 0.05));
+        }
+
+        .card-orange {
+            border-color: var(--color-orange);
+            background: linear-gradient(135deg, rgba(251, 146, 60, 0.1), rgba(249, 115, 22, 0.05));
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.2em;
+            margin-top: 0.2em;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.2em;
+            margin-top: 0.2em;
+        }
+
+        .highlight-green {
+            color: var(--color-green);
+            font-weight: bold;
+        }
+
+        .highlight-blue {
+            color: var(--color-blue);
+            font-weight: bold;
+        }
+
+        .highlight-yellow {
+            color: var(--color-yellow);
+            font-weight: bold;
+        }
+
+        .highlight-purple {
+            color: var(--color-purple);
+            font-weight: bold;
+        }
+
+        .revenue-number {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin: 0.1em 0;
+        }
+
+        .pricing-tier {
+            text-align: center;
+            padding: 0.15em;
+        }
+
+        .pricing-tier h3 {
+            margin-bottom: 0.15em;
+            font-size: 0.8em;
+        }
+
+        .price {
+            font-size: 0.9em;
+            font-weight: bold;
+            margin: 0.15em 0;
+        }
+
+        .features-list {
+            text-align: left;
+            font-size: 0.55em;
+            line-height: 1.2;
+            margin-top: 0.15em;
+        }
+
+        .features-list li {
+            margin: 0.05em 0;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Folie 1: Titel -->
+            <section>
+                <h1 style="font-size: 1.5em; margin-bottom: 0.2em;">💰 Monetarisierung</h1>
+                <h2 style="font-size: 1em; color: var(--color-purple); margin-bottom: 0.5em;">Web-Extension (Chrome & Firefox)</h2>
+                
+                <div class="card card-orange" style="margin: 0.5em auto; max-width: 90%; padding: 0.5em;">
+                    <h3 style="font-size: 0.9em; margin-bottom: 0.3em;">⚠️ Das Problem</h3>
+                    <p style="font-size: 0.75em; line-height: 1.4;">
+                        <strong>Browser-Stores zahlen kein Geld pro Download!</strong><br>
+                        Chrome Web Store & Firefox Add-ons = €0 pro Installation
+                    </p>
+                </div>
+
+                <div class="card card-green" style="margin: 0.5em auto; max-width: 90%; padding: 0.5em;">
+                    <h3 style="font-size: 0.9em; margin-bottom: 0.3em;">✅ Die Lösung</h3>
+                    <p style="font-size: 0.75em; line-height: 1.4;">
+                        <strong>Einnahmen entstehen durch Monetarisierung innerhalb der Extension</strong><br>
+                        Downloads bringen Reichweite → Geld verdient man durch Premium-Funktionen
+                    </p>
+                </div>
+            </section>
+
+            <!-- Folie 2: Revenue Streams -->
+            <section>
+                <h2 style="font-size: 0.95em; margin-bottom: 0.2em;">💵 Mögliche Einnahmequellen</h2>
+                <div style="margin: 0.1em 0.2em;">
+                    <div style="display: flex; justify-content: center;">
+                        <div class="card card-green" style="max-width: 600px;">
+                            <h3 style="font-size: 0.75em; margin-bottom: 0.2em;">🎯 Freemium-Modell</h3>
+                            <div style="text-align: left; margin-top: 0.3em;">
+                                <p style="font-size: 0.65em; margin: 0.2em 0;"><strong>FREE:</strong></p>
+                                <ul style="font-size: 0.6em; line-height: 1.3; margin: 0.1em 0 0.3em 1em;">
+                                    <li>✓ Basis-Funktionen</li>
+                                    <li>✓ Begrenzte Nutzung</li>
+                                </ul>
+                                
+                                <p style="font-size: 0.65em; margin: 0.3em 0 0.2em 0;"><strong>PREMIUM (3-5 €/Monat):</strong></p>
+                                <ul style="font-size: 0.6em; line-height: 1.3; margin: 0.1em 0;">
+                                    <li>✓ Alle Features freigeschaltet</li>
+                                    <li>✓ Unlimited Nutzung</li>
+                                    <li>✓ Export-Funktionen</li>
+                                    <li>✓ Cloud-Sync</li>
+                                    <li>✓ Premium Support</li>
+                                    <li>✓ Keine Werbung</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Folie 3: Best Practices & Fazit -->
+            <section>
+                <h2 style="font-size: 0.95em; margin-bottom: 0.2em;">Zusammenfassung</h2>
+                <div style="margin: 0.1em 0.2em;">
+                    
+                    
+                    <div class="grid-2">
+                        <div class="card card-green">
+                            <h3 style="font-size: 0.8em; margin-bottom: 0.2em;">✅ Vorteile des Modells</h3>
+                            <ul style="text-align: left; font-size: 0.65em; line-height: 1.3; margin-top: 0.2em;">
+                                <li>✓ Kostenloser Einstieg → viele Nutzer</li>
+                                <li>✓ Langfristige Einnahmen durch Abos</li>
+                                <li>✓ Skalierbar und store-konform</li>
+                                <li>✓ Mehrere Einnahmequellen kombinierbar</li>
+                            </ul>
+                        </div>
+
+                        <div class="card card-purple">
+                            <h3 style="font-size: 0.8em; margin-bottom: 0.2em;">💡 Fazit</h3>
+                            <div style="text-align: left; font-size: 0.65em; line-height: 1.4; margin-top: 0.2em;">
+                                <p style="margin: 0.2em 0;"><strong>Downloads bringen Reichweite</strong></p>
+                                <p style="margin: 0.2em 0;"><strong>Geld verdient man durch:</strong></p>
+                                <ul style="margin: 0.2em 0; padding-left: 1.2em;">
+                                    <li>Premium-Funktionen</li>
+                                    <li>Services in der Extension</li>
+                                    <li>Langfristige Abo-Modelle</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card card-blue" style="margin-top: 0.3em; text-align: center; padding: 0.4em;">
+                        <p style="font-size: 0.75em; margin: 0;">
+                            🚀 <span class="highlight-purple">Erfolgsformel:</span> Kostenlos starten + Premium-Features + Mehrwert bieten
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            backgroundTransition: 'fade',
+            controls: true,
+            progress: true,
+            center: true,
+            slideNumber: true,
+            width: '100%',
+            height: '100%',
+            margin: 0.05,
+            minScale: 0.2,
+            maxScale: 2.0
+        });
+    </script>
+</body>
+</html>
