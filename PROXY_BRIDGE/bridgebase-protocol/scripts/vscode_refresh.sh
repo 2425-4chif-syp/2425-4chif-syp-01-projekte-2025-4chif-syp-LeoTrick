@@ -1,4 +1,4 @@
-#!/bin/zsh
+Gri#!/bin/zsh
 
 # Auto-refresh VS Code file watcher
 cd "$(dirname "$0")"
