@@ -1,7 +1,32 @@
 from mitmproxy import http
 import re
+import os
 
-# ABSOLUTE MAXIMUM Werbe-Domain Blocklist - 100+ Domains!
+# WELTWEITE SCHIMPFWORT-DATENBANK laden
+def load_profanity_list():
+    """Lädt Schimpfwörter aus Dateien"""
+    profanity_words = set()
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # Deutsche Schimpfwörter
+    de_file = os.path.join(script_dir, "profanity_de.txt")
+    if os.path.exists(de_file):
+        with open(de_file, 'r', encoding='utf-8') as f:
+            profanity_words.update(line.strip() for line in f if line.strip())
+    
+    # Englische Schimpfwörter
+    en_file = os.path.join(script_dir, "profanity_en.txt")
+    if os.path.exists(en_file):
+        with open(en_file, 'r', encoding='utf-8') as f:
+            profanity_words.update(line.strip() for line in f if line.strip())
+    
+    return profanity_words
+
+# Globale Variable - wird beim Start geladen
+PROFANITY_WORDS = load_profanity_list()
+print(f"🤬 {len(PROFANITY_WORDS)} Schimpfwörter geladen!")
+
+# ABSOLUTE MAXIMUM Werbe-Domain Blocklist - 150+ Domains!
 AD_DOMAINS = [
     # Google Ads & Tracking
     'doubleclick.net', 'googlesyndication.com', 'googleadservices.com',
@@ -18,6 +43,14 @@ AD_DOMAINS = [
     'pubmatic.com', 'rubiconproject.com', 'openx.net', 'casalemedia.com',
     'adsafeprotected.com', 'moatads.com', 'serving-sys.com', 'adsrvr.org',
     'adform.net', 'smartadserver.com', 'contextweb.com', 'turn.com',
+    # ADITION (NEU - für flashscore!)
+    'adition.com', 'adfarm1.adition.com', 'imagesrv.adition.com',
+    # LIVESPORT MEDIA (NEU - für flashscore!)
+    'livesportmedia.eu', 'advert.livesportmedia.eu', 'content.livesportmedia.eu',
+    # BANNERFLOW (NEU!)
+    'bannerflow.net', 'c.bannerflow.net',
+    # BET365 AFFILIATES (NEU!)
+    'bet365affiliates.com', 'imstore.bet365affiliates.com',
     # STREAMING SITE POPUPS & REDIRECTS (CRITICAL!)
     'popcash.net', 'popads.net', 'adcash.com', 'propellerads.com', 'adsterra.com',
     'clickadu.com', 'hilltopads.net', 'exoclick.com', 'trafficjunky.com',
@@ -44,6 +77,8 @@ AD_DOMAINS = [
 def request(flow: http.HTTPFlow) -> None:
     """Blockiert ALLES - Werbe-Requests auf Netzwerk-Ebene"""
     url = flow.request.pretty_url.lower()
+    host = flow.request.host.lower()
+    referrer = flow.request.headers.get("referer", "").lower()
     
     # Blockiere Werbe-Domains
     for ad_domain in AD_DOMAINS:
@@ -71,9 +106,10 @@ def response(flow: http.HTTPFlow) -> None:
         
     try:
         content = flow.response.get_text()
+        host = flow.request.host.lower()
         
         # HTL Leonding Modifikationen
-        if "htl-leonding.at" in flow.request.host:
+        if "htl-leonding.at" in host:
             content = content.replace("TOP NEWS", "SUPER NEWS")
             content = content.replace("Bildungsangebot", "Angebot")
             content = content.replace("Informatik", "Design")
@@ -88,129 +124,99 @@ def response(flow: http.HTTPFlow) -> None:
             content = content.replace("</head>", htl_css + "</head>")
             print(f"✅ HTL-Leonding modifiziert")
         
-        # ABSOLUTE MAXIMUM ADBLOCKER - NICHTS KOMMT DURCH! 🔥💀🔥
-        nuclear_adblocker = """<style>
-        /* Google Ads - KOMPLETT */
-        ins.adsbygoogle,.adsbygoogle,iframe[src*="doubleclick"],iframe[src*="googlesyndication"],
-        iframe[src*="googleadservices"],div[id^="google_ads"],div[id^="aswift"],div[id*="google_ad"],
-        script[src*="googlesyndication"],script[src*="doubleclick"],
-        /* Werbe-Container - ULTRA MEGA AGGRESSIVE */
-        .advertisement,.ad-container,.ad-wrapper,.ad-banner,.ad-slot,.ad-box,.ad-space,.ad-unit,
-        .ads-container,.ads-wrapper,.ads-banner,#advertisement,#ad-container,#ads,#advert,
-        .adsbyvli,.ads-box,.adsbox,[id^="ad-"],[id^="ads-"],[class^="ad-"],[class^="ads-"],
-        /* Popup/Overlay - ALLES ALLES ALLES */
-        .popup,.popup-ad,.popup-overlay,.popup-container,.modal-ad,.ad-modal,
-        .interstitial,.overlay-ad,.modal-overlay,[id*="popup"],[class*="popup"],
-        [id*="overlay"],[class*="overlay"],[id*="modal"],[class*="modal"],
-        /* ALLE bekannten Ad-Network iframes + scripts */
-        iframe[src*="adnxs"],iframe[src*="advertising"],iframe[src*="exoclick"],
-        iframe[src*="popcash"],iframe[src*="popads"],iframe[src*="propellerads"],
-        iframe[src*="adcash"],iframe[src*="adsterra"],iframe[src*="clickadu"],
-        iframe[src*="hilltopads"],iframe[src*="trafficjunky"],iframe[src*="mgid"],
-        iframe[src*="revcontent"],iframe[src*="bidvertiser"],iframe[src*="adtng"],
-        iframe[src*="outbrain"],iframe[src*="taboola"],iframe[src*="criteo"],
-        iframe[src*="adform"],iframe[src*="smartadserver"],iframe[src*="spotx"],
-        script[src*="popcash"],script[src*="popads"],script[src*="exoclick"],
-        script[src*="adcash"],script[src*="propellerads"],script[src*="adsterra"],
-        /* Sponsored & Promo */
-        .sponsored,.sponsored-content,.promo-banner,.promo-box,.marketing-banner,.promotion,
-        /* Betting/Casino */
-        [class*="bet365"],[class*="tipico"],[class*="bwin"],[class*="casino"],[class*="betting"],
-        [href*="bet365"],[href*="casino"],[href*="betting"],
-        /* Standard Ad Positions */
-        .banner-ad,.sidebar-ad,.header-ad,.footer-ad,.video-ad,.video-ad-container,
-        .top-ad,.bottom-ad,.left-ad,.right-ad,
-        /* Streaming Site Specific */
-        .ad-overlay,.overlay-ad,.pre-roll,.post-roll,.ad-break,.ad-label,
-        /* MEGA AGGRESSIVE - alle mit ad/ads im Namen */
-        [id*="_ad_"],[class*="_ad_"],[id*="-ad-"],[class*="-ad-"],
-        [id*="_ads_"],[class*="_ads_"],[id*="-ads-"],[class*="-ads-"],
-        [id$="_ad"],[class$="_ad"],[id$="-ad"],[class$="-ad"]
-        {display:none!important;visibility:hidden!important;opacity:0!important;
-        height:0!important;width:0!important;max-height:0!important;max-width:0!important;
-        pointer-events:none!important;position:absolute!important;left:-9999px!important;top:-9999px!important;
-        z-index:-1!important;overflow:hidden!important}
-        body,html{overflow:auto!important;position:static!important}
-        body *{pointer-events:auto!important}
+        # ORF.at Modifikationen - Österreichische News-Seite!
+        elif "orf.at" in host:
+            content = content.replace("ORF.at", "🔥 ORF.at 🔥")
+            content = content.replace("Nachrichten", "Breaking News")
+            
+            orf_css = """<style>
+            body{background:#f0f0f0!important}
+            header,.site-header{background:linear-gradient(90deg,#e74c3c,#c0392b)!important}
+            h1,h2,h3{color:#e74c3c!important;font-weight:bold!important}
+            a{color:#3498db!important}
+            .ticker{background:#2ecc71!important;color:#fff!important;padding:10px!important;
+            font-weight:bold!important;border-radius:5px!important}
+            </style>"""
+            content = content.replace("</head>", orf_css + "</head>")
+            print(f"✅ ORF.at modifiziert")
+        
+        # 🤬 WELTWEITER SCHIMPWORT-BLOCKER - Datenbank mit 469+ Wörtern!
+        if PROFANITY_WORDS:
+            for word in PROFANITY_WORDS:
+                if len(word) >= 3:  # Nur Wörter mit 3+ Buchstaben (vermeidet False Positives)
+                    # Case-insensitive replacement mit Regex - Wort-Grenzen beachten
+                    pattern = re.compile(r'\b' + re.escape(word) + r'\b', re.IGNORECASE)
+                    content = pattern.sub("***", content)
+        
+        print(f"✅ 🤬 Schimpwort-Blocker aktiviert ({len(PROFANITY_WORDS)} Wörter)")
+        
+        # MINIMAL ADBLOCKER - nur Google Ads blockieren
+        
+        # MINIMAL ADBLOCKER - nur Google Ads + Ad-Iframes
+        smart_adblocker = """<style>
+        /* Ad-Network iframes */
+        iframe[src*="doubleclick"],iframe[src*="googlesyndication"],
+        iframe[src*="googleadservices"],
+        /* Google Ads Elemente */
+        ins.adsbygoogle,.adsbygoogle,div[id^="google_ads"]
+        {display:none!important}
         </style>
         <script>
         (function(){
             'use strict';
-            console.log('🔥💀 ABSOLUTE MAXIMUM ADBLOCKER ACTIVATED 💀🔥');
+            console.log('🎯 SMART ADBLOCKER + ANTI-DETECTION ACTIVE');
             
-            // 1. TOTALE Popup-Blockierung - ALLE Varianten
-            window.open=function(){console.log('🚫 window.open KILLED');return null;};
-            Object.defineProperty(window,'open',{value:function(){console.log('🚫 window.open KILLED');return null;},writable:false,configurable:false});
+            // 1. Blockiere window.open
+            window.open=function(){console.log('🚫 popup blocked');return null;};
             
-            // 2. Blockiere alert/confirm/prompt
-            window.alert=function(){console.log('🚫 alert KILLED');return true;};
-            window.confirm=function(){console.log('🚫 confirm KILLED');return false;};
-            window.prompt=function(){console.log('🚫 prompt KILLED');return null;};
+            // 2. ANTI-ADBLOCKER BYPASS - täusche dass Ads geladen sind
+            // Fake AdSense API
+            if(!window.adsbygoogle){
+                window.adsbygoogle=[];
+                window.adsbygoogle.loaded=true;
+                window.adsbygoogle.push=function(){return true;};
+            }
             
-            // 3. Blockiere ALLE setTimeout/setInterval mit Redirects/Popups
-            const origSetTimeout=window.setTimeout,origSetInterval=window.setInterval,origRequestAnimationFrame=window.requestAnimationFrame;
+            // Fake common ad detection variables - SEHR AGGRESSIV!
+            window.canRunAds=true;
+            window.adsLoaded=true;
+            window.isAdBlockActive=false;
+            window.adBlockDetected=false;
+            window.adBlockEnabled=false;
+            window.hasAdblock=false;
+            
+            // Fake Adblock Detection Functions
+            window.checkAdBlock=function(){return false;};
+            window.detectAdBlock=function(){return false;};
+            window.isAdBlockEnabled=function(){return false;};
+            window.adsLoaded=true;
+            window.isAdBlockActive=false;
+            
+            // 3. Blockiere NUR eindeutige Ad-Redirects
+            const origSetTimeout=window.setTimeout;
             window.setTimeout=function(fn,delay){
                 try{
                     const fnStr=(typeof fn==='function'?fn.toString():fn+'');
-                    if(fnStr.match(/window\.location|location\.(href|replace|assign|reload)|window\.open|\.click\(\)|popup|redirect/i)){
-                        console.log('🚫 setTimeout BLOCKED:',fnStr.substring(0,100));
+                    // NUR blockieren wenn es EINDEUTIG eine Ad ist
+                    if(fnStr.match(/popcash|popads|exoclick|adcash|clickadu|window\.open.*popup/i)){
+                        console.log('🚫 ad setTimeout blocked');
                         return 999999;
                     }
                 }catch(e){}
                 return origSetTimeout.apply(this,arguments);
             };
-            window.setInterval=function(fn,delay){
-                try{
-                    const fnStr=(typeof fn==='function'?fn.toString():fn+'');
-                    if(fnStr.match(/window\.location|location\.(href|replace|assign)|window\.open|popup/i)){
-                        console.log('🚫 setInterval BLOCKED');
-                        return 999999;
-                    }
-                }catch(e){}
-                return origSetInterval.apply(this,arguments);
-            };
-            window.requestAnimationFrame=function(fn){
-                try{
-                    const fnStr=(typeof fn==='function'?fn.toString():fn+'');
-                    if(fnStr.match(/window\.open|popup/i)){
-                        console.log('🚫 requestAnimationFrame BLOCKED');
-                        return 999999;
-                    }
-                }catch(e){}
-                return origRequestAnimationFrame.apply(this,arguments);
-            };
             
-            // 4. Blockiere beforeunload/unload Events
-            window.addEventListener('beforeunload',function(e){e.preventDefault();e.stopImmediatePropagation();},true);
-            window.addEventListener('unload',function(e){e.preventDefault();e.stopImmediatePropagation();},true);
-            
-            // 5. MEGA AGGRESSIVE Click-Blocking
+            // 4. Blockiere NUR Clicks auf Ad-Domains
             document.addEventListener('click',function(e){
                 let el=e.target;
-                for(let i=0;i<15&&el&&el!==document;i++){
+                for(let i=0;i<5&&el&&el!==document;i++){
                     try{
-                        const tag=(el.tagName||'').toLowerCase();
-                        const onclick=(el.getAttribute&&el.getAttribute('onclick'))||'';
                         const href=(el.href||'').toLowerCase();
-                        const target=(el.getAttribute&&el.getAttribute('target'))||'';
-                        const cn=(el.className||'').toString().toLowerCase();
-                        const id=(el.id||'').toString().toLowerCase();
-                        
-                        // MEGA AGGRESSIVE - blockiere fast alles verdächtige
-                        const suspicious=(
-                            onclick.match(/window\.open|popup|location\.|redirect|\.click\(\)/i)||
-                            href.match(/bet365|casino|popcash|popads|clickadu|exoclick|adcash|propeller|adsterra|hilltop|mgid|outbrain|taboola/i)||
-                            href.match(/\.(top|xyz|club|click|link|site|online|stream|info|icu|pw|tk|ml|ga|cf|gq)($|\/)/i)||
-                            target==='_blank'&&(href.includes('ad')||href.includes('redirect')||href.includes('track'))||
-                            cn.match(/popup|ad-|overlay|-ad|_ad|^ad[^a-z]|sponsor|promo/)||
-                            id.match(/popup|ad-|overlay|-ad|_ad|^ad[^a-z]/)
-                        );
-                        
-                        if(suspicious){
+                        // NUR blockieren wenn es EINDEUTIG eine Ad-Domain ist
+                        if(href.match(/popcash|popads|clickadu|exoclick|adcash|bet365affiliates|adition|adfarm|bannerflow/i)){
                             e.preventDefault();
                             e.stopPropagation();
-                            e.stopImmediatePropagation();
-                            console.log('🚫 CLICK KILLED:',tag,href.substring(0,50));
+                            console.log('🚫 ad click blocked');
                             return false;
                         }
                     }catch(err){}
@@ -218,41 +224,68 @@ def response(flow: http.HTTPFlow) -> None:
                 }
             },true);
             
-            // 6. Blockiere mousedown/mouseup für Ad-Tricks
-            ['mousedown','mouseup','touchstart','touchend'].forEach(function(evt){
-                document.addEventListener(evt,function(e){
-                    const el=e.target;
-                    if(el&&el.className&&el.className.toString().match(/popup|ad-overlay|interstitial/i)){
-                        e.preventDefault();
-                        e.stopImmediatePropagation();
-                        console.log('🚫',evt,'on ad element BLOCKED');
-                        return false;
-                    }
-                },true);
-            });
+            // 5. AGGRESSIVE Anti-Adblocker Entfernung mit MutationObserver
+            const removeAntiAdblock=function(){
+                // Suche nach typischen Anti-Adblocker Elementen
+                const selectors=[
+                    '[class*="adblock"]','[id*="adblock"]','[class*="blocker"]',
+                    '[class*="ad-block"]','[id*="ad-block"]','[class*="adblocker"]'
+                ];
+                selectors.forEach(function(sel){
+                    try{
+                        document.querySelectorAll(sel).forEach(function(el){
+                            const txt=(el.innerText||'').toLowerCase();
+                            // Nur entfernen wenn es wirklich eine Warnung ist
+                            if(txt.match(/blocker|werbung.*block|deaktivieren|aufgrund.*blocker/i)){
+                                el.remove();
+                                console.log('🚫 Anti-adblocker removed');
+                            }
+                        });
+                    }catch(e){}
+                });
+                
+                // Entsperre body wenn es geblockt ist
+                if(document.body){
+                    document.body.style.overflow='auto';
+                    document.body.style.position='static';
+                }
+                if(document.documentElement){
+                    document.documentElement.style.overflow='auto';
+                }
+            };
             
-            // 7. ULTRA AGGRESSIVE MutationObserver - entfernt ALLES verdächtige
-            const obs=new MutationObserver(function(muts){
+            // Führe mehrmals aus
+            if(document.readyState==='loading'){
+                document.addEventListener('DOMContentLoaded',removeAntiAdblock);
+            }else{
+                removeAntiAdblock();
+            }
+            setTimeout(removeAntiAdblock,100);
+            setTimeout(removeAntiAdblock,500);
+            setTimeout(removeAntiAdblock,1000);
+            setTimeout(removeAntiAdblock,2000);
+            setTimeout(removeAntiAdblock,3000);
+            
+            // CONTINUOUS MutationObserver - entfernt SOFORT neue Anti-Adblocker!
+            const antiAdblockObs=new MutationObserver(function(muts){
                 muts.forEach(function(mut){
                     mut.addedNodes.forEach(function(node){
                         if(node.nodeType===1){
                             try{
                                 const cn=(node.className||'').toString().toLowerCase();
                                 const id=(node.id||'').toString().toLowerCase();
-                                const tag=(node.tagName||'').toLowerCase();
-                                const style=node.style||{};
+                                const txt=(node.innerText||'').toLowerCase();
                                 
-                                // Entferne wenn IRGENDWAS verdächtig ist
-                                const remove=(
-                                    cn.match(/popup|interstitial|ad-overlay|ad-modal|overlay-ad|modal-ad|_ad_|-ad-|^ad[^a-z]/)||
-                                    id.match(/popup|ad-overlay|interstitial|modal-ad|_ad_|-ad-|^ad[^a-z]/)||
-                                    (tag==='div'&&style.position==='fixed'&&parseInt(style.zIndex)>9000)||
-                                    (tag==='iframe'&&node.src&&node.src.match(/popcash|popads|exoclick|adcash|propeller|adsterra/i))
-                                );
-                                
-                                if(remove){
+                                // Entferne wenn es eine Anti-Adblocker Warnung ist
+                                if((cn.match(/adblock|blocker/)||id.match(/adblock|blocker/))&&
+                                   txt.match(/blocker|werbung.*block|deaktivieren|aufgrund/i)){
                                     node.remove();
-                                    console.log('🚫 REMOVED:',tag,cn||id);
+                                    console.log('🚫 Dynamic anti-adblocker removed');
+                                    // Entsperre body
+                                    if(document.body){
+                                        document.body.style.overflow='auto';
+                                        document.body.style.position='static';
+                                    }
                                 }
                             }catch(e){}
                         }
@@ -260,53 +293,26 @@ def response(flow: http.HTTPFlow) -> None:
                 });
             });
             
-            const startObs=function(){
+            // Starte Observer sobald body existiert
+            const startAntiAdblockObs=function(){
                 if(document.body){
-                    obs.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','id','style']});
-                    console.log('✅ MEGA MutationObserver active');
+                    antiAdblockObs.observe(document.body,{childList:true,subtree:true});
+                    console.log('✅ Anti-Adblocker Observer active');
                 }
             };
-            if(document.body)startObs();
-            else document.addEventListener('DOMContentLoaded',startObs);
+            if(document.body)startAntiAdblockObs();
+            else document.addEventListener('DOMContentLoaded',startAntiAdblockObs);
             
-            // 8. Blockiere iframe/script-Erstellung mit Ad-Domains
-            const origCreateElement=document.createElement;
-            document.createElement=function(tag){
-                const el=origCreateElement.apply(document,arguments);
-                const t=tag.toLowerCase();
-                if(t==='iframe'||t==='script'){
-                    const origSetAttribute=el.setAttribute;
-                    el.setAttribute=function(attr,val){
-                        if(attr==='src'&&val&&val.match(/doubleclick|googlesyndication|adnxs|exoclick|popcash|popads|adcash|propeller|mgid|outbrain|taboola/i)){
-                            console.log('🚫',t,'CREATION BLOCKED:',val);
-                            return;
-                        }
-                        return origSetAttribute.apply(this,arguments);
-                    };
-                }
-                return el;
-            };
-            
-            // 9. Blockiere focus() auf hidden elements (Ad-Trick)
-            const origFocus=HTMLElement.prototype.focus;
-            HTMLElement.prototype.focus=function(){
-                if(this.offsetParent===null||this.style.display==='none'){
-                    console.log('🚫 focus() on hidden element BLOCKED');
-                    return;
-                }
-                return origFocus.apply(this,arguments);
-            };
-            
-            console.log('✅💀 ABSOLUTE MAXIMUM ADBLOCKER ARMED - Nothing gets through! 💀✅');
+            console.log('✅ SMART ADBLOCKER + ANTI-DETECTION READY');
         })();
         </script>"""
         
         if "</head>" in content:
-            content = content.replace("</head>", nuclear_adblocker + "</head>")
+            content = content.replace("</head>", smart_adblocker + "</head>")
         elif "<body" in content:
-            content = content.replace("<body", nuclear_adblocker + "<body", 1)
+            content = content.replace("<body", smart_adblocker + "<body", 1)
         else:
-            content = nuclear_adblocker + content
+            content = smart_adblocker + content
         
         flow.response.set_text(content)
         
