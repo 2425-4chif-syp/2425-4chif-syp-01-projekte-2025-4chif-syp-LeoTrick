@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sc_bm pov="N" d="N" v="-" n="t53.6.q543.aq964" s="94.akj5.akjt.t72" e="j862.q94.8762.kj" w="akq7.t8732.9.853" h="p-p-1c-p" o="" bm="n" ac="n" rc="0" c="n" gv="43">
-  <r type="bid" bid="3C" meaning="Weak -- 5+ !C; 3- !H; 3- !S; 9- HCP; 5+ total points"/>
-</sc_bm>
-
-
