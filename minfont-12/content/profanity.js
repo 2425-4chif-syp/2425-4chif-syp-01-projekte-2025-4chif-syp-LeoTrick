@@ -3,7 +3,7 @@ window.MF = window.MF || {};
   // Umfassende hardcodierte Schimpfwörterliste (über 200 Wörter)
   const PROFANITY_WORDS = [
     // Deutsche Schimpfwörter - Basis
-    "scheiße","scheisse","arsch","arschloch","hurensohn","wichser","fotze","miststück",
+    "scheiße", "Trump","scheisse","arsch","arschloch","hurensohn","wichser","fotze","miststück",
     "fick","ficken","ficker","schlampe","spasti","spast","drecksau","penner",
     "bastard","pisser","kackbratze","vollpfosten","vollidiot","dummkopf","blödmann",
     "arschgesicht","scheißkerl","dreckssau","hurenbock","fickschnitzel","wixe","wixen",
@@ -113,8 +113,41 @@ window.MF = window.MF || {};
     "thrusting","pumping","grinding","humping","mounting","riding","bouncing"
   ];
 
-  const PROFANITY_RE = new RegExp(`\\b(${PROFANITY_WORDS.map(w => w.replace(/[.*+?^${}()|[\\]\\\\]/g,"\\$&")).join("|")})\\b`, "giu");
+  const PROFANITY_RE = new RegExp(`(?<![\\p{L}\\p{N}])(${PROFANITY_WORDS.map(w => w.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|")})(?![\\p{L}\\p{N}])`, "giu");
   
+  // Eigene Wörter aus Storage + kombiniertes Regex
+  let customWords = [];
+  let combinedRE = PROFANITY_RE;
+
+  function rebuildRegex() {
+    const all = [...PROFANITY_WORDS, ...customWords].filter(Boolean);
+    combinedRE = new RegExp(`(?<![\\p{L}\\p{N}])(${all.map(w => w.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|")})(?![\\p{L}\\p{N}])`, "giu");
+    // Cache leeren da sich Wörter geändert haben
+    textCache.clear();
+  }
+
+  // Eigene Wörter initial laden
+  chrome.storage.local.get({ customProfanityWords: [] }, res => {
+    customWords = res.customProfanityWords || [];
+    if (customWords.length) {
+      rebuildRegex();
+      console.log(`📋 ${customWords.length} eigene Schimpfwörter geladen`);
+    }
+  });
+
+  // Bei Änderungen neu laden
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === 'local' && changes.customProfanityWords) {
+      customWords = changes.customProfanityWords.newValue || [];
+      rebuildRegex();
+      console.log(`🔄 Eigene Schimpfwörter aktualisiert: ${customWords.length} Wörter`);
+      // Seite erneut filtern
+      if (MF.state.enabled && MF.state.profanityEnabled) {
+        initial();
+      }
+    }
+  });
+
   // Cache für bereits gefilterte Texte
   const textCache = new Map();
   const CACHE_MAX_SIZE = 1000;
@@ -139,7 +172,7 @@ window.MF = window.MF || {};
     }
     
     const originalText = text;
-    const filteredText = text.replace(PROFANITY_RE, match => {
+    const filteredText = text.replace(combinedRE, match => {
       console.log(`🚫 [HARDCODED] Schimpfwort erkannt: "${match}" → "${"*".repeat(match.length)}"`);
       return "*".repeat(match.length);
     });
@@ -158,6 +191,9 @@ window.MF = window.MF || {};
     return filteredText;
   };
 
+  // Speicher für Originaltexte um sie wiederherstellen zu können
+  const originalTexts = new Map();
+
   // Batch-Verarbeitung
   function batchProcess(nodes) {
     let filtered = 0;
@@ -167,14 +203,21 @@ window.MF = window.MF || {};
       const old = n.nodeValue;
       if (!old || old.length < 3) continue;
       
-      // Wort-Tracking vor Filterung
-      const matches = old.match(PROFANITY_RE);
+      // Original merken falls noch nicht gespeichert
+      if (!originalTexts.has(n)) {
+        originalTexts.set(n, old);
+      }
+      
+      // Immer vom Original aus filtern
+      const originalForNode = originalTexts.get(n);
+      
+      const matches = originalForNode.match(combinedRE);
       if (matches) {
         foundWords.push(...matches);
       }
       
-      const filteredText = filterText(old);
-      if (filteredText !== old) {
+      const filteredText = filterText(originalForNode);
+      if (filteredText !== n.nodeValue) {
         n.nodeValue = filteredText;
         filtered++;
       }
@@ -197,7 +240,7 @@ window.MF = window.MF || {};
       let n;
       let totalNodes = 0;
       
-      console.log(`🔍 Starte Schimpfwort-Scan mit ${PROFANITY_WORDS.length} hardcodierten Wörtern...`);
+      console.log(`🔍 Starte Schimpfwort-Scan mit ${PROFANITY_WORDS.length + customWords.length} Wörtern (${customWords.length} eigene)...`);
       
       while ((n = w.nextNode())) { 
         if (!skippable(n)) {
@@ -266,6 +309,21 @@ window.MF = window.MF || {};
       obs=null; 
     } 
   }
+
+  function restoreOriginals() {
+    let restored = 0;
+    for (const [node, original] of originalTexts) {
+      try {
+        if (node.nodeValue !== original) {
+          node.nodeValue = original;
+          restored++;
+        }
+      } catch (e) { /* Node evtl. nicht mehr im DOM */ }
+    }
+    originalTexts.clear();
+    textCache.clear();
+    console.log(`🔄 ${restored} Textstellen wiederhergestellt`);
+  }
   
   function collect(root,set){
     if (!root) return;
@@ -280,19 +338,21 @@ window.MF = window.MF || {};
 
   MF.profanityApply = () => {
     if (!MF.state.enabled) { 
-      stop(); 
+      stop();
+      restoreOriginals();
       console.log('🔴 Profanity Filter deaktiviert (Extension aus)');
       return; 
     }
     
     if (MF.state.profanityEnabled) { 
       console.log('🟢 Starte hardcodierte Schimpfwort-Filterung...');
-      console.log(`📋 Verfügbare Wörter: ${PROFANITY_WORDS.length} (keine API mehr)`);
+      console.log(`📋 Verfügbare Wörter: ${PROFANITY_WORDS.length + customWords.length}`);
       initial(); 
       start(); 
     } else { 
       console.log('🟡 Profanity Filter deaktiviert (Feature aus)');
-      stop(); 
+      stop();
+      restoreOriginals();
     }
   };
 

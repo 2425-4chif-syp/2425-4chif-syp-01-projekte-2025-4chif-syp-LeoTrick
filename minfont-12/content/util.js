@@ -26,3 +26,25 @@ MF.applyHighlightPalette = m => {
     default:        set('--hl-bg','#002aff'); set('--hl-fg','#ffffff'); break; // Standard Blau
   }
 };
+
+// High Contrast Modus
+MF.applyHighContrast = (enabled) => {
+  const root = document.documentElement;
+  
+  if (enabled) {
+    // Hoher Kontrast: Schwarzer Hintergrund, weißer Text
+    root.style.setProperty('--hc-bg', '#000000', 'important');
+    root.style.setProperty('--hc-text', '#ffffff', 'important');
+    root.style.setProperty('--hc-link', '#ffff00', 'important');
+    root.style.setProperty('--hc-border', '#ffffff', 'important');
+    
+    // CSS-Klasse hinzufügen für erweiterte Styles
+    root.classList.add('mf-high-contrast');
+    
+    console.log('🔆 Hoher Kontrast aktiviert');
+  } else {
+    // High Contrast deaktivieren
+    root.classList.remove('mf-high-contrast');
+    console.log('🔅 Hoher Kontrast deaktiviert');
+  }
+};

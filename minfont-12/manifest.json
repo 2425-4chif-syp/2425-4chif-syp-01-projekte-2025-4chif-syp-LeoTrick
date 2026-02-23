@@ -29,6 +29,7 @@
         "content/profanity.js",
         "content/hotlinks.js",
         "content/adblocker.js",
+        "content/highcontrast.js",
         "content/main.js"
       ]
     }

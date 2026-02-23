@@ -104,7 +104,6 @@ window.MF = window.MF || {};
   }
 
   // JavaScript-basierte echte Mindestschriftgröße
-  let processedElements = new WeakSet();
   let observer = null;
 
   function isIconElement(el) {
@@ -115,25 +114,19 @@ window.MF = window.MF || {};
   function applyMinFontSize(minPx) {
     if (!MF.state.fontEnabled) return;
 
+    const root = document.body || document.documentElement;
+    if (!root) return;
+
     // Alle Textelemente finden
     const walker = document.createTreeWalker(
-      document.body || document.documentElement,
+      root,
       NodeFilter.SHOW_ELEMENT,
       {
         acceptNode: function(node) {
-          // Nur Elemente mit Text-Content
           if (!node.textContent || !node.textContent.trim()) return NodeFilter.FILTER_SKIP;
-          
-          // Icons ausschließen
           if (isIconElement(node)) return NodeFilter.FILTER_SKIP;
-          
-          // Bereits verarbeitete Elemente überspringen
-          if (processedElements.has(node)) return NodeFilter.FILTER_SKIP;
-          
-          // Nur sichtbare Elemente
           const style = getComputedStyle(node);
           if (style.display === 'none' || style.visibility === 'hidden') return NodeFilter.FILTER_SKIP;
-          
           return NodeFilter.FILTER_ACCEPT;
         }
       }
@@ -148,21 +141,23 @@ window.MF = window.MF || {};
     // Batch-Verarbeitung für Performance
     elementsToProcess.forEach(el => {
       try {
-        const currentFontSize = parseFloat(getComputedStyle(el).fontSize);
-        
-        // Nur vergrößern wenn aktuell kleiner als Minimum
-        if (currentFontSize < minPx) {
-          if (!el.hasAttribute('data-mf-original-font')) {
-            // Ursprüngliche Größe speichern
-            el.setAttribute('data-mf-original-font', currentFontSize + 'px');
-          }
-          
-          // Neue Größe setzen
+        // Originalgröße ermitteln (gespeicherte oder aktuelle)
+        let originalSize = el.getAttribute('data-mf-original-font');
+        if (!originalSize) {
+          originalSize = getComputedStyle(el).fontSize;
+          el.setAttribute('data-mf-original-font', originalSize);
+        }
+        const originalPx = parseFloat(originalSize);
+
+        if (originalPx < minPx) {
           el.style.setProperty('font-size', minPx + 'px', 'important');
           el.setAttribute('data-mf-enhanced', 'true');
+        } else if (el.getAttribute('data-mf-enhanced') === 'true') {
+          // War vorher vergrößert, jetzt nicht mehr nötig (z.B. min gesenkt)
+          el.style.removeProperty('font-size');
+          el.removeAttribute('data-mf-enhanced');
+          el.removeAttribute('data-mf-original-font');
         }
-        
-        processedElements.add(el);
       } catch (e) {
         // Ignoriere Fehler bei einzelnen Elementen
       }
@@ -170,7 +165,6 @@ window.MF = window.MF || {};
   }
 
   function resetMinFontSize() {
-    // Alle enhanced Elemente zurücksetzen
     document.querySelectorAll('[data-mf-enhanced="true"]').forEach(el => {
       const original = el.getAttribute('data-mf-original-font');
       if (original) {
@@ -181,12 +175,12 @@ window.MF = window.MF || {};
       el.removeAttribute('data-mf-enhanced');
       el.removeAttribute('data-mf-original-font');
     });
-    
-    processedElements = new WeakSet();
   }
 
   function startMinFontObserver(minPx) {
     if (observer) observer.disconnect();
+    
+    let debounceTimer = null;
     
     observer = new MutationObserver(mutations => {
       let hasChanges = false;
@@ -202,8 +196,8 @@ window.MF = window.MF || {};
       });
       
       if (hasChanges) {
-        // Debounced update
-        setTimeout(() => applyMinFontSize(minPx), 100);
+        if (debounceTimer) clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => applyMinFontSize(minPx), 200);
       }
     });
     
@@ -232,12 +226,9 @@ window.MF = window.MF || {};
     MF.setRootVar('--minfont', s.minPx + 'px');
     
     if (s.fontEnabled) {
-      // JavaScript-basierte Mindestschriftgröße
-      resetMinFontSize(); // Erst zurücksetzen
-      setTimeout(() => {
-        applyMinFontSize(s.minPx);
-        startMinFontObserver(s.minPx);
-      }, 50); // Kurz warten für DOM-Updates
+      // Direkt anwenden ohne Reset — applyMinFontSize vergleicht mit gespeicherter Originalgröße
+      applyMinFontSize(s.minPx);
+      startMinFontObserver(s.minPx);
     } else {
       resetMinFontSize();
       stopMinFontObserver();
@@ -247,11 +238,8 @@ window.MF = window.MF || {};
   MF.fontReevalIfNeeded = (oldMin) => {
     const s = MF.state;
     if (s.enabled && s.fontEnabled && s.minPx !== oldMin) {
-      // Komplette Neuanwendung bei Größenänderung
-      resetMinFontSize();
-      setTimeout(() => {
-        applyMinFontSize(s.minPx);
-      }, 50);
+      // Direkt mit neuem Wert anwenden — kein Reset nötig
+      applyMinFontSize(s.minPx);
     }
   };
 

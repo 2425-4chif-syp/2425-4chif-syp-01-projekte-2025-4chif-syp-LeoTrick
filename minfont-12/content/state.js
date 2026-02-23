@@ -6,5 +6,6 @@ MF.state = {
   minPx: 16,
   profanityEnabled: true,
   adBlockerEnabled: false,
+  highContrastEnabled: false,  // Hoher Kontrast Modus
   linkClicks: {}
 };

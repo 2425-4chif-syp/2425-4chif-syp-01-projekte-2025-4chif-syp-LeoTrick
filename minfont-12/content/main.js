@@ -6,6 +6,7 @@
     if (!S.enabled) {
       MF.fontDetach();
       MF.adBlockerDetachCSS();
+      MF.highContrastDetach();
       MF.profanityApply(); // stoppt sich selbst
       // Ad Blocker explizit stoppen wenn Extension deaktiviert
       if (MF.adBlockerStop) MF.adBlockerStop();
@@ -26,12 +27,19 @@
       if (MF.adBlockerStop) MF.adBlockerStop();
     }
     
+    // High Contrast separat behandeln
+    if (S.highContrastEnabled) {
+      MF.highContrastAttach();
+    } else {
+      MF.highContrastDetach();
+    }
+    
     MF.fontReevalIfNeeded(oldMin);
   }
 
   // Initial laden
   chrome.storage.local.get(
-    { enabled:true, fontEnabled:true, mode:"off", minPx:16, profanityEnabled:true, adBlockerEnabled:false, mf_linkClicks:{} },
+    { enabled:true, fontEnabled:true, mode:"off", minPx:16, profanityEnabled:true, adBlockerEnabled:false, highContrastEnabled:false, mf_linkClicks:{} },
     s => {
       S.enabled = !!s.enabled;
       S.fontEnabled = !!s.fontEnabled;
@@ -39,6 +47,7 @@
       S.minPx = MF.clampPx(s.minPx);
       S.profanityEnabled = !!s.profanityEnabled;
       S.adBlockerEnabled = !!s.adBlockerEnabled;
+      S.highContrastEnabled = !!s.highContrastEnabled;
       S.linkClicks = s.mf_linkClicks || {};
 
       // Hotlinks NACH dem Laden der Daten initialisieren
@@ -66,7 +75,7 @@
   chrome.runtime.onMessage.addListener(msg => {
     if (msg && msg.type === "MINFONT_STATE_CHANGED") {
       chrome.storage.local.get(
-        { enabled:true, fontEnabled:true, mode:"off", minPx:16, profanityEnabled:true, adBlockerEnabled:false, mf_linkClicks:{} },
+        { enabled:true, fontEnabled:true, mode:"off", minPx:16, profanityEnabled:true, adBlockerEnabled:false, highContrastEnabled:false, mf_linkClicks:{} },
         s => {
           const oldMin = S.minPx;
           S.enabled = !!s.enabled;
@@ -75,6 +84,7 @@
           S.minPx = MF.clampPx(s.minPx);
           S.profanityEnabled = !!s.profanityEnabled;
           S.adBlockerEnabled = !!s.adBlockerEnabled;
+          S.highContrastEnabled = !!s.highContrastEnabled;
           // Wichtig: Hotlink-Daten auch bei Updates synchronisieren
           S.linkClicks = s.mf_linkClicks || {};
           applyAll(oldMin);

@@ -21,6 +21,7 @@ function updatePopupSizeDisplay(scale) {
     minPx:16,
     profanityEnabled:true,
     adBlockerEnabled:false,
+    highContrastEnabled:false,
     popupScale:1
   });
 
@@ -28,6 +29,7 @@ function updatePopupSizeDisplay(scale) {
   const fontChk     = document.getElementById('fontEnabled');
   const profChk     = document.getElementById('profanity');
   const adBlockChk  = document.getElementById('adBlocker');
+  const highContrastChk = document.getElementById('highContrast');
 
   const sizeWrap    = document.getElementById('sizeWrap');
   const slider      = document.getElementById('slider');
@@ -88,6 +90,7 @@ function updatePopupSizeDisplay(scale) {
     fontChk.checked   = !!state.fontEnabled;
     profChk.checked   = !!state.profanityEnabled;
     adBlockChk.checked = !!state.adBlockerEnabled;
+    highContrastChk.checked = !!state.highContrastEnabled;
 
     modeButtons.forEach(b => b.classList.toggle('on', b.dataset.mode === state.mode));
 
@@ -131,6 +134,63 @@ function updatePopupSizeDisplay(scale) {
     chrome.runtime.sendMessage({ type:"MINFONT_STATE_CHANGED" });
   });
 
+  // ── Eigene Schimpfwörter ──
+  const customWordInput = document.getElementById('customWordInput');
+  const addWordBtn      = document.getElementById('addWordBtn');
+  const customWordList  = document.getElementById('customWordList');
+  const noCustomWords   = document.getElementById('noCustomWords');
+
+  let customWords = [];
+
+  function renderCustomWords() {
+    customWordList.innerHTML = '';
+    noCustomWords.style.display = customWords.length ? 'none' : 'block';
+    customWords.forEach(word => {
+      const tag = document.createElement('span');
+      tag.className = 'custom-word-tag';
+      tag.textContent = word + ' ';
+      const rm = document.createElement('span');
+      rm.className = 'remove-word';
+      rm.textContent = '×';
+      rm.addEventListener('click', () => removeCustomWord(word));
+      tag.appendChild(rm);
+      customWordList.appendChild(tag);
+    });
+  }
+
+  async function saveCustomWords() {
+    await setKV('customProfanityWords', customWords);
+    chrome.runtime.sendMessage({ type:"MINFONT_STATE_CHANGED" });
+  }
+
+  async function addCustomWord() {
+    const raw = customWordInput.value.trim().toLowerCase();
+    if (!raw) return;
+    if (!customWords.includes(raw)) {
+      customWords.push(raw);
+      await saveCustomWords();
+      renderCustomWords();
+    }
+    customWordInput.value = '';
+  }
+
+  async function removeCustomWord(word) {
+    customWords = customWords.filter(w => w !== word);
+    await saveCustomWords();
+    renderCustomWords();
+  }
+
+  addWordBtn.addEventListener('click', addCustomWord);
+  customWordInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') addCustomWord();
+  });
+
+  // Eigene Wörter laden
+  chrome.storage.local.get({ customProfanityWords: [] }, res => {
+    customWords = res.customProfanityWords || [];
+    renderCustomWords();
+  });
+
 
 
   // Ad Blocker Event Listener (war vergessen!)
@@ -140,6 +200,16 @@ function updatePopupSizeDisplay(scale) {
     
     // Debug-Log
     console.log('💾 Ad Blocker Toggle:', state.adBlockerEnabled ? 'EIN' : 'AUS');
+    
+    chrome.runtime.sendMessage({ type:"MINFONT_STATE_CHANGED" });
+  });
+
+  // High Contrast Event Listener
+  highContrastChk.addEventListener('change', async ()=>{
+    state.highContrastEnabled = !!highContrastChk.checked;
+    await setKV('highContrastEnabled', state.highContrastEnabled);
+    
+    console.log('💾 High Contrast Toggle:', state.highContrastEnabled ? 'EIN' : 'AUS');
     
     chrome.runtime.sendMessage({ type:"MINFONT_STATE_CHANGED" });
   });

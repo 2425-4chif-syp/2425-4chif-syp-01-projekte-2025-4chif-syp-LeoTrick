@@ -340,6 +340,72 @@
       background: #5a6268;
     }
 
+    /* Eigene Schimpfwörter */
+    #customProfanityWrap {
+      margin-top: calc(8px * var(--popup-scale));
+      border: calc(1px * var(--popup-scale)) solid #ddd;
+      border-radius: calc(8px * var(--popup-scale));
+      padding: calc(8px * var(--popup-scale));
+      background: #fafafa;
+    }
+    #customProfanityWrap h2 {
+      font-size: calc(13px * var(--popup-scale));
+      margin: 0 0 calc(6px * var(--popup-scale));
+    }
+    .custom-word-input-row {
+      display: flex;
+      gap: calc(6px * var(--popup-scale));
+      margin-bottom: calc(6px * var(--popup-scale));
+    }
+    #customWordInput {
+      flex: 1;
+      padding: calc(6px * var(--popup-scale));
+      border: calc(1px * var(--popup-scale)) solid #ccc;
+      border-radius: calc(6px * var(--popup-scale));
+      font-size: calc(13px * var(--popup-scale));
+    }
+    #addWordBtn {
+      padding: calc(6px * var(--popup-scale)) calc(12px * var(--popup-scale));
+      border: none;
+      border-radius: calc(6px * var(--popup-scale));
+      background: #2ecc71;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: calc(13px * var(--popup-scale));
+      transition: background .15s;
+    }
+    #addWordBtn:hover { background: #27ae60; }
+    #customWordList {
+      display: flex;
+      flex-wrap: wrap;
+      gap: calc(4px * var(--popup-scale));
+      max-height: calc(120px * var(--popup-scale));
+      overflow-y: auto;
+    }
+    .custom-word-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: calc(4px * var(--popup-scale));
+      background: #e8e8e8;
+      border-radius: calc(12px * var(--popup-scale));
+      padding: calc(2px * var(--popup-scale)) calc(8px * var(--popup-scale));
+      font-size: calc(12px * var(--popup-scale));
+    }
+    .custom-word-tag .remove-word {
+      cursor: pointer;
+      color: #e74c3c;
+      font-weight: bold;
+      font-size: calc(14px * var(--popup-scale));
+      line-height: 1;
+    }
+    .custom-word-tag .remove-word:hover { color: #c0392b; }
+    #noCustomWords {
+      font-size: calc(12px * var(--popup-scale));
+      opacity: .6;
+      font-style: italic;
+    }
+
   </style>
 </head>
 <body>
@@ -394,10 +460,26 @@
       <span class="toggle-slider"></span>
     </div>
   </div>
+  <div id="customProfanityWrap">
+    <h2>Eigene Schimpfwörter</h2>
+    <div class="custom-word-input-row">
+      <input type="text" id="customWordInput" placeholder="Wort eingeben…">
+      <button id="addWordBtn">+</button>
+    </div>
+    <div id="customWordList"></div>
+    <span id="noCustomWords">Keine eigenen Wörter.</span>
+  </div>
   <div class="toggleline">
     <label for="adBlocker">🚫 Werbung blockieren (Ad Blocker)</label>
     <div class="toggle-switch">
       <input type="checkbox" id="adBlocker">
+      <span class="toggle-slider"></span>
+    </div>
+  </div>
+  <div class="toggleline">
+    <label for="highContrast">🔆 Hoher Kontrast Modus</label>
+    <div class="toggle-switch">
+      <input type="checkbox" id="highContrast">
       <span class="toggle-slider"></span>
     </div>
   </div>
