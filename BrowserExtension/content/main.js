@@ -5,27 +5,14 @@
   function applyAll(oldMin){
     if (!S.enabled) {
       MF.fontDetach();
-      MF.adBlockerDetachCSS();
       MF.highContrastDetach();
       MF.profanityApply(); // stoppt sich selbst
-      // Ad Blocker explizit stoppen wenn Extension deaktiviert
-      if (MF.adBlockerStop) MF.adBlockerStop();
       return;
     }
     MF.fontAttach();
     MF.colorApply();
     MF.fontApply();
     MF.profanityApply(); // Jetzt wieder synchron
-    
-    // Ad Blocker separat behandeln
-    if (S.adBlockerEnabled) {
-      MF.adBlockerAttachCSS();
-      MF.adBlockerApply();
-    } else {
-      MF.adBlockerDetachCSS();
-      // Ad Blocker explizit stoppen
-      if (MF.adBlockerStop) MF.adBlockerStop();
-    }
     
     // High Contrast separat behandeln
     if (S.highContrastEnabled) {
@@ -39,14 +26,13 @@
 
   // Initial laden
   chrome.storage.local.get(
-    { enabled:true, fontEnabled:true, mode:"off", minPx:16, profanityEnabled:true, adBlockerEnabled:false, highContrastEnabled:false, mf_linkClicks:{} },
+    { enabled:true, fontEnabled:true, mode:"off", minPx:16, profanityEnabled:true, highContrastEnabled:false, mf_linkClicks:{} },
     s => {
       S.enabled = !!s.enabled;
       S.fontEnabled = !!s.fontEnabled;
       S.mode = s.mode || "off";
       S.minPx = MF.clampPx(s.minPx);
       S.profanityEnabled = !!s.profanityEnabled;
-      S.adBlockerEnabled = !!s.adBlockerEnabled;
       S.highContrastEnabled = !!s.highContrastEnabled;
       S.linkClicks = s.mf_linkClicks || {};
 
@@ -75,7 +61,7 @@
   chrome.runtime.onMessage.addListener(msg => {
     if (msg && msg.type === "MINFONT_STATE_CHANGED") {
       chrome.storage.local.get(
-        { enabled:true, fontEnabled:true, mode:"off", minPx:16, profanityEnabled:true, adBlockerEnabled:false, highContrastEnabled:false, mf_linkClicks:{} },
+        { enabled:true, fontEnabled:true, mode:"off", minPx:16, profanityEnabled:true, highContrastEnabled:false, mf_linkClicks:{} },
         s => {
           const oldMin = S.minPx;
           S.enabled = !!s.enabled;
@@ -83,7 +69,6 @@
           S.mode = s.mode || "off";
           S.minPx = MF.clampPx(s.minPx);
           S.profanityEnabled = !!s.profanityEnabled;
-          S.adBlockerEnabled = !!s.adBlockerEnabled;
           S.highContrastEnabled = !!s.highContrastEnabled;
           // Wichtig: Hotlink-Daten auch bei Updates synchronisieren
           S.linkClicks = s.mf_linkClicks || {};

@@ -20,7 +20,6 @@ function updatePopupSizeDisplay(scale) {
     mode:"off",
     minPx:16,
     profanityEnabled:true,
-    adBlockerEnabled:false,
     highContrastEnabled:false,
     popupScale:1
   });
@@ -28,7 +27,6 @@ function updatePopupSizeDisplay(scale) {
   const toggleBtn   = document.getElementById('toggle');
   const fontChk     = document.getElementById('fontEnabled');
   const profChk     = document.getElementById('profanity');
-  const adBlockChk  = document.getElementById('adBlocker');
   const highContrastChk = document.getElementById('highContrast');
 
   const sizeWrap    = document.getElementById('sizeWrap');
@@ -89,7 +87,6 @@ function updatePopupSizeDisplay(scale) {
     renderToggleColors();
     fontChk.checked   = !!state.fontEnabled;
     profChk.checked   = !!state.profanityEnabled;
-    adBlockChk.checked = !!state.adBlockerEnabled;
     highContrastChk.checked = !!state.highContrastEnabled;
 
     modeButtons.forEach(b => b.classList.toggle('on', b.dataset.mode === state.mode));
@@ -192,17 +189,6 @@ function updatePopupSizeDisplay(scale) {
   });
 
 
-
-  // Ad Blocker Event Listener (war vergessen!)
-  adBlockChk.addEventListener('change', async ()=>{
-    state.adBlockerEnabled = !!adBlockChk.checked;
-    await setKV('adBlockerEnabled', state.adBlockerEnabled);
-    
-    // Debug-Log
-    console.log('💾 Ad Blocker Toggle:', state.adBlockerEnabled ? 'EIN' : 'AUS');
-    
-    chrome.runtime.sendMessage({ type:"MINFONT_STATE_CHANGED" });
-  });
 
   // High Contrast Event Listener
   highContrastChk.addEventListener('change', async ()=>{

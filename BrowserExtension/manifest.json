@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "LeoTrick – Accessibility Toolkit",
   "version": "2.2.0",
-  "description": "Barrierefreiheit für alle: Mindest-Schriftgröße, Farbenblindheit-Modi, Hochkontrast, Schimpfwort-Filter, Link-Hervorhebung und Ad-Blocker.",
+  "description": "Barrierefreiheit für alle: Mindest-Schriftgröße, Farbenblindheit-Modi, Hochkontrast, Schimpfwort-Filter und Link-Hervorhebung.",
   "icons": { "48": "icon48.png", "96": "icon96.png" },
 
   "permissions": ["storage", "tabs", "activeTab"],
@@ -29,7 +29,6 @@
         "content/color.js",
         "content/profanity.js",
         "content/hotlinks.js",
-        "content/adblocker.js",
         "content/highcontrast.js",
         "content/frequentsite.js",
         "content/main.js"
