@@ -26,6 +26,112 @@ def load_profanity_list():
 PROFANITY_WORDS = load_profanity_list()
 print(f"🤬 {len(PROFANITY_WORDS)} Schimpfwörter geladen!")
 
+# ⚡ PERFORMANCE: Einmalig ein kombiniertes Regex für ALLE Wörter kompilieren
+_profanity_words_3plus = sorted([w for w in PROFANITY_WORDS if len(w) >= 3], key=len, reverse=True)
+if _profanity_words_3plus:
+    _combined_text_pattern = re.compile(
+        r'\b(' + '|'.join(re.escape(w) for w in _profanity_words_3plus) + r')\b',
+        re.IGNORECASE
+    )
+    # Für Attribute-Matching (ohne Wortgrenzen, da URLs keine Wortgrenzen haben)
+    _combined_attr_pattern = re.compile(
+        '|'.join(re.escape(w) for w in _profanity_words_3plus),
+        re.IGNORECASE
+    )
+else:
+    _combined_text_pattern = None
+    _combined_attr_pattern = None
+
+# ⚡ CSS-REGELN + JS-SCANNER für Bild-Verstecken generieren
+def _generate_profanity_css():
+    """Generiert CSS + JS das Bilder/Container mit Schimpfwörtern versteckt"""
+    words = [w for w in PROFANITY_WORDS if len(w) >= 2 and ' ' not in w]
+    if not words:
+        return ''
+    
+    HIDE = 'display:none!important;visibility:hidden!important;height:0!important;overflow:hidden!important;'
+    attrs = ['data-lpage', 'data-docid', 'data-ref-docid', 'data-attrid', 'data-ipage']
+    img_attrs = ['src', 'data-src', 'alt', 'title']
+    
+    rules = []
+    rules.append('[data-mf-hidden]{display:none!important;visibility:hidden!important;height:0!important;max-height:0!important;overflow:hidden!important;opacity:0!important;pointer-events:none!important;position:absolute!important;clip:rect(0,0,0,0)!important;}')
+    
+    for word in words:
+        escaped = word.replace('"', '\\"')
+        for attr in attrs:
+            rules.append(f'[{attr}*="{escaped}" i]{{{HIDE}}}')
+        for attr in img_attrs:
+            rules.append(f'img[{attr}*="{escaped}" i]{{{HIDE}}}')
+    
+    css_part = '<style id="mf-profanity-css">' + '\n'.join(rules) + '</style>'
+    
+    # JS-Teil: Escaped JSON-Array der Wörter
+    words_json = ','.join(f'"{w.replace(chr(34), "")}"' for w in words if len(w) >= 3)
+    
+    js_part = f'''<script>
+(function(){{
+  var W=[{words_json}];
+  var RE=new RegExp(W.join("|"),"i");
+  var H="display:none!important;visibility:hidden!important;height:0!important;overflow:hidden!important;";
+  var done=new WeakSet();
+  function hide(el){{if(!el||done.has(el))return;done.add(el);el.style.cssText+=H;el.setAttribute("data-mf-hidden","1");}}
+  function chk(s){{return s&&s.length>=3&&RE.test(s);}}
+  function scanEl(el){{
+    if(!el||!el.attributes)return false;
+    var a=el.attributes;
+    for(var i=0;i<a.length;i++){{
+      var n=a[i].name;
+      if(n==="class"||n==="style"||n==="id")continue;
+      if(chk(a[i].value))return true;
+    }}
+    return false;
+  }}
+  function scan(){{
+    var all=document.querySelectorAll("*");
+    for(var i=0;i<all.length;i++){{
+      var el=all[i];
+      if(done.has(el))continue;
+      var tag=el.tagName;
+      if(tag==="BODY"||tag==="HTML"||tag==="HEAD"||tag==="SCRIPT"||tag==="STYLE")continue;
+      if(!scanEl(el))continue;
+      var txt=(el.textContent||"").length;
+      if(txt>5000)continue;
+      if(tag==="IMG"||el.querySelector("img")||tag==="VIDEO"||tag==="IFRAME"){{
+        hide(el);
+      }}else{{
+        var imgs=el.querySelectorAll("img");
+        if(imgs.length>0&&imgs.length<20)hide(el);
+      }}
+    }}
+  }}
+  function ready(fn){{if(document.body)fn();else document.addEventListener("DOMContentLoaded",fn);}}
+  ready(function(){{
+    scan();
+    var t=[200,500,1000,2000,3000,5000];
+    for(var i=0;i<t.length;i++)setTimeout(scan,t[i]);
+    setInterval(scan,1500);
+    new MutationObserver(function(){{setTimeout(scan,50);}}).observe(document.documentElement,{{childList:true,subtree:true}});
+    window.addEventListener("scroll",function(){{setTimeout(scan,100);}},{{passive:true}});
+  }});
+}})();
+</script>'''
+    
+    return css_part + js_part
+
+_PROFANITY_CSS = _generate_profanity_css()
+print(f"🎨 CSS-Bildfilter generiert: {len(_PROFANITY_CSS)} Bytes")
+
+# Regex um Nonce aus CSP-Header zu extrahieren
+_nonce_re = re.compile(r"'nonce-([A-Za-z0-9+/=_-]+)'")
+
+# ⚡ Einmal kompilierte Tag-Patterns
+_img_tag_re = re.compile(r'<img\b[^>]*/?>',  re.IGNORECASE)
+_a_tag_re = re.compile(r'<a\b[^>]*>.*?</a>', re.IGNORECASE | re.DOTALL)
+_video_tag_re = re.compile(r'<video\b[^>]*>.*?</video>', re.IGNORECASE | re.DOTALL)
+_picture_tag_re = re.compile(r'<picture\b[^>]*>.*?</picture>', re.IGNORECASE | re.DOTALL)
+_iframe_tag_re = re.compile(r'<iframe\b[^>]*>.*?</iframe>', re.IGNORECASE | re.DOTALL)
+_attr_val_re = re.compile(r'(?:src|href|alt|title|data-src|srcset|poster|aria-label)\s*=\s*["\']([^"\']*)["\']', re.IGNORECASE)
+
 # ABSOLUTE MAXIMUM Werbe-Domain Blocklist - 150+ Domains!
 AD_DOMAINS = [
     # Google Ads & Tracking
@@ -140,13 +246,57 @@ def response(flow: http.HTTPFlow) -> None:
             content = content.replace("</head>", orf_css + "</head>")
             print(f"✅ ORF.at modifiziert")
         
-        # 🤬 WELTWEITER SCHIMPWORT-BLOCKER - Datenbank mit 469+ Wörtern!
-        if PROFANITY_WORDS:
-            for word in PROFANITY_WORDS:
-                if len(word) >= 3:  # Nur Wörter mit 3+ Buchstaben (vermeidet False Positives)
-                    # Case-insensitive replacement mit Regex - Wort-Grenzen beachten
-                    pattern = re.compile(r'\b' + re.escape(word) + r'\b', re.IGNORECASE)
-                    content = pattern.sub("***", content)
+        # Nonce aus CSP-Header holen (wird für alle Script-Injektionen gebraucht)
+        csp = flow.response.headers.get("content-security-policy", "")
+        nonce_match = _nonce_re.search(csp)
+        if nonce_match:
+            nonce = nonce_match.group(1)
+        else:
+            nonce = None
+            # Kein CSP/Nonce → CSP-Header entfernen damit Scripts laufen
+            if "content-security-policy" in flow.response.headers:
+                del flow.response.headers["content-security-policy"]
+        
+        # ⚡ ZUERST: CSS-Regeln + JS-Scanner für Bild-Verstecken injizieren
+        if _PROFANITY_CSS:
+            inject = _PROFANITY_CSS
+            if nonce:
+                inject = inject.replace('<script>', f'<script nonce="{nonce}">')
+            
+            if "</head>" in content:
+                content = content.replace("</head>", inject + "</head>", 1)
+            elif "<body" in content:
+                content = content.replace("<body", inject + "<body", 1)
+            else:
+                content = inject + content
+        
+        # ⚡ DANN: BILD- & LINK-FILTER (einzelne Tags verstecken)
+        if _combined_attr_pattern:
+            hidden_count = 0
+            
+            def _hide_if_profane(match):
+                """Prüft ob ein Tag Schimpfwörter in Attributen hat und versteckt es"""
+                nonlocal hidden_count
+                tag_html = match.group(0)
+                attrs = _attr_val_re.findall(tag_html)
+                for attr_val in attrs:
+                    if _combined_attr_pattern.search(attr_val):
+                        hidden_count += 1
+                        return f'<span style="display:none">{tag_html}</span>'
+                return tag_html
+            
+            content = _img_tag_re.sub(_hide_if_profane, content)
+            content = _a_tag_re.sub(_hide_if_profane, content)
+            content = _video_tag_re.sub(_hide_if_profane, content)
+            content = _picture_tag_re.sub(_hide_if_profane, content)
+            content = _iframe_tag_re.sub(_hide_if_profane, content)
+            
+            if hidden_count > 0:
+                print(f"🖼️🚫 {hidden_count} Bilder/Links/Media versteckt")
+        
+        # ⚡ DANN: Text-Ersetzung
+        if _combined_text_pattern:
+            content = _combined_text_pattern.sub("***", content)
         
         print(f"✅ 🤬 Schimpwort-Blocker aktiviert ({len(PROFANITY_WORDS)} Wörter)")
         
@@ -308,6 +458,8 @@ def response(flow: http.HTTPFlow) -> None:
         </script>"""
         
         if "</head>" in content:
+            if nonce:
+                smart_adblocker = smart_adblocker.replace('<script>', f'<script nonce="{nonce}">')
             content = content.replace("</head>", smart_adblocker + "</head>")
         elif "<body" in content:
             content = content.replace("<body", smart_adblocker + "<body", 1)
