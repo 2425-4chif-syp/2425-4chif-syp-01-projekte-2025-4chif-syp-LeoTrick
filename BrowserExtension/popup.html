@@ -1,0 +1,488 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    :root { --gap:8px; --popup-scale: 1; }
+    body { 
+      font: calc(14px * var(--popup-scale)) system-ui, sans-serif; 
+      margin: calc(12px * var(--popup-scale)); 
+      width: calc(300px * var(--popup-scale)); 
+      min-height: calc(600px * var(--popup-scale));
+      transition: all 0.2s ease;
+      box-sizing: border-box;
+    }
+    h1 { font-size: calc(16px * var(--popup-scale)); margin: calc(10px * var(--popup-scale)) 0 calc(8px * var(--popup-scale)); }
+
+    .row { display:flex; gap: calc(var(--gap) * var(--popup-scale)); margin-bottom: calc(var(--gap) * var(--popup-scale)); }
+    .btn {
+      flex:1; 
+      padding: calc(10px * var(--popup-scale)); 
+      border-radius: calc(12px * var(--popup-scale)); 
+      border: calc(1px * var(--popup-scale)) solid #d0d0d0;
+      background:#f8f8f8; cursor:pointer; text-align:left; 
+      transition:background .15s, border-color .15s, color .15s;
+    }
+    .btn strong { display:block; font-size: calc(14px * var(--popup-scale)); }
+    .btn small { display:block; opacity:.85; font-size: calc(12px * var(--popup-scale)); }
+
+    /* Toggle: klar grün/rot */
+    #toggle.on  { background:#eaffee; border-color:#2ecc71; color:#0b5; }
+    #toggle.off { background:#ffefef; border-color:#e74c3c; color:#b31212; }
+
+    /* Aktive Farbenblindheit-Modi - leuchtende Hervorhebung */
+    .btn.on {
+      background: linear-gradient(135deg, #3498db, #2980b9) !important;
+      border-color: #2980b9 !important;
+      color: #ffffff !important;
+      box-shadow: 
+        0 0 calc(15px * var(--popup-scale)) rgba(52, 152, 219, 0.6), 
+        0 0 calc(25px * var(--popup-scale)) rgba(52, 152, 219, 0.3) !important;
+      transform: translateY(calc(-1px * var(--popup-scale)));
+      position: relative;
+    }
+    .btn.on::before {
+      content: '';
+      position: absolute;
+      top: calc(-2px * var(--popup-scale)); 
+      left: calc(-2px * var(--popup-scale)); 
+      right: calc(-2px * var(--popup-scale)); 
+      bottom: calc(-2px * var(--popup-scale));
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      border-radius: calc(14px * var(--popup-scale));
+      z-index: -1;
+      opacity: 0.3;
+      animation: glow-pulse 2s ease-in-out infinite alternate;
+    }
+    @keyframes glow-pulse {
+      from { box-shadow: 0 0 calc(20px * var(--popup-scale)) rgba(52, 152, 219, 0.4); }
+      to { box-shadow: 0 0 calc(30px * var(--popup-scale)) rgba(52, 152, 219, 0.8); }
+    }
+    .btn.on strong { color: #ffffff !important; }
+    .btn.on small { color: #ecf0f1 !important; opacity: 0.9; }
+
+    .toggleline { 
+      display:flex; 
+      align-items:center; 
+      gap: calc(8px * var(--popup-scale)); 
+      margin-bottom: calc(8px * var(--popup-scale)); 
+    }
+    .toggleline label { flex:1; cursor:pointer; user-select:none; }
+
+    /* Moderne Toggle-Schalter */
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: calc(50px * var(--popup-scale));
+      height: calc(26px * var(--popup-scale));
+      cursor: pointer; /* Ganzer Schalter ist klickbar */
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ccc;
+      border-radius: calc(26px * var(--popup-scale));
+      transition: all 0.3s ease;
+      box-shadow: inset 0 calc(2px * var(--popup-scale)) calc(4px * var(--popup-scale)) rgba(0,0,0,0.1);
+    }
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: calc(20px * var(--popup-scale));
+      width: calc(20px * var(--popup-scale));
+      left: calc(3px * var(--popup-scale));
+      bottom: calc(3px * var(--popup-scale));
+      background-color: white;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      box-shadow: 0 calc(2px * var(--popup-scale)) calc(4px * var(--popup-scale)) rgba(0,0,0,0.2);
+    }
+    
+    /* Hover-Effekte */
+    .toggle-switch:hover .toggle-slider {
+      background-color: #bbb;
+      transform: scale(1.02);
+    }
+    .toggle-switch:hover .toggle-slider:before {
+      box-shadow: 0 calc(3px * var(--popup-scale)) calc(6px * var(--popup-scale)) rgba(0,0,0,0.3);
+    }
+    
+    /* Aktiver Zustand - mit der gleichen Farbe wie die Farbmodus-Buttons */
+    input:checked + .toggle-slider {
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      box-shadow: 0 0 calc(10px * var(--popup-scale)) rgba(52, 152, 219, 0.4);
+    }
+    input:checked + .toggle-slider:before {
+      transform: translateX(calc(24px * var(--popup-scale)));
+      box-shadow: 0 calc(2px * var(--popup-scale)) calc(8px * var(--popup-scale)) rgba(0,0,0,0.3);
+    }
+    
+    /* Hover bei aktivem Zustand */
+    input:checked + .toggle-slider:hover {
+      background: linear-gradient(135deg, #2980b9, #3498db);
+      box-shadow: 0 0 calc(15px * var(--popup-scale)) rgba(52, 152, 219, 0.6);
+    }
+    
+    /* Fokus-Ring für Accessibility */
+    .toggle-switch input:focus + .toggle-slider {
+      outline: calc(2px * var(--popup-scale)) solid #3498db;
+      outline-offset: calc(2px * var(--popup-scale));
+    }
+
+    /* Ausgrauen wenn Extension deaktiviert ist */
+    body.extension-disabled {
+      pointer-events: none;
+    }
+    body.extension-disabled .toggleline,
+    body.extension-disabled #sizeWrap,
+    body.extension-disabled .row,
+    body.extension-disabled h1:not(:first-child),
+    body.extension-disabled #note {
+      opacity: 0.3;
+      filter: grayscale(100%);
+      transition: opacity 0.3s ease, filter 0.3s ease;
+    }
+    body.extension-disabled #toggle {
+      pointer-events: auto; /* Toggle-Button soll weiterhin klickbar bleiben */
+    }
+
+    /* Runder Slider mit schöner grüner Füllung */
+    #sizeWrap { 
+      display:flex; 
+      flex-direction:column; 
+      gap: calc(8px * var(--popup-scale)); 
+    }
+    #valueRow { 
+      display:flex; 
+      align-items:center; 
+      gap: calc(8px * var(--popup-scale)); 
+    }
+    #pxLabel { 
+      font-weight:600; 
+      min-width: calc(70px * var(--popup-scale)); 
+      text-align:center; 
+      font-size: calc(14px * var(--popup-scale));
+    }
+    #pxInput { 
+      width: calc(80px * var(--popup-scale)); 
+      padding: calc(6px * var(--popup-scale)); 
+      border-radius: calc(999px * var(--popup-scale)); 
+      border: calc(1px * var(--popup-scale)) solid #ccc; 
+      text-align:center;
+      font-size: calc(14px * var(--popup-scale));
+    }
+
+    #slider { 
+      width:100%; 
+      height: calc(24px * var(--popup-scale)); 
+      background:transparent; 
+      cursor:pointer; 
+      -webkit-appearance:none; 
+      appearance:none; 
+      outline:none; 
+    }
+    
+    /* Firefox - native runde Füllung */
+    #slider::-moz-range-track { 
+      height: calc(14px * var(--popup-scale)); 
+      border-radius: calc(7px * var(--popup-scale)); 
+      background:#e8e8e8; 
+      border: calc(1px * var(--popup-scale)) solid #ddd; 
+      box-shadow: inset 0 calc(1px * var(--popup-scale)) calc(2px * var(--popup-scale)) rgba(0,0,0,0.1);
+    }
+    #slider::-moz-range-progress { 
+      height: calc(14px * var(--popup-scale)); 
+      border-radius: calc(7px * var(--popup-scale)); 
+      background:linear-gradient(90deg, #2ecc71 0%, #27ae60 100%); 
+      border:none;
+      box-shadow: 0 calc(1px * var(--popup-scale)) calc(3px * var(--popup-scale)) rgba(46,204,113,0.3);
+    }
+    #slider::-moz-range-thumb { 
+      width: calc(22px * var(--popup-scale)); 
+      height: calc(22px * var(--popup-scale)); 
+      border-radius:50%; 
+      border: calc(3px * var(--popup-scale)) solid #fff; 
+      background:linear-gradient(135deg, #2ecc71, #27ae60); 
+      box-shadow: 
+        0 calc(2px * var(--popup-scale)) calc(6px * var(--popup-scale)) rgba(0,0,0,0.2), 
+        0 calc(1px * var(--popup-scale)) calc(3px * var(--popup-scale)) rgba(46,204,113,0.4);
+      cursor:pointer;
+    }
+    
+    /* WebKit - simulierte runde Füllung */
+    #slider::-webkit-slider-runnable-track {
+      height: calc(14px * var(--popup-scale)); 
+      border-radius: calc(7px * var(--popup-scale)); 
+      background:#e8e8e8;
+      border: calc(1px * var(--popup-scale)) solid #ddd;
+      box-shadow: inset 0 calc(1px * var(--popup-scale)) calc(2px * var(--popup-scale)) rgba(0,0,0,0.1);
+      position:relative;
+    }
+    #slider::-webkit-slider-thumb {
+      -webkit-appearance:none; 
+      appearance:none;
+      width: calc(22px * var(--popup-scale)); 
+      height: calc(22px * var(--popup-scale)); 
+      border-radius:50%; 
+      border: calc(3px * var(--popup-scale)) solid #fff; 
+      background:linear-gradient(135deg, #2ecc71, #27ae60); 
+      margin-top: calc(-5px * var(--popup-scale));
+      box-shadow: 
+        0 calc(2px * var(--popup-scale)) calc(6px * var(--popup-scale)) rgba(0,0,0,0.2), 
+        0 calc(1px * var(--popup-scale)) calc(3px * var(--popup-scale)) rgba(46,204,113,0.4);
+      cursor:pointer;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+    #slider::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+      box-shadow: 
+        0 calc(3px * var(--popup-scale)) calc(8px * var(--popup-scale)) rgba(0,0,0,0.25), 
+        0 calc(2px * var(--popup-scale)) calc(4px * var(--popup-scale)) rgba(46,204,113,0.5);
+    }
+    #slider::-webkit-slider-thumb:active {
+      transform: scale(0.95);
+    }
+
+    /* Deaktiviert-Styles für den ganzen Block */
+    .disabled { opacity:.5; filter:grayscale(100%); pointer-events:none; user-select:none; }
+    #note { font-size: calc(12px * var(--popup-scale)); opacity:.8; margin-top: calc(6px * var(--popup-scale)); }
+
+    /* Vergrößerungsleiste */
+    .resize-bar {
+      position: sticky;
+      top: 0;
+      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+      border-bottom: calc(1px * var(--popup-scale)) solid #dee2e6;
+      padding: calc(8px * var(--popup-scale)) calc(12px * var(--popup-scale));
+      margin: calc(-12px * var(--popup-scale)) calc(-12px * var(--popup-scale)) calc(12px * var(--popup-scale)) calc(-12px * var(--popup-scale));
+      display: flex;
+      align-items: center;
+      gap: calc(10px * var(--popup-scale));
+      z-index: 1000;
+      box-shadow: 0 calc(2px * var(--popup-scale)) calc(4px * var(--popup-scale)) rgba(0,0,0,0.1);
+    }
+    .resize-bar .resize-label {
+      font-size: calc(12px * var(--popup-scale));
+      font-weight: 600;
+      color: #495057;
+      min-width: calc(60px * var(--popup-scale));
+    }
+    .resize-bar .resize-slider {
+      flex: 1;
+      height: calc(20px * var(--popup-scale));
+      background: transparent;
+      cursor: pointer;
+      -webkit-appearance: none;
+      appearance: none;
+      outline: none;
+    }
+    .resize-bar .resize-slider::-webkit-slider-runnable-track {
+      height: calc(6px * var(--popup-scale));
+      border-radius: calc(3px * var(--popup-scale));
+      background: linear-gradient(90deg, #6c757d 0%, #495057 100%);
+      border: none;
+    }
+    .resize-bar .resize-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: calc(18px * var(--popup-scale));
+      height: calc(18px * var(--popup-scale));
+      border-radius: 50%;
+      background: linear-gradient(135deg, #007bff, #0056b3);
+      border: calc(2px * var(--popup-scale)) solid #fff;
+      margin-top: calc(-6px * var(--popup-scale));
+      box-shadow: 0 calc(2px * var(--popup-scale)) calc(4px * var(--popup-scale)) rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+    .resize-bar .resize-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+    .resize-bar .resize-slider::-moz-range-track {
+      height: calc(6px * var(--popup-scale));
+      border-radius: calc(3px * var(--popup-scale));
+      background: linear-gradient(90deg, #6c757d 0%, #495057 100%);
+      border: none;
+    }
+    .resize-bar .resize-slider::-moz-range-thumb {
+      width: calc(18px * var(--popup-scale));
+      height: calc(18px * var(--popup-scale));
+      border-radius: 50%;
+      background: linear-gradient(135deg, #007bff, #0056b3);
+      border: calc(2px * var(--popup-scale)) solid #fff;
+      box-shadow: 0 calc(2px * var(--popup-scale)) calc(4px * var(--popup-scale)) rgba(0,0,0,0.2);
+      cursor: pointer;
+    }
+    .resize-bar .resize-value {
+      font-size: calc(12px * var(--popup-scale));
+      font-weight: 600;
+      color: #007bff;
+      min-width: calc(40px * var(--popup-scale));
+      text-align: right;
+    }
+    .resize-bar .resize-reset {
+      background: #6c757d;
+      color: white;
+      border: none;
+      border-radius: calc(4px * var(--popup-scale));
+      padding: calc(4px * var(--popup-scale)) calc(8px * var(--popup-scale));
+      font-size: calc(11px * var(--popup-scale));
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .resize-bar .resize-reset:hover {
+      background: #5a6268;
+    }
+
+    /* Eigene Schimpfwörter */
+    #customProfanityWrap {
+      margin-top: calc(8px * var(--popup-scale));
+      border: calc(1px * var(--popup-scale)) solid #ddd;
+      border-radius: calc(8px * var(--popup-scale));
+      padding: calc(8px * var(--popup-scale));
+      background: #fafafa;
+    }
+    #customProfanityWrap h2 {
+      font-size: calc(13px * var(--popup-scale));
+      margin: 0 0 calc(6px * var(--popup-scale));
+    }
+    .custom-word-input-row {
+      display: flex;
+      gap: calc(6px * var(--popup-scale));
+      margin-bottom: calc(6px * var(--popup-scale));
+    }
+    #customWordInput {
+      flex: 1;
+      padding: calc(6px * var(--popup-scale));
+      border: calc(1px * var(--popup-scale)) solid #ccc;
+      border-radius: calc(6px * var(--popup-scale));
+      font-size: calc(13px * var(--popup-scale));
+    }
+    #addWordBtn {
+      padding: calc(6px * var(--popup-scale)) calc(12px * var(--popup-scale));
+      border: none;
+      border-radius: calc(6px * var(--popup-scale));
+      background: #2ecc71;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: calc(13px * var(--popup-scale));
+      transition: background .15s;
+    }
+    #addWordBtn:hover { background: #27ae60; }
+    #customWordList {
+      display: flex;
+      flex-wrap: wrap;
+      gap: calc(4px * var(--popup-scale));
+      max-height: calc(120px * var(--popup-scale));
+      overflow-y: auto;
+    }
+    .custom-word-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: calc(4px * var(--popup-scale));
+      background: #e8e8e8;
+      border-radius: calc(12px * var(--popup-scale));
+      padding: calc(2px * var(--popup-scale)) calc(8px * var(--popup-scale));
+      font-size: calc(12px * var(--popup-scale));
+    }
+    .custom-word-tag .remove-word {
+      cursor: pointer;
+      color: #e74c3c;
+      font-weight: bold;
+      font-size: calc(14px * var(--popup-scale));
+      line-height: 1;
+    }
+    .custom-word-tag .remove-word:hover { color: #c0392b; }
+    #noCustomWords {
+      font-size: calc(12px * var(--popup-scale));
+      opacity: .6;
+      font-style: italic;
+    }
+
+  </style>
+</head>
+<body>
+  <!-- Vergrößerungsleiste -->
+  <div class="resize-bar">
+    <span class="resize-label">Größe:</span>
+    <input type="range" class="resize-slider" id="popupSizeSlider" min="0.7" max="1.5" step="0.1" value="1">
+    <span class="resize-value" id="popupSizeValue">100%</span>
+    <button class="resize-reset" id="popupSizeReset" title="Zurücksetzen">⟲</button>
+  </div>
+  
+  <h1>Darstellung</h1>
+  <button id="toggle" class="btn off">
+    <strong>Aktivieren</strong>
+    <small>Add-on ist aus</small>
+  </button>
+
+  <div class="toggleline">
+    <label for="fontEnabled">Schrift-Zoom aktivieren</label>
+    <div class="toggle-switch">
+      <input type="checkbox" id="fontEnabled">
+      <span class="toggle-slider"></span>
+    </div>
+  </div>
+
+  <div id="sizeWrap" class="">
+    <div id="valueRow">
+      <span id="pxLabel">16 px</span>
+      <input id="slider" type="range" min="12" max="50" step="1" value="16" />
+      <input id="pxInput" type="number" min="12" max="50" step="1" value="16" />
+    </div>
+  </div>
+
+  <h1>Farbenblindheit</h1>
+  <div class="row">
+    <button class="btn" data-mode="off"><strong>Aus</strong><small>Keine Farbänderung</small></button>
+    <button class="btn" data-mode="achroma"><strong>Graustufen</strong><small>Achromatopsie</small></button>
+  </div>
+  <div class="row">
+    <button class="btn" data-mode="deuter"><strong>Rot-Grün-Schwäche</strong><small>Deuteranopie</small></button>
+    <button class="btn" data-mode="prot"><strong>Rot-Schwäche</strong><small>Protanopie</small></button>
+  </div>
+  <div class="row">
+    <button class="btn" data-mode="trit"><strong>Blau-Gelb-Schwäche</strong><small>Tritanopie</small></button>
+  </div>
+
+
+  <div class="toggleline">
+    <label for="profanity">Schimpfwörter filtern (******)</label>
+    <div class="toggle-switch">
+      <input type="checkbox" id="profanity">
+      <span class="toggle-slider"></span>
+    </div>
+  </div>
+  <div id="customProfanityWrap">
+    <h2>Eigene Schimpfwörter</h2>
+    <div class="custom-word-input-row">
+      <input type="text" id="customWordInput" placeholder="Wort eingeben…">
+      <button id="addWordBtn">+</button>
+    </div>
+    <div id="customWordList"></div>
+    <span id="noCustomWords">Keine eigenen Wörter.</span>
+  </div>
+  <div class="toggleline">
+    <label for="adBlocker">🚫 Werbung blockieren (Ad Blocker)</label>
+    <div class="toggle-switch">
+      <input type="checkbox" id="adBlocker">
+      <span class="toggle-slider"></span>
+    </div>
+  </div>
+  <div class="toggleline">
+    <label for="highContrast">🔆 Hoher Kontrast Modus</label>
+    <div class="toggle-switch">
+      <input type="checkbox" id="highContrast">
+      <span class="toggle-slider"></span>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
