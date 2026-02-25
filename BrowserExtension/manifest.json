@@ -1,14 +1,15 @@
 {
   "manifest_version": 2,
-  "name": "MinFont (clean) + Colorblind + Profanity + Hotlinks",
+  "name": "LeoTrick – Accessibility Toolkit",
   "version": "2.2.0",
-  "description": "Saubere Struktur. Mindest-Schrift (12–50 px) mit Toggle, Farbmodi, Schimpfwort-Filter, Link-Highlight.",
+  "description": "Barrierefreiheit für alle: Mindest-Schriftgröße, Farbenblindheit-Modi, Hochkontrast, Schimpfwort-Filter, Link-Hervorhebung und Ad-Blocker.",
   "icons": { "48": "icon48.png", "96": "icon96.png" },
 
-  "permissions": ["storage", "tabs", "<all_urls>", "activeTab"],
+  "permissions": ["storage", "tabs", "activeTab"],
 
   "browser_action": {
-    "default_title": "MinFont Controller",
+    "default_icon": { "48": "icon48.png", "96": "icon96.png" },
+    "default_title": "LeoTrick – Accessibility Toolkit",
     "default_popup": "popup.html"
   },
 
@@ -30,6 +31,7 @@
         "content/hotlinks.js",
         "content/adblocker.js",
         "content/highcontrast.js",
+        "content/frequentsite.js",
         "content/main.js"
       ]
     }
