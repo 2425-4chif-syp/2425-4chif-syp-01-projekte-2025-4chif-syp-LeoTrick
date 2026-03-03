@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeoProxy – Pitch</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/black.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap">
+    <style>
+        :root {
+            --accent: #00d2ff;
+            --accent2: #7b2ff7;
+            --glow: rgba(0, 210, 255, 0.15);
+            --glass: rgba(255,255,255,0.06);
+            --glass-border: rgba(255,255,255,0.12);
+        }
+
+        .reveal {
+            font-size: 26px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: #e0e6ed;
+        }
+        .reveal h1, .reveal h2, .reveal h3 {
+            text-transform: none;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: -0.02em;
+        }
+        .reveal h1 {
+            font-size: 3.5em;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00d2ff, #7b2ff7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .reveal h2 {
+            font-size: 2.2em;
+            font-weight: 800;
+            margin-bottom: 0.4em;
+            color: #fff;
+        }
+        .reveal h3 {
+            font-size: 1.15em;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 0.3em;
+        }
+        .reveal p, .reveal li {
+            font-size: 0.95em;
+            line-height: 1.55;
+            color: #c0c8d4;
+        }
+
+        /* Animated gradient BG */
+        .reveal .slides {
+            background: transparent;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(0,210,255,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(123,47,247,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(0,210,255,0.05) 0%, transparent 50%);
+            z-index: -1;
+            animation: bgShift 20s ease-in-out infinite alternate;
+        }
+        @keyframes bgShift {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        /* Glass cards */
+        .card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1em 1.2em;
+            margin: 0.35em 0;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.06);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+        .card-blue { border-color: rgba(0,210,255,0.3); background: linear-gradient(135deg, rgba(0,210,255,0.1), rgba(0,210,255,0.02)); }
+        .card-green { border-color: rgba(0,255,136,0.3); background: linear-gradient(135deg, rgba(0,255,136,0.1), rgba(0,255,136,0.02)); }
+        .card-red { border-color: rgba(255,71,87,0.3); background: linear-gradient(135deg, rgba(255,71,87,0.1), rgba(255,71,87,0.02)); }
+        .card-purple { border-color: rgba(123,47,247,0.3); background: linear-gradient(135deg, rgba(123,47,247,0.1), rgba(123,47,247,0.02)); }
+        .card-yellow { border-color: rgba(255,211,42,0.3); background: linear-gradient(135deg, rgba(255,211,42,0.1), rgba(255,211,42,0.02)); }
+
+        /* Accent colors */
+        .blue { color: #00d2ff; } .green { color: #00ff88; } .red { color: #ff4757; }
+        .yellow { color: #ffd32a; } .purple { color: #a55eea; } .orange { color: #ff9f43; }
+        b { font-weight: 700; }
+
+        /* Grid */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8em; margin: 0.5em 0; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6em; margin: 0.5em 0; }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.25em 0.8em;
+            border-radius: 100px;
+            font-size: 0.78em;
+            font-weight: 600;
+            margin: 0.15em;
+            letter-spacing: 0.02em;
+        }
+        .badge-blue { background: rgba(0,210,255,0.15); border: 1px solid rgba(0,210,255,0.4); color: #00d2ff; }
+        .badge-green { background: rgba(0,255,136,0.15); border: 1px solid rgba(0,255,136,0.4); color: #00ff88; }
+        .badge-red { background: rgba(255,71,87,0.15); border: 1px solid rgba(255,71,87,0.4); color: #ff4757; }
+        .badge-purple { background: rgba(123,47,247,0.15); border: 1px solid rgba(123,47,247,0.4); color: #a55eea; }
+        .badge-yellow { background: rgba(255,211,42,0.15); border: 1px solid rgba(255,211,42,0.4); color: #ffd32a; }
+
+        /* Stat */
+        .stat { text-align: center; padding: 0.5em; }
+        .stat-number {
+            font-size: 3em;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+        }
+        .stat-label { font-size: 0.78em; opacity: 0.6; margin-top: 0.25em; font-weight: 400; }
+
+        /* Separator */
+        hr { border: none; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent); margin: 0.8em 2em; }
+
+        /* Flow */
+        .flow { display: flex; align-items: center; justify-content: center; gap: 0.6em; margin: 0.6em 0; }
+        .flow-box {
+            padding: 0.6em 1em;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 0.9em;
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--glass-border);
+        }
+        .flow-arrow {
+            font-size: 1.6em;
+            background: linear-gradient(135deg, #00d2ff, #7b2ff7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Code */
+        .code-inline {
+            background: rgba(0,210,255,0.1);
+            border: 1px solid rgba(0,210,255,0.2);
+            padding: 0.1em 0.5em;
+            border-radius: 6px;
+            font-family: 'SF Mono', 'JetBrains Mono', Monaco, monospace;
+            font-size: 0.85em;
+            color: #00d2ff;
+        }
+
+        /* Table */
+        .reveal table { margin: 0 auto; border-collapse: collapse; border-radius: 12px; overflow: hidden; }
+        .reveal table th, .reveal table td {
+            padding: 0.5em 1em;
+            border: 1px solid rgba(255,255,255,0.08);
+            font-size: 0.85em;
+        }
+        .reveal table th { background: rgba(0,210,255,0.1); font-weight: 600; color: #fff; }
+        .reveal table tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+
+        /* Title page */
+        .title-icon { font-size: 4em; margin-bottom: 0.1em; filter: drop-shadow(0 0 30px rgba(0,210,255,0.3)); }
+        .subtitle { font-size: 1.15em; opacity: 0.6; margin-top: 0.3em; font-weight: 300; letter-spacing: 0.04em; }
+
+        /* Glow heading */
+        .glow-heading {
+            text-shadow: 0 0 40px rgba(0,210,255,0.3), 0 0 80px rgba(123,47,247,0.15);
+        }
+
+        /* Animated entry */
+        .reveal .slides section .fragment.fade-up {
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+        .reveal .slides section .fragment.fade-up.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Progress indicator */
+        .reveal .progress { height: 3px; color: #00d2ff; }
+        .reveal .slide-number { font-family: 'Inter', sans-serif; font-size: 0.7em; color: rgba(255,255,255,0.3); }
+
+        /* Animated shield on title */
+        @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        .float { animation: float 3s ease-in-out infinite; }
+
+        /* Pulse ring */
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(0,210,255,0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(0,210,255,0); }
+            100% { box-shadow: 0 0 0 0 rgba(0,210,255,0); }
+        }
+        .pulse { animation: pulse-ring 2s infinite; }
+
+        /* Gradient text helper */
+        .grad {
+            background: linear-gradient(135deg, #00d2ff, #7b2ff7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+        }
+
+        /* Feature icon circle */
+        .feat-icon {
+            width: 48px; height: 48px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4em;
+            margin-bottom: 0.3em;
+        }
+        .feat-icon-blue { background: rgba(0,210,255,0.15); border: 1px solid rgba(0,210,255,0.3); }
+        .feat-icon-green { background: rgba(0,255,136,0.15); border: 1px solid rgba(0,255,136,0.3); }
+        .feat-icon-purple { background: rgba(123,47,247,0.15); border: 1px solid rgba(123,47,247,0.3); }
+        .feat-icon-yellow { background: rgba(255,211,42,0.15); border: 1px solid rgba(255,211,42,0.3); }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ====== SLIDE 1: TITEL ====== -->
+<section data-background-gradient="linear-gradient(135deg, #0a0a1a 0%, #0d1117 50%, #0a0a1a 100%)">
+    <div class="float" style="font-size:4.5em; margin-bottom:0.05em; filter: drop-shadow(0 0 40px rgba(0,210,255,0.4));">🛡️</div>
+    <h1 class="glow-heading" style="margin-bottom:0.1em;">LeoProxy</h1>
+    <p style="font-size: 1.2em; font-weight: 300; color: rgba(255,255,255,0.5); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.8em;">
+        Proxy &nbsp;·&nbsp; Extension &nbsp;·&nbsp; Accessibility
+    </p>
+    <hr>
+    <div style="margin-top:0.6em;">
+        <span class="badge badge-blue">Ad-Blocker</span>
+        <span class="badge badge-green">Schimpfwort-Filter</span>
+        <span class="badge badge-purple">Schrift-Modifier</span>
+        <span class="badge badge-yellow">Website-Styling</span>
+    </div>
+    <p style="opacity:0.3; font-size:0.75em; margin-top:1.2em;">HTL Leonding &nbsp;·&nbsp; SYP 2024/25</p>
+</section>
+
+<!-- ====== SLIDE 2: PROBLEM → LÖSUNG ====== -->
+<section data-auto-animate>
+    <h2 data-id="title" class="glow-heading">Das Problem</h2>
+    <div class="grid-3" style="margin-top:0.8em;">
+        <div class="card card-red" style="text-align:center;">
+            <div style="font-size:2.2em; margin-bottom:0.15em;">📺</div>
+            <h3 style="color:#ff4757;">Werbung</h3>
+            <p>Aggressive Ads, Popups, Tracking — besonders auf Streaming &amp; News-Seiten</p>
+        </div>
+        <div class="card card-red" style="text-align:center;">
+            <div style="font-size:2.2em; margin-bottom:0.15em;">🤬</div>
+            <h3 style="color:#ff4757;">Unangemessene Inhalte</h3>
+            <p>Schimpfwörter und anstößige Bilder — ein Problem in Schulen &amp; Firmen</p>
+        </div>
+        <div class="card card-red" style="text-align:center;">
+            <div style="font-size:2.2em; margin-bottom:0.15em;">🔤</div>
+            <h3 style="color:#ff4757;">Schlechte Lesbarkeit</h3>
+            <p>Zu kleine Schriften, fehlende Kontraste — Barrierefreiheit wird ignoriert</p>
+        </div>
+    </div>
+    <div class="fragment fade-up" style="margin-top:1em;">
+        <p style="font-size:1.3em; color:#fff; font-weight:700;">→ Es gibt keine einfache <span class="grad">All-in-One-Lösung</span></p>
+    </div>
+</section>
+
+<section data-auto-animate>
+    <h2 data-id="title" class="glow-heading">Unsere Lösung</h2>
+    <p style="font-size:1.15em; margin-bottom:0.6em;">Ein <span class="grad">MITM-Proxy</span> der den gesamten Web-Traffic modifiziert</p>
+    <div class="flow">
+        <div class="flow-box" style="background: rgba(0,210,255,0.1); border-color: rgba(0,210,255,0.3);">
+            <span style="font-size:1.3em;">🖥️</span><br>Browser
+        </div>
+        <div class="flow-arrow">⟶</div>
+        <div class="flow-box pulse" style="background: linear-gradient(135deg, rgba(0,210,255,0.15), rgba(123,47,247,0.15)); border-color: rgba(0,210,255,0.4); padding:0.8em 1.5em;">
+            <span style="font-size:1.5em;">🛡️</span><br>
+            <b style="color:#fff; font-size:1.1em;">LeoProxy</b><br>
+            <span style="font-size:0.7em; opacity:0.7;">Ad-Block · Profanity · Schrift · Styling</span>
+        </div>
+        <div class="flow-arrow">⟶</div>
+        <div class="flow-box" style="background: rgba(123,47,247,0.1); border-color: rgba(123,47,247,0.3);">
+            <span style="font-size:1.3em;">🌍</span><br>Internet
+        </div>
+    </div>
+    <div class="grid-2" style="margin-top:0.7em; max-width:800px; margin-left:auto; margin-right:auto;">
+        <div class="card card-blue" style="text-align:center; padding:0.6em;">
+            <p style="color:#fff;">✅ Funktioniert <b class="blue">netzwerk-weit</b></p>
+        </div>
+        <div class="card card-green" style="text-align:center; padding:0.6em;">
+            <p style="color:#fff;">✅ Kein Browser-Addon nötig</p>
+        </div>
+    </div>
+</section>
+
+<!-- ====== SLIDE 3: FEATURES ====== -->
+<section>
+    <h2 class="glow-heading">Proxy-Features</h2>
+    <div class="grid-2">
+        <div class="card card-blue">
+            <div class="feat-icon feat-icon-blue">🚫</div>
+            <h3>Ad-Blocker</h3>
+            <p><b class="blue">150+ Werbe-Domains</b> auf Netzwerk-Ebene geblockt</p>
+            <p style="font-size:0.82em; opacity:0.6;">Request → HTTP 204, kein Traffic · Anti-Adblocker Bypass</p>
+        </div>
+        <div class="card card-green">
+            <div class="feat-icon feat-icon-green">🤬</div>
+            <h3>Inhalts-Filter</h3>
+            <p>Schimpfwörter → <span class="code-inline">***</span> + Bilder/Videos versteckt</p>
+            <p style="color:#fff; font-size:0.88em; margin-top:0.3em;">🎯 <b class="green">Eigene Wörter</b> hinzufügen — z.B. einen Namen eingeben und alle Inhalte dazu werden ausgeblendet</p>
+            <p style="font-size:0.82em; opacity:0.6;">DE + EN Wortlisten · Regex · MutationObserver</p>
+        </div>
+        <div class="card card-purple">
+            <div class="feat-icon feat-icon-purple">🔤</div>
+            <h3>Schrift-Modifier</h3>
+            <p>Mindest-Schriftgröße automatisch auf <b class="purple">20px</b></p>
+            <p style="font-size:0.82em; opacity:0.6;">Script-Injection in jede HTML-Response</p>
+        </div>
+        <div class="card card-yellow">
+            <div class="feat-icon feat-icon-yellow">🎨</div>
+            <h3>Website-Styling</h3>
+            <p>CSS &amp; Text pro Website anpassen</p>
+            <p style="font-size:0.82em; opacity:0.6;">Farben, Backgrounds, Text-Ersetzung (htl-leonding.at, orf.at)</p>
+        </div>
+    </div>
+</section>
+
+<!-- ====== SLIDE 4: SO FUNKTIONIERT'S ====== -->
+<section>
+    <h2 class="glow-heading">So funktioniert's</h2>
+    <p style="font-size:1.05em; margin-bottom:0.8em;">Zwei Tools — <span class="grad">gemeinsam oder einzeln</span> nutzbar</p>
+    <div class="grid-2" style="max-width:900px; margin:0 auto;">
+        <div class="card card-green" style="text-align:center; padding:1em;">
+            <div style="font-size:2.5em; margin-bottom:0.15em;">🛡️</div>
+            <h3 style="color:#00ff88; font-size:1.3em;">Proxy (EXE)</h3>
+            <hr>
+            <p style="color:#fff;">Sitzt <b>zwischen</b> Browser &amp; Internet</p>
+            <p>Filtert <b class="green">allen Traffic</b> automatisch — Werbung, Schimpfwörter, Schrift</p>
+            <p style="font-size:0.82em; opacity:0.5; margin-top:0.4em;">Netzwerk-weit · kein Addon nötig</p>
+        </div>
+        <div class="card card-blue" style="text-align:center; padding:1em;">
+            <div style="font-size:2.5em; margin-bottom:0.15em;">🧩</div>
+            <h3 style="color:#00d2ff; font-size:1.3em;">Extension (Firefox)</h3>
+            <hr>
+            <p style="color:#fff;">Add-on direkt <b>im Browser</b></p>
+            <p>Gleiche Features + <b class="blue">Farbenblindheit</b>, Hochkontrast, Hotlinks</p>
+            <p style="font-size:0.82em; opacity:0.5; margin-top:0.4em;">Individuell einstellbar · Popup-UI</p>
+        </div>
+    </div>
+    <div class="card" style="text-align:center; margin-top:0.6em; max-width:900px; margin-left:auto; margin-right:auto; border-color: rgba(123,47,247,0.3);">
+        <p style="color:#fff; font-size:1.1em;">💡 <b class="purple">Beide gleichzeitig</b> → doppelter Schutz, maximale Accessibility</p>
+    </div>
+</section>
+
+<!-- ====== SLIDE 5: INSTALLATION ====== -->
+<section>
+    <h2 class="glow-heading">Installation</h2>
+    <p style="font-size:1.1em; margin-bottom:0.6em;">In <span class="grad">2 Schritten</span> einsatzbereit</p>
+    <div class="grid-2" style="max-width:900px; margin:0 auto;">
+        <div class="card card-green" style="position:relative; overflow:hidden;">
+            <div style="position:absolute; top:-10px; right:-10px; font-size:3em; opacity:0.1;">🚀</div>
+            <div style="text-align:center; margin-bottom:0.4em;">
+                <span class="badge badge-green" style="font-size:1.1em; padding:0.3em 1em;">Schritt 1</span>
+            </div>
+            <h3 style="color:#00ff88; text-align:center;">Proxy — EXE starten</h3>
+            <p style="color:#fff; text-align:center; font-size:1.05em; margin-bottom:0.5em;">Doppelklick → <b class="green">läuft.</b></p>
+            <div style="font-size:0.85em; line-height:1.8;">
+                <span class="badge badge-green" style="font-size:0.85em;">✓</span> mitmproxy startet automatisch<br>
+                <span class="badge badge-green" style="font-size:0.85em;">✓</span> SSL-Zertifikat wird erstellt<br>
+                <span class="badge badge-green" style="font-size:0.85em;">✓</span> Firefox-Proxy konfiguriert sich<br>
+                <span class="badge badge-green" style="font-size:0.85em;">✓</span> Alle Filter sofort aktiv
+            </div>
+        </div>
+        <div class="card card-blue" style="position:relative; overflow:hidden;">
+            <div style="position:absolute; top:-10px; right:-10px; font-size:3em; opacity:0.1;">🧩</div>
+            <div style="text-align:center; margin-bottom:0.4em;">
+                <span class="badge badge-blue" style="font-size:1.1em; padding:0.3em 1em;">Schritt 2</span>
+            </div>
+            <h3 style="color:#00d2ff; text-align:center;">Extension — in Firefox laden</h3>
+            <p style="color:#fff; text-align:center; font-size:1.05em; margin-bottom:0.5em;">Add-on installieren → <b class="blue">fertig.</b></p>
+            <div style="font-size:0.85em; line-height:1.8;">
+                <span class="badge badge-blue" style="font-size:0.85em;">✓</span> Firefox Add-on herunterladen<br>
+                <span class="badge badge-blue" style="font-size:0.85em;">✓</span> Popup-UI für Einstellungen<br>
+                <span class="badge badge-blue" style="font-size:0.85em;">✓</span> Features einzeln an/aus<br>
+                <span class="badge badge-blue" style="font-size:0.85em;">✓</span> Sofort einsatzbereit
+            </div>
+        </div>
+    </div>
+    <div class="card" style="text-align:center; margin-top:0.6em; max-width:900px; margin-left:auto; margin-right:auto; border-color: rgba(0,255,136,0.25);">
+        <p style="color:#fff;">⚡ Einfach <b class="green">installieren &amp; loslegen</b></p>
+    </div>
+</section>
+
+<!-- ====== SLIDE 6: EXTENSION ====== -->
+<section>
+    <h2 class="glow-heading">Browser-Extension</h2>
+    <p style="font-size:1.05em; margin-bottom:0.6em;">Gleiche Features als <span class="grad">Firefox Add-on</span> für den einzelnen User</p>
+    <div class="grid-3" style="margin-top:0.5em;">
+        <div class="card" style="text-align:center; padding:0.6em;">
+            <div style="font-size:1.6em;">🔤</div>
+            <p style="color:#fff; font-weight:600;">Schrift-Zoom</p>
+            <p style="font-size:0.78em; opacity:0.5;">12–50 px einstellbar</p>
+        </div>
+        <div class="card" style="text-align:center; padding:0.6em;">
+            <div style="font-size:1.6em;">🎨</div>
+            <p style="color:#fff; font-weight:600;">Farbenblindheit</p>
+            <p style="font-size:0.78em; opacity:0.5;">4 Modi + Graustufen</p>
+        </div>
+        <div class="card" style="text-align:center; padding:0.6em;">
+            <div style="font-size:1.6em;">◐</div>
+            <p style="color:#fff; font-weight:600;">Hochkontrast</p>
+            <p style="font-size:0.78em; opacity:0.5;">Invertierte Farben</p>
+        </div>
+        <div class="card" style="text-align:center; padding:0.6em;">
+            <div style="font-size:1.6em;">🤬</div>
+            <p style="color:#fff; font-weight:600;">Profanity-Filter</p>
+            <p style="font-size:0.78em; opacity:0.5;">DE + EN + eigene Wörter</p>
+        </div>
+        <div class="card" style="text-align:center; padding:0.6em;">
+            <div style="font-size:1.6em;">🚫</div>
+            <p style="color:#fff; font-weight:600;">Ad-Blocker</p>
+            <p style="font-size:0.78em; opacity:0.5;">CSS-basiert</p>
+        </div>
+        <div class="card" style="text-align:center; padding:0.6em;">
+            <div style="font-size:1.6em;">🔗</div>
+            <p style="color:#fff; font-weight:600;">Hotlinks</p>
+            <p style="font-size:0.78em; opacity:0.5;">+ häufige Seiten</p>
+        </div>
+    </div>
+    <div class="card" style="text-align:center; margin-top:0.5em; border-color: rgba(0,255,136,0.3);">
+        <p style="color:#fff;">🔒 <b class="green">100% lokal</b> — keine Daten verlassen den Browser · DSGVO-konform · Open Source</p>
+    </div>
+</section>
+
+<!-- ====== SLIDE 7: LIVE DEMO ====== -->
+<section data-background-gradient="linear-gradient(135deg, #0d1117 0%, #0a0e1a 100%)">
+    <h2 class="glow-heading" style="font-size:2.5em;">Live Demo</h2>
+    <div class="card" style="text-align:center; max-width:700px; margin:0.8em auto; padding:1.5em 2em; border-color: rgba(0,210,255,0.3);">
+        <div class="float" style="font-size:3em; margin-bottom:0.2em;">🌐</div>
+        <h3 style="font-size:1.3em; margin-bottom:0.6em;">LeoProxy in Aktion</h3>
+        <hr>
+        <div style="text-align:left; max-width:400px; margin:0.8em auto 0; line-height:2.2;">
+            <p style="color:#fff;">🚫 Ad-Blocking auf Netzwerk-Ebene</p>
+            <p style="color:#fff;">🤬 Schimpfwort-Filter live</p>
+            <p style="color:#fff;">🔤 Schrift-Größen automatisch angepasst</p>
+            <p style="color:#fff;">🎨 Website-Modifier: htl-leonding.at</p>
+        </div>
+    </div>
+</section>
+
+<!-- ====== SLIDE 8: DANKE ====== -->
+<section data-background-gradient="linear-gradient(135deg, #0a0a1a 0%, #0d1117 50%, #0a0a1a 100%)">
+    <div class="float" style="font-size:4em; margin-bottom:0.2em; filter: drop-shadow(0 0 40px rgba(0,210,255,0.3));">🛡️</div>
+    <h1 class="glow-heading" style="font-size:3em; margin-bottom:0.15em;">Danke!</h1>
+    <p style="font-size:1.3em; font-weight:300; color:rgba(255,255,255,0.5); letter-spacing:0.1em;">Fragen?</p>
+    <hr>
+    <div style="margin-top:0.8em;">
+        <span class="badge badge-blue">LeoProxy</span>
+        <span class="badge badge-purple">LeoTrick Extension</span>
+    </div>
+    <p style="opacity:0.25; font-size:0.7em; margin-top:1.2em;">HTL Leonding · SYP 2024/25</p>
+</section>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+<script>
+    Reveal.initialize({
+        hash: true,
+        slideNumber: 'c/t',
+        transition: 'slide',
+        transitionSpeed: 'default',
+        backgroundTransition: 'fade',
+        center: true,
+        width: 1280,
+        height: 720,
+        margin: 0.06,
+        autoAnimateEasing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+        autoAnimateDuration: 0.7,
+        autoAnimateUnmatched: false
+    });
+</script>
+</body>
+</html>
